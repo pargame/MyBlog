@@ -6,7 +6,7 @@
       "base": "AActor",
       "file": "docs/AActor.md",
       "archive": "(default)",
-      "topic": "(root)"
+      "topics": []
     },
     {
       "id": "APawn",
@@ -14,7 +14,7 @@
       "base": "APawn",
       "file": "docs/APawn.md",
       "archive": "(default)",
-      "topic": "(root)"
+      "topics": []
     }
   ],
   "edges": [
@@ -30,12 +30,8 @@
   "archives": [
     "(default)"
   ],
-  "topics": [
-    "(root)"
-  ],
+  "topics": [],
   "topicsByArchive": {
-    "(default)": [
-      "(root)"
-    ]
+    "(default)": []
   }
 }

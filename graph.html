@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>문서 그래프</title>
+  <title>A 페이지 · 그래프</title>
     <link rel="stylesheet" href="./assets/css/styles.css" />
     <style>
-      .graph-wrap { height: 70vh; background: #0b1020; border: 1px solid #1e2749; border-radius: 12px; }
+  .graph-wrap { height: 60vh; background: #0b1020; border: 1px solid #1e2749; border-radius: 12px; }
       .legend { color: var(--muted); font-size: 14px; }
       #graph { width: 100%; height: 100%; }
       .node { cursor: pointer; }
@@ -21,25 +21,57 @@
       .link { stroke: #3a4b86; stroke-opacity: .6; }
       .link:hover { stroke-opacity: 1; }
   .faded { opacity: 0.15; }
+  .btn { display:inline-block; margin: 4px 6px 0 0; padding: 6px 10px; border:1px solid #1e2749; border-radius: 16px; background:#121933; color:#e7ecff; cursor:pointer; }
+  .btn.active { outline:2px solid var(--accent); }
+  .ctrls label { margin-right: 16px; }
+  #A-de { display:grid; grid-template-columns: 1fr 2fr; gap: 16px; }
+  #doc-list { list-style: none; padding-left: 16px; }
+  #doc-list li { margin: 6px 0; }
     </style>
   </head>
   <body>
     <header class="site-header">
       <div class="container">
-        <h1>문서 그래프</h1>
-        <p class="tagline">docs/*.md 의 [[링크]]를 자동으로 시각화합니다</p>
+        <h1>A 페이지 · A-a 그래프</h1>
+        <p class="tagline">A-b(아카이브)와 A-c(주제) 선택에 따라 A-a 그래프가 바뀝니다.</p>
       </div>
     </header>
     <main class="container">
-      <div class="card">
-        <label for="archive">아카이브:</label>
-        <select id="archive"></select>
-        &nbsp;&nbsp;
-        <label for="topic">주제:</label>
-        <select id="topic"></select>
-        <span class="legend">노드를 드래그해 재배치할 수 있습니다. 노드 클릭 시 문서를 엽니다.</span>
+      <!-- A-b: 아카이브 선택 버튼들 -->
+      <div class="card" id="A-b">
+        <strong>아카이브:</strong>
+        <span id="archives"></span>
+      </div>
+
+      <!-- A-a: 그래프 컨트롤 + 그래프 -->
+      <div class="card ctrls" id="controls">
+        <strong>그래프 컨트롤</strong>
+        <label>링크거리 <input id="ctl-distance" type="range" min="40" max="240" value="120" /></label>
+        <label>반발력 <input id="ctl-charge" type="range" min="-800" max="-50" value="-320" /></label>
+        <label>링크굵기 <input id="ctl-width" type="range" min="1" max="6" value="2" /></label>
+        <label>노드크기 <input id="ctl-size" type="range" min="6" max="26" value="6" /></label>
+        <span class="legend">드래그/휠로 이동·확대/축소. 노드 클릭 시 아래 C 뷰어에 문서가 열립니다.</span>
       </div>
       <div class="graph-wrap" id="graph"></div>
+
+      <!-- A-c: 주제 버튼들 -->
+      <div class="card" id="A-c">
+        <strong>주제:</strong>
+        <button id="topic-reset" class="btn">reset</button>
+        <span id="topics"></span>
+      </div>
+
+    <!-- A-d/A-e: 문서 목록/뷰어 -->
+    <div class="card" id="A-de">
+        <div>
+      <h3>A-d · 문서 목록</h3>
+          <ul id="doc-list"></ul>
+        </div>
+        <div>
+      <h3>A-e · 문서 뷰어</h3>
+          <iframe id="doc-view" style="width:100%;height:420px;border:1px solid #1e2749;border-radius:8px;background:#0b1020"></iframe>
+        </div>
+      </div>
     </main>
     <footer class="site-footer">
       <div class="container"><a href="./index.html">← 홈으로</a></div>
@@ -54,58 +86,86 @@
           return;
         }
         const data = await res.json();
-        setupArchivesAndTopics(data);
-        renderGraph(filter(data, getSelectedArchive(), getSelectedTopic()));
+        setupArchives(data);
+        setupTopicsArea(data);
+        setupControls();
+        rerender(data);
       }
 
-      function getSelectedArchive() {
-        return document.getElementById('archive').value || 'ALL';
+      let state = { archive: 'ALL', topic: 'ALL' };
+      function getSelectedArchive(){ return state.archive; }
+      function getSelectedTopic(){ return state.topic; }
+      function setSelectedArchive(a){ state.archive = a || 'ALL'; setURL(); }
+      function setSelectedTopic(t){ state.topic = t || 'ALL'; setURL(); }
+      function setURL(){
+        const u = new URL(location.href);
+        if (state.archive && state.archive !== 'ALL') u.searchParams.set('archive', state.archive); else u.searchParams.delete('archive');
+        if (state.topic && state.topic !== 'ALL') u.searchParams.set('topic', state.topic); else u.searchParams.delete('topic');
+        history.replaceState({}, '', u);
       }
-      function getSelectedTopic() {
-        return document.getElementById('topic').value || 'ALL';
-      }
-      function setupArchivesAndTopics(data) {
+
+      function setupArchives(data){
         const u = new URL(location.href);
         const archiveParam = u.searchParams.get('archive');
+        if (archiveParam) setSelectedArchive(archiveParam);
+        const container = document.getElementById('archives');
+        const list = data.archives || [];
+        container.innerHTML = list.map(a => `<button class="btn" data-arch="${a}">${a}</button>`).join('');
+        const buttons = container.querySelectorAll('button');
+        function refreshActive(){ buttons.forEach(b => b.classList.toggle('active', b.getAttribute('data-arch')===getSelectedArchive())); }
+        buttons.forEach(btn => btn.addEventListener('click', () => { setSelectedArchive(btn.getAttribute('data-arch')); setSelectedTopic('ALL'); refreshActive(); rerender(); }));
+        if (!archiveParam && list.length) { setSelectedArchive(list[0]); refreshActive(); }
+        refreshActive();
+      }
+
+      function setupTopicsArea(data){
+        const u = new URL(location.href);
         const topicParam = u.searchParams.get('topic');
-
-        const archives = ['ALL', ...(data.archives || [])];
-        const archSel = document.getElementById('archive');
-        archSel.innerHTML = archives.map(a => `<option value="${a}">${a}</option>`).join('');
-        if (archiveParam && archives.includes(archiveParam)) archSel.value = archiveParam;
-
         const topicsAll = data.topicsByArchive || {};
-        function refreshTopics() {
+        function renderTopics(){
           const curArch = getSelectedArchive();
-          const topicList = curArch === 'ALL'
-            ? ['ALL', ...(data.topics || [])]
-            : ['ALL', ...((topicsAll[curArch] || []))];
-          const topicSel = document.getElementById('topic');
-          topicSel.innerHTML = topicList.map(t => `<option value="${t}">${t}</option>`).join('');
-          if (topicParam && topicList.includes(topicParam)) topicSel.value = topicParam;
+          const list = (topicsAll[curArch] || []).filter(t => t !== curArch); // 아카이브명은 제외
+          const wrap = document.getElementById('topics');
+          wrap.innerHTML = list.map(t => `<button class="btn" data-topic="${t}">${t}</button>`).join('');
+          const buttons = wrap.querySelectorAll('button');
+          function refreshActive(){ buttons.forEach(b => b.classList.toggle('active', b.getAttribute('data-topic')===getSelectedTopic())); }
+          buttons.forEach(btn => btn.addEventListener('click', () => { setSelectedTopic(btn.getAttribute('data-topic')); refreshActive(); rerender(); }));
+          document.getElementById('topic-reset').onclick = () => { setSelectedTopic('ALL'); refreshActive(); rerender(); };
+          if (topicParam && list.includes(topicParam)) { setSelectedTopic(topicParam); }
+          refreshActive();
         }
-        refreshTopics();
-
-        archSel.addEventListener('change', async () => {
-          refreshTopics();
-          const res = await fetch('./public/graph.json', { cache: 'no-store' });
-          const fresh = await res.json();
-          renderGraph(filter(fresh, getSelectedArchive(), getSelectedTopic()));
-        });
-        document.getElementById('topic').addEventListener('change', async () => {
-          const res = await fetch('./public/graph.json', { cache: 'no-store' });
-          const fresh = await res.json();
-          renderGraph(filter(fresh, getSelectedArchive(), getSelectedTopic()));
-        });
+        renderTopics();
+        // 아카이브가 바뀌면 주제 버튼도 갱신되도록 관찰
+        const observer = new MutationObserver(()=>renderTopics());
+        observer.observe(document.getElementById('archives'), { childList:true, subtree:true });
       }
 
       function filter(data, archive, topic) {
         let nodes = data.nodes;
         if (archive && archive !== 'ALL') nodes = nodes.filter(n => n.archive === archive);
-        if (topic && topic !== 'ALL') nodes = nodes.filter(n => n.topic === topic);
+        if (topic && topic !== 'ALL') nodes = nodes.filter(n => (n.topics||[]).includes(topic));
         const ids = new Set(nodes.map(n => n.id));
         const edges = data.edges.filter(e => ids.has(e.source) && ids.has(e.target));
         return { nodes, edges };
+      }
+
+      function setupControls(){
+        ['ctl-distance','ctl-charge','ctl-width','ctl-size'].forEach(id => {
+          document.getElementById(id).addEventListener('input', () => rerender());
+        });
+      }
+
+      function rerender(full){
+        // full 데이터가 없으면 다시 불러옴
+        if (!full) {
+          fetch('./public/graph.json', { cache: 'no-store' }).then(r=>r.json()).then(data => {
+            renderGraph(filter(data, getSelectedArchive(), getSelectedTopic()));
+            renderDocList(data);
+          });
+        } else {
+          renderGraph(filter(full, getSelectedArchive(), getSelectedTopic()));
+          renderDocList(full);
+        }
       }
 
   function renderGraph(data) {
@@ -115,9 +175,14 @@
   const svg = d3.select('#graph').append('svg').attr('width', width).attr('height', height);
   const inner = svg.append('g');
 
+        const distance = +document.getElementById('ctl-distance').value;
+        const charge = +document.getElementById('ctl-charge').value;
+        const linkWidth = +document.getElementById('ctl-width').value;
+        const sizeBase = +document.getElementById('ctl-size').value;
+
         const simulation = d3.forceSimulation(data.nodes)
-          .force('link', d3.forceLink(data.edges).id(d => d.id).distance(120))
-          .force('charge', d3.forceManyBody().strength(-320))
+          .force('link', d3.forceLink(data.edges).id(d => d.id).distance(distance))
+          .force('charge', d3.forceManyBody().strength(charge))
           .force('center', d3.forceCenter(width / 2, height / 2));
 
         const link = inner.append('g').selectAll('line')
@@ -125,11 +190,14 @@
           .enter().append('line')
           .attr('class', 'link');
 
-        const topicKey = (t) => (t && t !== '(root)') ? `topic-${(Math.abs(hashCode(t)) % 5) + 1}` : 'topic-ROOT';
+        const topicKey = (topics) => {
+          const t = (topics && topics.length) ? topics[0] : '(root)';
+          return (t && t !== '(root)') ? `topic-${(Math.abs(hashCode(t)) % 5) + 1}` : 'topic-ROOT';
+        };
         const node = inner.append('g').selectAll('g')
           .data(data.nodes)
           .enter().append('g')
-          .attr('class', d => `node ${topicKey(d.topic)}`)
+          .attr('class', d => `node ${topicKey(d.topics)}`)
           .call(d3.drag()
             .on('start', dragstarted)
             .on('drag', dragged)
@@ -141,20 +209,21 @@
           deg.set(e.source, (deg.get(e.source) || 0) + 1);
           deg.set(e.target, (deg.get(e.target) || 0) + 1);
         }
-        const radius = d => Math.max(6, Math.min(22, 6 + Math.sqrt(deg.get(d.id) || 0) * 4));
+  const radius = d => Math.max(sizeBase, Math.min(sizeBase+16, sizeBase + Math.sqrt(deg.get(d.id) || 0) * 4));
 
-        node.append('circle').attr('r', radius);
-        node.append('text').attr('x', 12).attr('y', 4).text(d => d.id);
+  node.append('circle').attr('r', radius).attr('stroke-width', linkWidth/2);
+  node.append('text').attr('x', 12).attr('y', 4).text(d => d.label || d.id);
 
         node.on('click', (_, d) => {
-          // viewer로 이동해 문서 내용을 페이지 내에서 열기
+          // 아래 C 뷰어 영역에 문서를 연다
           const url = new URL('./viewer.html', location.href);
           url.searchParams.set('id', d.id);
           const topic = getSelectedTopic();
           if (topic && topic !== 'ALL') url.searchParams.set('topic', topic);
           const arch = getSelectedArchive();
           if (arch && arch !== 'ALL') url.searchParams.set('archive', arch);
-          window.location.href = url.toString();
+          document.getElementById('doc-view').src = url.toString();
+          document.getElementById('doc-view').scrollIntoView({ behavior:'smooth', block:'start' });
         });
 
   simulation.on('tick', () => {
@@ -207,6 +276,26 @@
           node.classed('faded', false);
           link.classed('faded', false);
         }
+      }
+
+      function renderDocList(full){
+        const arch = getSelectedArchive();
+        const topic = getSelectedTopic();
+        let nodes = full.nodes;
+        if (arch && arch !== 'ALL') nodes = nodes.filter(n => n.archive === arch);
+        if (topic && topic !== 'ALL') nodes = nodes.filter(n => (n.topics||[]).includes(topic));
+        nodes = nodes.sort((a,b)=> (a.label||a.id).localeCompare(b.label||b.id));
+        const ul = document.getElementById('doc-list');
+        ul.innerHTML = nodes.map(n => `<li><a data-id="${n.id}" href="#">${n.label || n.id}</a> <span class=\"legend\">(${(n.topics||[]).join(', ')})</span></li>`).join('');
+        ul.querySelectorAll('a').forEach(a => a.addEventListener('click', (e) => {
+          e.preventDefault();
+          const id = a.getAttribute('data-id');
+          const url = new URL('./viewer.html', location.href);
+          url.searchParams.set('id', id);
+          if (topic && topic !== 'ALL') url.searchParams.set('topic', topic);
+          if (arch && arch !== 'ALL') url.searchParams.set('archive', arch);
+          document.getElementById('doc-view').src = url.toString();
+        }));
       }
 
       load();
