@@ -101,31 +101,19 @@ function main() {
     const base = path.basename(file, '.md');
     const relFromRepo = path.relative(REPO_ROOT, file); // docs/.../X.md
     const relFromDocs = path.relative(DOCS_DIR, file);  // .../X.md
-    const segs = relFromDocs.split(path.sep);
-
-    // 아카이브 및 폴더 기반 토픽 추출
-    let archive = '(default)';
-    let folderTopic = '(root)';
-    if (segs.length === 1) {
-      // docs/Name.md -> archive=(default), topic=(root)
-    } else if (segs.length === 2) {
-      // docs/Archive/Name.md -> archive=Archive, topic=Archive(폴더명)
-      archive = segs[0];
-      folderTopic = segs[0];
-    } else if (segs.length >= 3) {
-      // docs/Archive/Topic/Name.md -> archive=Archive, topic=Topic
-      archive = segs[0];
-      folderTopic = segs[1];
-    }
+  const segs = relFromDocs.split(path.sep);
+  // 아카이브 및 폴더 기반 토픽 추출: 모든 폴더명을 토픽으로 포함
+  const folders = segs.slice(0, Math.max(0, segs.length - 1));
+  const archive = folders.length ? folders[0] : '(default)';
     archives.add(archive);
 
     const raw = fs.readFileSync(file, 'utf8');
     const firstHeading = /^\s*#\s+(.+)$/m.exec(raw)?.[1]?.trim();
     const title = firstHeading || base;
 
-    // 문서 상단 태그 파싱(front matter 또는 간단 tags: [..])
-    const tagSet = new Set();
-    if (folderTopic && folderTopic !== '(root)') tagSet.add(folderTopic);
+  // 문서 상단 태그 파싱(front matter 또는 간단 tags: [..]) + 모든 폴더명을 토픽으로
+  const tagSet = new Set();
+  for (const f of folders) tagSet.add(f);
     for (const t of parseFrontMatterTags(raw)) tagSet.add(t);
     for (const t of parseSimpleTags(raw)) tagSet.add(t);
     for (const t of tagSet) topics.add(t);
