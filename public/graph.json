@@ -2,11 +2,15 @@
   "nodes": [
     {
       "id": "AActor",
-      "file": "docs/AActor.md"
+      "title": "AActor",
+      "file": "docs/AActor.md",
+      "topic": "(root)"
     },
     {
       "id": "APawn",
-      "file": "docs/APawn.md"
+      "title": "APawn",
+      "file": "docs/APawn.md",
+      "topic": "(root)"
     }
   ],
   "edges": [
@@ -18,5 +22,8 @@
       "source": "APawn",
       "target": "AActor"
     }
+  ],
+  "topics": [
+    "(root)"
   ]
 }

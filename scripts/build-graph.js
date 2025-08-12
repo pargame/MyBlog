@@ -8,8 +8,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const DOCS_DIR = path.resolve(__dirname, '..', 'docs');
-const OUT_DIR = path.resolve(__dirname, '..', 'public');
+const REPO_ROOT = path.resolve(__dirname, '..');
+const DOCS_DIR = path.resolve(REPO_ROOT, 'docs');
+const OUT_DIR = path.resolve(REPO_ROOT, 'public');
 const OUT_FILE = path.join(OUT_DIR, 'graph.json');
 
 function listMarkdownFiles(dir) {
@@ -44,12 +45,21 @@ function main() {
   const nodes = [];
   const nodeIndex = new Map();
   const edges = [];
+  const topics = new Set();
 
   // 파일명(확장자 제거)를 id로 사용
   for (const file of files) {
     const id = path.basename(file, '.md');
+    const relFromRepo = path.relative(REPO_ROOT, file); // e.g., docs/foo/bar.md
+    const relFromDocs = path.relative(DOCS_DIR, file);  // e.g., foo/bar.md
+    const topic = relFromDocs.includes(path.sep) ? relFromDocs.split(path.sep)[0] : '(root)';
+    topics.add(topic);
+    // title: first markdown heading or id fallback
+    const raw = fs.readFileSync(file, 'utf8');
+    const firstHeading = /^\s*#\s+(.+)$/m.exec(raw)?.[1]?.trim();
+    const title = firstHeading || id;
     nodeIndex.set(id, nodes.length);
-    nodes.push({ id, file: path.relative(process.cwd(), file) });
+    nodes.push({ id, title, file: relFromRepo, topic });
   }
 
   for (const file of files) {
@@ -64,7 +74,7 @@ function main() {
   }
 
   if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
-  fs.writeFileSync(OUT_FILE, JSON.stringify({ nodes, edges }, null, 2));
+  fs.writeFileSync(OUT_FILE, JSON.stringify({ nodes, edges, topics: [...topics].sort() }, null, 2));
   console.log(`graph written: ${OUT_FILE}`);
 }
 

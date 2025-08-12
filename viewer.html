@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>문서 뷰어</title>
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+    <style>
+      .md { background: var(--card); border: 1px solid #1e2749; border-radius: 12px; padding: 20px; margin: 24px 0; }
+      .md h1, .md h2, .md h3 { margin-top: 1.2em; }
+      .md pre { background: #0b1020; padding: 12px; border-radius: 8px; overflow: auto; }
+      .md code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <h1 id="title">문서 뷰어</h1>
+        <p class="tagline"><a href="./graph.html">← 그래프로 돌아가기</a></p>
+      </div>
+    </header>
+    <main class="container">
+      <div id="content" class="md">로딩 중…</div>
+    </main>
+    <footer class="site-footer">
+      <div class="container"><a href="./index.html">← 홈</a></div>
+    </footer>
+    <script>
+      function getParam(name) {
+        const u = new URL(location.href);
+        return u.searchParams.get(name);
+      }
+      async function load() {
+        const id = getParam('id');
+        if (!id) {
+          document.getElementById('content').textContent = 'id 파라미터가 없습니다.';
+          return;
+        }
+        // docs/{id}.md를 그대로 불러온다 (Pages가 raw md를 서빙함)
+        const url = `./docs/${encodeURIComponent(id)}.md`;
+        const res = await fetch(url);
+        if (!res.ok) {
+          document.getElementById('content').textContent = '문서를 불러오지 못했습니다: ' + url;
+          return;
+        }
+        const text = await res.text();
+        // 간단한 마크다운 렌더(아주 기초적인 헤더/코드/링크만)
+        const html = text
+          .replace(/^#\s+(.+)$/gm, '<h1>$1</h1>')
+          .replace(/^##\s+(.+)$/gm, '<h2>$1</h2>')
+          .replace(/^###\s+(.+)$/gm, '<h3>$1</h3>')
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/`([^`]+)`/g, '<code>$1</code>')
+          .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>')
+          .replace(/\n\n/g, '<br/><br/>' );
+        document.getElementById('content').innerHTML = html;
+        const title = /^#\s+(.+)$/m.exec(text)?.[1] || id;
+        document.getElementById('title').textContent = title;
+      }
+      load();
+    </script>
+  </body>
+  </html>
