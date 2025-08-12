@@ -34,6 +34,10 @@
         const u = new URL(location.href);
         return u.searchParams.get('topic');
       }
+      function getArchiveParam() {
+        const u = new URL(location.href);
+        return u.searchParams.get('archive');
+      }
       async function load() {
         const id = getParam('id');
         if (!id) {
@@ -41,7 +45,12 @@
           return;
         }
         // docs/{id}.md를 그대로 불러온다 (Pages가 raw md를 서빙함)
-        const url = `./docs/${encodeURIComponent(id)}.md`;
+  // id는 docs 기준의 상대경로(확장자 제외)일 수 있음
+  const safe = id.replace(/\.+/g, '.') // 간단한 경로 세이프가드
+      .split('/')
+      .map(encodeURIComponent)
+      .join('/');
+  const url = `./docs/${safe}.md`;
         const res = await fetch(url);
         if (!res.ok) {
           document.getElementById('content').textContent = '문서를 불러오지 못했습니다: ' + url;
@@ -51,7 +60,7 @@
         // 간단한 마크다운 렌더(아주 기초적인 헤더/코드/링크만)
         // 위키링크 [[Name]]를 동일 뷰어의 링크로 변환
         const topic = getTopicParam();
-        const html = text
+  const html = text
           .replace(/^#\s+(.+)$/gm, '<h1>$1</h1>')
           .replace(/^##\s+(.+)$/gm, '<h2>$1</h2>')
           .replace(/^###\s+(.+)$/gm, '<h3>$1</h3>')
@@ -59,20 +68,25 @@
           .replace(/`([^`]+)`/g, '<code>$1</code>')
           .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>')
           .replace(/\[\[([^\]|]+)(?:\|[^\]]+)?\]\]/g, (_, p1) => {
-            const target = p1.trim();
+            const targetBase = p1.trim();
             const url = new URL('./viewer.html', location.href);
-            url.searchParams.set('id', target);
+            // 링크는 basename 기준으로만 연결하므로 id는 basename으로 전달
+            url.searchParams.set('id', targetBase);
             if (topic) url.searchParams.set('topic', topic);
-            return `<a href="${url.toString()}">${target}</a>`;
+            const arch = getArchiveParam();
+            if (arch) url.searchParams.set('archive', arch);
+            return `<a href="${url.toString()}">${targetBase}</a>`;
           })
           .replace(/\n\n/g, '<br/><br/>' );
         document.getElementById('content').innerHTML = html;
         const title = /^#\s+(.+)$/m.exec(text)?.[1] || id;
         document.getElementById('title').textContent = title;
         const back = document.querySelector('.tagline a');
-        if (back && topic) {
+        if (back) {
           const u = new URL('./graph.html', location.href);
-          u.searchParams.set('topic', topic);
+          if (topic) u.searchParams.set('topic', topic);
+          const arch = getArchiveParam();
+          if (arch) u.searchParams.set('archive', arch);
           back.href = u.toString();
         }
       }

@@ -2,14 +2,18 @@
   "nodes": [
     {
       "id": "AActor",
-      "title": "AActor",
+      "label": "AActor",
+      "base": "AActor",
       "file": "docs/AActor.md",
+      "archive": "(default)",
       "topic": "(root)"
     },
     {
       "id": "APawn",
-      "title": "APawn",
+      "label": "APawn",
+      "base": "APawn",
       "file": "docs/APawn.md",
+      "archive": "(default)",
       "topic": "(root)"
     }
   ],
@@ -23,7 +27,15 @@
       "target": "AActor"
     }
   ],
+  "archives": [
+    "(default)"
+  ],
   "topics": [
     "(root)"
-  ]
+  ],
+  "topicsByArchive": {
+    "(default)": [
+      "(root)"
+    ]
+  }
 }

@@ -25,7 +25,10 @@
     </header>
     <main class="container">
       <div class="card">
-        <label for="topic">주제 선택:</label>
+        <label for="archive">아카이브:</label>
+        <select id="archive"></select>
+        &nbsp;&nbsp;
+        <label for="topic">주제:</label>
         <select id="topic"></select>
         <span class="legend">노드를 드래그해 재배치할 수 있습니다. 노드 클릭 시 문서를 엽니다.</span>
       </div>
@@ -44,36 +47,58 @@
           return;
         }
         const data = await res.json();
-        setupTopics(data);
-        renderGraph(filterByTopic(data, getSelectedTopic()));
+        setupArchivesAndTopics(data);
+        renderGraph(filter(data, getSelectedArchive(), getSelectedTopic()));
       }
 
+      function getSelectedArchive() {
+        return document.getElementById('archive').value || 'ALL';
+      }
       function getSelectedTopic() {
         return document.getElementById('topic').value || 'ALL';
       }
-      function setupTopics(data) {
-        const select = document.getElementById('topic');
-        const topics = ['ALL', ...(data.topics || [] )];
-        select.innerHTML = topics.map(t => `<option value="${t}">${t}</option>`).join('');
-        select.addEventListener('change', async () => {
+      function setupArchivesAndTopics(data) {
+        const u = new URL(location.href);
+        const archiveParam = u.searchParams.get('archive');
+        const topicParam = u.searchParams.get('topic');
+
+        const archives = ['ALL', ...(data.archives || [])];
+        const archSel = document.getElementById('archive');
+        archSel.innerHTML = archives.map(a => `<option value="${a}">${a}</option>`).join('');
+        if (archiveParam && archives.includes(archiveParam)) archSel.value = archiveParam;
+
+        const topicsAll = data.topicsByArchive || {};
+        function refreshTopics() {
+          const curArch = getSelectedArchive();
+          const topicList = curArch === 'ALL'
+            ? ['ALL', ...(data.topics || [])]
+            : ['ALL', ...((topicsAll[curArch] || []))];
+          const topicSel = document.getElementById('topic');
+          topicSel.innerHTML = topicList.map(t => `<option value="${t}">${t}</option>`).join('');
+          if (topicParam && topicList.includes(topicParam)) topicSel.value = topicParam;
+        }
+        refreshTopics();
+
+        archSel.addEventListener('change', async () => {
+          refreshTopics();
           const res = await fetch('./public/graph.json', { cache: 'no-store' });
           const fresh = await res.json();
-          renderGraph(filterByTopic(fresh, getSelectedTopic()));
+          renderGraph(filter(fresh, getSelectedArchive(), getSelectedTopic()));
         });
-        // URL 파라미터로 topic 지정 가능
-        const u = new URL(location.href);
-        const t = u.searchParams.get('topic');
-        if (t && topics.includes(t)) {
-          select.value = t;
-        }
+        document.getElementById('topic').addEventListener('change', async () => {
+          const res = await fetch('./public/graph.json', { cache: 'no-store' });
+          const fresh = await res.json();
+          renderGraph(filter(fresh, getSelectedArchive(), getSelectedTopic()));
+        });
       }
 
-      function filterByTopic(data, topic) {
-        if (!topic || topic === 'ALL') return data;
-        const nodes = data.nodes.filter(n => n.topic === topic);
+      function filter(data, archive, topic) {
+        let nodes = data.nodes;
+        if (archive && archive !== 'ALL') nodes = nodes.filter(n => n.archive === archive);
+        if (topic && topic !== 'ALL') nodes = nodes.filter(n => n.topic === topic);
         const ids = new Set(nodes.map(n => n.id));
         const edges = data.edges.filter(e => ids.has(e.source) && ids.has(e.target));
-        return { nodes, edges, topics: data.topics };
+        return { nodes, edges };
       }
 
       function renderGraph(data) {
@@ -110,6 +135,8 @@
           url.searchParams.set('id', d.id);
           const topic = getSelectedTopic();
           if (topic && topic !== 'ALL') url.searchParams.set('topic', topic);
+          const arch = getSelectedArchive();
+          if (arch && arch !== 'ALL') url.searchParams.set('archive', arch);
           window.location.href = url.toString();
         });
 

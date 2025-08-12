@@ -43,38 +43,71 @@ function main() {
   const files = listMarkdownFiles(DOCS_DIR);
 
   const nodes = [];
-  const nodeIndex = new Map();
+  const nodeIndex = new Map(); // id (unique key) -> index
   const edges = [];
   const topics = new Set();
+  const archives = new Set();
+  const byBaseName = new Map(); // basename -> array of node ids (prefer first)
 
   // 파일명(확장자 제거)를 id로 사용
   for (const file of files) {
-    const id = path.basename(file, '.md');
+    const base = path.basename(file, '.md');
     const relFromRepo = path.relative(REPO_ROOT, file); // e.g., docs/foo/bar.md
     const relFromDocs = path.relative(DOCS_DIR, file);  // e.g., foo/bar.md
-    const topic = relFromDocs.includes(path.sep) ? relFromDocs.split(path.sep)[0] : '(root)';
+    const segs = relFromDocs.split(path.sep);
+    let archive = '(default)';
+    let topic = '(root)';
+    if (segs.length === 2) {
+      topic = segs[0];
+    } else if (segs.length >= 3) {
+      archive = segs[0];
+      topic = segs[1];
+    }
     topics.add(topic);
-    // title: first markdown heading or id fallback
+    archives.add(archive);
     const raw = fs.readFileSync(file, 'utf8');
     const firstHeading = /^\s*#\s+(.+)$/m.exec(raw)?.[1]?.trim();
-    const title = firstHeading || id;
+    const title = firstHeading || base;
+    const id = relFromDocs.replace(/\\/g, '/').replace(/\.md$/i, ''); // unique id per file path
+    const node = { id, label: title, base, file: relFromRepo, archive, topic };
     nodeIndex.set(id, nodes.length);
-    nodes.push({ id, title, file: relFromRepo, topic });
+    nodes.push(node);
+    const arr = byBaseName.get(base) || [];
+    arr.push(id);
+    byBaseName.set(base, arr);
   }
 
   for (const file of files) {
-    const srcId = path.basename(file, '.md');
+    const relFromDocs = path.relative(DOCS_DIR, file);
+    const srcId = relFromDocs.replace(/\\/g, '/').replace(/\.md$/i, '');
     const content = fs.readFileSync(file, 'utf8');
     const links = parseWikiLinks(content);
     for (const target of links) {
-      const tgtId = target.endsWith('.md') ? target.replace(/\.md$/, '') : target;
-      if (!nodeIndex.has(tgtId)) continue; // 대상 문서가 없으면 스킵
+      const tgtBase = target.endsWith('.md') ? target.replace(/\.md$/i, '') : target;
+      const candidates = byBaseName.get(tgtBase);
+      if (!candidates || candidates.length === 0) continue;
+      const tgtId = candidates[0]; // 우선 첫번째 후보로 연결
       edges.push({ source: srcId, target: tgtId });
     }
   }
 
   if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
-  fs.writeFileSync(OUT_FILE, JSON.stringify({ nodes, edges, topics: [...topics].sort() }, null, 2));
+  // topicsByArchive 계산
+  const topicsByArchive = {};
+  for (const n of nodes) {
+    if (!topicsByArchive[n.archive]) topicsByArchive[n.archive] = new Set();
+    topicsByArchive[n.archive].add(n.topic);
+  }
+  const topicsByArchiveSorted = Object.fromEntries(
+    Object.entries(topicsByArchive).map(([k, v]) => [k, [...v].sort()])
+  );
+  fs.writeFileSync(OUT_FILE, JSON.stringify({
+    nodes,
+    edges,
+    archives: [...archives].sort(),
+    topics: [...topics].sort(),
+    topicsByArchive: topicsByArchiveSorted,
+  }, null, 2));
   console.log(`graph written: ${OUT_FILE}`);
 }
 
