@@ -108,6 +108,8 @@
           // viewer로 이동해 문서 내용을 페이지 내에서 열기
           const url = new URL('./viewer.html', location.href);
           url.searchParams.set('id', d.id);
+          const topic = getSelectedTopic();
+          if (topic && topic !== 'ALL') url.searchParams.set('topic', topic);
           window.location.href = url.toString();
         });
 

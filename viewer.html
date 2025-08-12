@@ -30,6 +30,10 @@
         const u = new URL(location.href);
         return u.searchParams.get(name);
       }
+      function getTopicParam() {
+        const u = new URL(location.href);
+        return u.searchParams.get('topic');
+      }
       async function load() {
         const id = getParam('id');
         if (!id) {
@@ -45,6 +49,8 @@
         }
         const text = await res.text();
         // 간단한 마크다운 렌더(아주 기초적인 헤더/코드/링크만)
+        // 위키링크 [[Name]]를 동일 뷰어의 링크로 변환
+        const topic = getTopicParam();
         const html = text
           .replace(/^#\s+(.+)$/gm, '<h1>$1</h1>')
           .replace(/^##\s+(.+)$/gm, '<h2>$1</h2>')
@@ -52,10 +58,23 @@
           .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
           .replace(/`([^`]+)`/g, '<code>$1</code>')
           .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>')
+          .replace(/\[\[([^\]|]+)(?:\|[^\]]+)?\]\]/g, (_, p1) => {
+            const target = p1.trim();
+            const url = new URL('./viewer.html', location.href);
+            url.searchParams.set('id', target);
+            if (topic) url.searchParams.set('topic', topic);
+            return `<a href="${url.toString()}">${target}</a>`;
+          })
           .replace(/\n\n/g, '<br/><br/>' );
         document.getElementById('content').innerHTML = html;
         const title = /^#\s+(.+)$/m.exec(text)?.[1] || id;
         document.getElementById('title').textContent = title;
+        const back = document.querySelector('.tagline a');
+        if (back && topic) {
+          const u = new URL('./graph.html', location.href);
+          u.searchParams.set('topic', topic);
+          back.href = u.toString();
+        }
       }
       load();
     </script>
