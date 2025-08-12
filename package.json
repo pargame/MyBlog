@@ -1,0 +1,8 @@
+{
+  "name": "myblog",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "build:graph": "node scripts/build-graph.js"
+  }
+}

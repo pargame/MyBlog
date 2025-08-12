@@ -1,0 +1,22 @@
+{
+  "nodes": [
+    {
+      "id": "AActor",
+      "file": "docs/AActor.md"
+    },
+    {
+      "id": "APawn",
+      "file": "docs/APawn.md"
+    }
+  ],
+  "edges": [
+    {
+      "source": "AActor",
+      "target": "APawn"
+    },
+    {
+      "source": "APawn",
+      "target": "AActor"
+    }
+  ]
+}
