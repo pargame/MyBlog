@@ -1,0 +1,10 @@
+# macOS
+.DS_Store
+
+# Node tooling (optional)
+node_modules/
+
+# Build output (if added later)
+dist/
+.out/
+.next/

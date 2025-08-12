@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MyBlog</title>
+    <meta name="description" content="나의 개인 블로그" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <h1>MyBlog</h1>
+        <p class="tagline">생각을 기록하고 공유하는 공간</p>
+      </div>
+    </header>
+    <main class="container">
+      <article class="card">
+        <h2>첫 글에 오신 것을 환영합니다 👋</h2>
+        <p>이 페이지는 GitHub Pages로 배포되는 최소 템플릿입니다. <code>index.html</code>을 수정해 첫 글을 작성해 보세요.</p>
+        <ul>
+          <li><strong>스타일</strong>: <code>assets/css/styles.css</code></li>
+          <li><strong>워크플로</strong>: <code>.github/workflows/pages.yml</code></li>
+        </ul>
+      </article>
+    </main>
+    <footer class="site-footer">
+      <div class="container">
+        <span>© <span id="year"></span> MyBlog</span>
+      </div>
+    </footer>
+    <script>
+      document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+  </body>
+  </html>
