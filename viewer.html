@@ -119,7 +119,8 @@
               to.searchParams.set('id', n.id);
               if (topic) to.searchParams.set('topic', topic);
               if (arch) to.searchParams.set('archive', arch);
-              return `<li><a href="${to.toString()}">${escapeHtml(n.label || n.id)}</a> <span class="legend">(${n.topic})</span></li>`;
+              const meta = `${n.archive}${(n.topics && n.topics.length) ? ' · ' + n.topics.join(', ') : ''}`;
+              return `<li><a href="${to.toString()}">${escapeHtml(n.label || n.id)}</a> <span class="legend">(${escapeHtml(meta)})</span></li>`;
             }).join('');
             panel.style.display = '';
           }
@@ -132,22 +133,27 @@
         if (!graph) return idRaw;
         const base = idRaw;
         const nodes = graph.nodes || [];
-        let cand = nodes.find(n => n.base === base && arch && n.archive === arch && topic && n.topic === topic);
-        if (cand) return cand.id;
-        cand = nodes.find(n => n.base === base && arch && n.archive === arch);
-        if (cand) return cand.id;
-        cand = nodes.find(n => n.base === base);
+        const pool = nodes.filter(n => n.base === base);
+        if (!pool.length) return idRaw;
+        // 우선순위: arch+topic -> arch -> topic -> 아무거나
+        let cand = null;
+        if (arch && topic) cand = pool.find(n => n.archive === arch && (n.topics||[]).includes(topic));
+        if (!cand && arch) cand = pool.find(n => n.archive === arch);
+        if (!cand && topic) cand = pool.find(n => (n.topics||[]).includes(topic));
+        if (!cand) cand = pool[0];
         return cand ? cand.id : idRaw;
       }
 
       function resolveByBasename(base, graph, arch, topic) {
         if (!graph) return null;
         const nodes = graph.nodes || [];
-        let cand = nodes.find(n => n.base === base && arch && n.archive === arch && topic && n.topic === topic);
-        if (cand) return cand.id;
-        cand = nodes.find(n => n.base === base && arch && n.archive === arch);
-        if (cand) return cand.id;
-        cand = nodes.find(n => n.base === base);
+        const pool = nodes.filter(n => n.base === base);
+        if (!pool.length) return null;
+        let cand = null;
+        if (arch && topic) cand = pool.find(n => n.archive === arch && (n.topics||[]).includes(topic));
+        if (!cand && arch) cand = pool.find(n => n.archive === arch);
+        if (!cand && topic) cand = pool.find(n => (n.topics||[]).includes(topic));
+        if (!cand) cand = pool[0];
         return cand ? cand.id : null;
       }
 

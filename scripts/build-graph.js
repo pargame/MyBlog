@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
  * 마크다운 위키 링크 그래프 생성기
- * - [[FileName]] 또는 [[FileName|Alias]] 링크를 추출
- * - 주제 소스: 폴더명 + 문서 상단 태그(front matter 또는 단순 tags: [..])
- * - 입력: docs/
+ * - 주제 소스: 상위 폴더명(보관함 포함) + 문서 상단 YAML 프론트매터 tags
+ * - 링크: [[FileName]] 또는 [[FileName|Alias]]
+ * - 입력: docs 폴더
  * - 출력: public/graph.json (nodes, edges, archives, topicsByArchive)
  */
 const fs = require('fs');
@@ -17,11 +17,13 @@ const OUT_FILE = path.join(OUT_DIR, 'graph.json');
 function listMarkdownFiles(dir) {
   if (!fs.existsSync(dir)) return [];
   const entries = fs.readdirSync(dir, { withFileTypes: true });
-  return entries.flatMap(e => {
+  const out = [];
+  for (const e of entries) {
     const p = path.join(dir, e.name);
-    if (e.isDirectory()) return listMarkdownFiles(p);
-    return e.isFile() && p.toLowerCase().endsWith('.md') ? [p] : [];
-  });
+    if (e.isDirectory()) out.push(...listMarkdownFiles(p));
+    else if (e.isFile() && p.toLowerCase().endsWith('.md')) out.push(p);
+  }
+  return out;
 }
 
 function parseWikiLinks(content) {
@@ -36,12 +38,13 @@ function parseWikiLinks(content) {
 }
 
 function parseFrontMatterTags(raw) {
+  // --- ... --- 블록 안의 tags만 간단 파싱
   if (!raw.startsWith('---')) return [];
   const end = raw.indexOf('\n---', 3);
   if (end === -1) return [];
   const header = raw.slice(3, end).split('\n');
   const tags = [];
-  let inTagsBlock = false;
+  let inTags = false;
   for (const lineRaw of header) {
     const line = lineRaw.trim();
     const m = /^tags\s*:\s*(.*)$/i.exec(line);
@@ -50,22 +53,22 @@ function parseFrontMatterTags(raw) {
       if (rest.startsWith('[')) {
         const inner = rest.replace(/^\[/, '').replace(/\]$/, '');
         inner.split(',').forEach(v => { const t = v.trim(); if (t) tags.push(t); });
-        inTagsBlock = false;
+        inTags = false;
       } else if (rest) {
-        rest.split(',').forEach(v => { const t = v.trim(); if (t) tags.push(t); });
-        inTagsBlock = false;
+        rest.split(/[;,]/).forEach(v => { const t = v.trim(); if (t) tags.push(t); });
+        inTags = false;
       } else {
-        inTagsBlock = true;
+        inTags = true; // 다음 라인들에서 - item
       }
       continue;
     }
-    if (inTagsBlock) {
+    if (inTags) {
       const m2 = /^-\s*(.+)$/.exec(line);
       if (m2) {
         const t = m2[1].trim();
         if (t) tags.push(t);
       } else if (line === '' || /^\w+\s*:/.test(line)) {
-        inTagsBlock = false;
+        inTags = false;
       }
     }
   }
@@ -73,6 +76,7 @@ function parseFrontMatterTags(raw) {
 }
 
 function parseSimpleTags(raw) {
+  // 파일 상단 20줄 내 "tags: [a, b]" 패턴 지원
   const head = raw.split('\n').slice(0, 20).join('\n');
   const m = /^\s*tags\s*:\s*\[(.*?)\].*$/mi.exec(head);
   if (!m) return [];
@@ -87,25 +91,29 @@ function main() {
   const files = listMarkdownFiles(DOCS_DIR);
 
   const nodes = [];
+  const nodeIndex = new Map();
   const edges = [];
   const topics = new Set();
   const archives = new Set();
-  const byBaseName = new Map(); // basename -> array of node ids
+  const byBaseName = new Map(); // basename -> [ids]
 
   for (const file of files) {
     const base = path.basename(file, '.md');
-    const relFromRepo = path.relative(REPO_ROOT, file);
-    const relFromDocs = path.relative(DOCS_DIR, file);
+    const relFromRepo = path.relative(REPO_ROOT, file); // docs/.../X.md
+    const relFromDocs = path.relative(DOCS_DIR, file);  // .../X.md
     const segs = relFromDocs.split(path.sep);
 
+    // 아카이브 및 폴더 기반 토픽 추출
     let archive = '(default)';
     let folderTopic = '(root)';
     if (segs.length === 1) {
-      // docs/Name.md -> default archive, root topic
+      // docs/Name.md -> archive=(default), topic=(root)
     } else if (segs.length === 2) {
+      // docs/Archive/Name.md -> archive=Archive, topic=Archive(폴더명)
       archive = segs[0];
       folderTopic = segs[0];
     } else if (segs.length >= 3) {
+      // docs/Archive/Topic/Name.md -> archive=Archive, topic=Topic
       archive = segs[0];
       folderTopic = segs[1];
     }
@@ -115,6 +123,7 @@ function main() {
     const firstHeading = /^\s*#\s+(.+)$/m.exec(raw)?.[1]?.trim();
     const title = firstHeading || base;
 
+    // 문서 상단 태그 파싱(front matter 또는 간단 tags: [..])
     const tagSet = new Set();
     if (folderTopic && folderTopic !== '(root)') tagSet.add(folderTopic);
     for (const t of parseFrontMatterTags(raw)) tagSet.add(t);
@@ -123,6 +132,7 @@ function main() {
 
     const id = relFromDocs.replace(/\\/g, '/').replace(/\.md$/i, '');
     const node = { id, label: title, base, file: relFromRepo, archive, topics: [...tagSet] };
+    nodeIndex.set(id, nodes.length);
     nodes.push(node);
 
     const arr = byBaseName.get(base) || [];
@@ -130,7 +140,7 @@ function main() {
     byBaseName.set(base, arr);
   }
 
-  // 링크 추출
+  // 위키링크 -> edges
   for (const file of files) {
     const relFromDocs = path.relative(DOCS_DIR, file);
     const srcId = relFromDocs.replace(/\\/g, '/').replace(/\.md$/i, '');
@@ -147,7 +157,6 @@ function main() {
 
   if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
 
-  // topicsByArchive 계산
   const topicsByArchive = {};
   for (const n of nodes) {
     if (!topicsByArchive[n.archive]) topicsByArchive[n.archive] = new Set();
