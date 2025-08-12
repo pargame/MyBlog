@@ -10,10 +10,17 @@
       .legend { color: var(--muted); font-size: 14px; }
       #graph { width: 100%; height: 100%; }
       .node { cursor: pointer; }
-      .node circle { fill: #6ea8fe; }
+  .node circle { fill: #6ea8fe; }
+  .node.topic-ROOT circle { fill: #6ea8fe; }
+  .node.topic-1 circle { fill: #60d394; }
+  .node.topic-2 circle { fill: #ee6055; }
+  .node.topic-3 circle { fill: #ffd97d; }
+  .node.topic-4 circle { fill: #aaf683; }
+  .node.topic-5 circle { fill: #57c7ff; }
       .node text { fill: #e7ecff; font-size: 12px; }
       .link { stroke: #3a4b86; stroke-opacity: .6; }
       .link:hover { stroke-opacity: 1; }
+  .faded { opacity: 0.15; }
     </style>
   </head>
   <body>
@@ -101,32 +108,42 @@
         return { nodes, edges };
       }
 
-      function renderGraph(data) {
-        const width = document.getElementById('graph').clientWidth;
-        const height = document.getElementById('graph').clientHeight;
-        d3.select('#graph').selectAll('*').remove();
-        const svg = d3.select('#graph').append('svg').attr('width', width).attr('height', height);
+  function renderGraph(data) {
+  const width = document.getElementById('graph').clientWidth;
+  const height = document.getElementById('graph').clientHeight;
+  d3.select('#graph').selectAll('*').remove();
+  const svg = d3.select('#graph').append('svg').attr('width', width).attr('height', height);
+  const inner = svg.append('g');
 
         const simulation = d3.forceSimulation(data.nodes)
           .force('link', d3.forceLink(data.edges).id(d => d.id).distance(120))
           .force('charge', d3.forceManyBody().strength(-320))
           .force('center', d3.forceCenter(width / 2, height / 2));
 
-        const link = svg.append('g').selectAll('line')
+        const link = inner.append('g').selectAll('line')
           .data(data.edges)
           .enter().append('line')
           .attr('class', 'link');
 
-        const node = svg.append('g').selectAll('g')
+        const topicKey = (t) => (t && t !== '(root)') ? `topic-${(Math.abs(hashCode(t)) % 5) + 1}` : 'topic-ROOT';
+        const node = inner.append('g').selectAll('g')
           .data(data.nodes)
           .enter().append('g')
-          .attr('class', 'node')
+          .attr('class', d => `node ${topicKey(d.topic)}`)
           .call(d3.drag()
             .on('start', dragstarted)
             .on('drag', dragged)
             .on('end', dragended));
 
-        node.append('circle').attr('r', 10);
+        // 차수 기반 반지름 계산
+        const deg = new Map(data.nodes.map(n => [n.id, 0]));
+        for (const e of data.edges) {
+          deg.set(e.source, (deg.get(e.source) || 0) + 1);
+          deg.set(e.target, (deg.get(e.target) || 0) + 1);
+        }
+        const radius = d => Math.max(6, Math.min(22, 6 + Math.sqrt(deg.get(d.id) || 0) * 4));
+
+        node.append('circle').attr('r', radius);
         node.append('text').attr('x', 12).attr('y', 4).text(d => d.id);
 
         node.on('click', (_, d) => {
@@ -140,7 +157,7 @@
           window.location.href = url.toString();
         });
 
-        simulation.on('tick', () => {
+  simulation.on('tick', () => {
           link
             .attr('x1', d => d.source.x)
             .attr('y1', d => d.source.y)
@@ -162,6 +179,33 @@
           if (!event.active) simulation.alphaTarget(0);
           event.subject.fx = null;
           event.subject.fy = null;
+        }
+
+        function hashCode(str){
+          let h = 0; for (let i=0;i<str.length;i++){h=((h<<5)-h)+str.charCodeAt(i); h|=0;} return h;
+        }
+
+        // 줌/팬
+        svg.call(d3.zoom().scaleExtent([0.2, 3]).on('zoom', (ev) => {
+          inner.attr('transform', ev.transform);
+        }));
+
+        // 이웃 하이라이트
+        const adj = new Map();
+        for (const n of data.nodes) adj.set(n.id, new Set());
+        for (const e of data.edges) {
+          adj.get(e.source).add(e.target);
+          adj.get(e.target).add(e.source);
+        }
+        node.on('mouseover', (_, d) => highlight(d.id));
+        node.on('mouseout', clearHighlight);
+        function highlight(id){
+          node.classed('faded', n => (n.id !== id && !adj.get(id).has(n.id)));
+          link.classed('faded', e => !(e.source.id === id || e.target.id === id || e.source === id || e.target === id || adj.get(id).has(e.source.id || e.source) || adj.get(id).has(e.target.id || e.target)));
+        }
+        function clearHighlight(){
+          node.classed('faded', false);
+          link.classed('faded', false);
         }
       }
 

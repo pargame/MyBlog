@@ -11,6 +11,8 @@
       .md pre { background: #0b1020; padding: 12px; border-radius: 8px; overflow: auto; }
       .md code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
     </style>
+  <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script>
   </head>
   <body>
     <header class="site-header">
@@ -77,18 +79,9 @@
         }
         const text = await res.text();
 
-        // 간단한 마크다운 렌더(기본 헤딩/볼드/인라인코드/링크)
-        let html = text
-          .replace(/^#\s+(.+)$/gm, '<h1>$1</h1>')
-          .replace(/^##\s+(.+)$/gm, '<h2>$1</h2>')
-          .replace(/^###\s+(.+)$/gm, '<h3>$1</h3>')
-          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-          .replace(/`([^`]+)`/g, '<code>$1</code>')
-          .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
-
-        // 위키링크 [[Name]] 처리: graph.json을 기반으로 경로를 해석
+        // 1) 위키링크를 viewer 내부 링크로 선치환
         const linkRegex = /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g;
-        html = html.replace(linkRegex, (_, p1, alias) => {
+        const preprocessed = text.replace(linkRegex, (_, p1, alias) => {
           const base = (p1 || '').trim();
           const resolved = resolveByBasename(base, graph, arch, topic) || base;
           const u2 = new URL('./viewer.html', location.href);
@@ -96,13 +89,13 @@
           if (topic) u2.searchParams.set('topic', topic);
           if (arch) u2.searchParams.set('archive', arch);
           const label = (alias || '').trim() || base;
-          return `<a href="${u2.toString()}">${label}</a>`;
+          return `[${label}](${u2.toString()})`;
         });
 
-        // 빈 줄을 줄바꿈으로
-        html = html.replace(/\n\n/g, '<br/><br/>');
-
-        document.getElementById('content').innerHTML = html;
+        // 2) marked로 HTML 변환 후 DOMPurify로 정화
+        const rawHtml = marked.parse(preprocessed, { mangle: false, headerIds: true });
+        const safeHtml = DOMPurify.sanitize(rawHtml);
+        document.getElementById('content').innerHTML = safeHtml;
 
         const title = /^#\s+(.+)$/m.exec(text)?.[1] || id;
         document.getElementById('title').textContent = title;
