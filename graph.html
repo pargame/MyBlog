@@ -46,10 +46,11 @@
       <!-- A-a: 그래프 컨트롤 + 그래프 -->
       <div class="card ctrls" id="controls">
         <strong>그래프 컨트롤</strong>
-        <label>링크거리 <input id="ctl-distance" type="range" min="40" max="240" value="120" /></label>
-        <label>반발력 <input id="ctl-charge" type="range" min="-800" max="-50" value="-320" /></label>
-        <label>링크굵기 <input id="ctl-width" type="range" min="1" max="6" value="2" /></label>
-        <label>노드크기 <input id="ctl-size" type="range" min="6" max="26" value="6" /></label>
+        <label>링크거리 <input id="ctl-distance" type="range" min="40" max="240" value="120" data-default="120" /></label>
+        <label>반발력 <input id="ctl-charge" type="range" min="-800" max="-50" value="-320" data-default="-320" /></label>
+        <label>링크굵기 <input id="ctl-width" type="range" min="1" max="6" value="2" data-default="2" /></label>
+        <label>노드크기 <input id="ctl-size" type="range" min="6" max="26" value="6" data-default="6" /></label>
+        <button id="ctl-reset" class="btn">Reset</button>
         <span class="legend">드래그/휠로 이동·확대/축소. 노드 클릭 시 아래 C 뷰어에 문서가 열립니다.</span>
       </div>
       <div class="graph-wrap" id="graph"></div>
@@ -168,6 +169,15 @@
       function setupControls(){
         ['ctl-distance','ctl-charge','ctl-width','ctl-size'].forEach(id => {
           document.getElementById(id).addEventListener('input', () => rerender());
+        });
+        const btn = document.getElementById('ctl-reset');
+        if (btn) btn.addEventListener('click', () => {
+          ['ctl-distance','ctl-charge','ctl-width','ctl-size'].forEach(id => {
+            const el = document.getElementById(id);
+            const def = el.getAttribute('data-default');
+            if (def != null) el.value = def;
+          });
+          rerender();
         });
       }
 
