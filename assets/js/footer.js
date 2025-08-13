@@ -26,7 +26,7 @@
       const span = document.createElement('span');
       span.textContent = `${user} at ${domain.replace(/\./g, ' dot ')}`;
       span.style.cursor = 'pointer';
-      span.title = '메일 보내기';
+  span.title = 'Send email';
       span.addEventListener('click', () => {
         const mail = `${user}@${domain}`;
         location.href = `mailto:${mail}`;

@@ -1,4 +1,4 @@
-/* 기본 스타일 */
+/* Base styles */
 :root {
   --bg: #0b1020;
   --card: #111938;
@@ -23,15 +23,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Pretendard, R
 .site-footer { border-top: 1px solid var(--border); color: var(--muted); }
 .site-footer .container { padding: 20px 16px; }
 
-/* 링크 */
+/* Links */
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-/* 폼/컨트롤 */
+/* Forms/controls */
 input[type="range"]{ accent-color: var(--accent); }
 .legend { color: var(--muted); font-size: 14px; }
 
-/* 그래프 컨트롤 레이아웃 */
+/* Graph controls layout */
 .ctrls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
 .ctrls > strong { flex-basis: 100%; }
 .ctrls > label { display: inline-flex; align-items: center; gap: 6px; min-width: 260px; }
@@ -39,7 +39,7 @@ input[type="range"]{ accent-color: var(--accent); }
 .ctrls .flex-break { flex-basis: 100%; height: 0; }
 .ctrls input[type="range"] { width: 180px; }
 
-/* 버튼 */
+/* Buttons */
 .btn {
   display: inline-block;
   margin: 4px 6px 0 0;
@@ -54,7 +54,7 @@ input[type="range"]{ accent-color: var(--accent); }
 .btn:hover { background: #152452; box-shadow: 0 6px 18px rgba(0,0,0,0.2); }
 .btn.active { outline: 2px solid var(--accent); }
 
-/* 그래프 컨테이너 */
+/* Graph container */
 .graph-wrap {
   height: 60vh;
   min-height: 420px;
@@ -68,14 +68,14 @@ input[type="range"]{ accent-color: var(--accent); }
   min-height: 420px;
 }
 
-/* A-d/A-e 레이아웃 (문서 목록/뷰어) */
+/* A-d/A-e layout (document list/viewer) */
 #A-de { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; }
 #doc-list { list-style: none; padding-left: 16px; margin: 0; }
 #doc-list li { margin: 6px 0; }
 #doc-list a { display:inline-block; padding: 2px 4px; border-radius: 6px; }
 #doc-list a:hover { background: rgba(110,168,254,0.12); text-decoration: none; }
 
-/* 코드 블록(기본 토큰 색) */
+/* Code block (base token colors) */
 .md pre code { display:block; }
 .md code .token.keyword { color: #9fd2ff; }
 .md code .token.string { color: #c3fba4; }
