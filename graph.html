@@ -101,7 +101,8 @@
         let simulation = null;
         let svg = null, inner = null, linkSel = null, nodeSel = null;
         let degMap = null;
-        let selectedId = null;
+  let selectedId = null;
+  let GRAPH_W = null, GRAPH_H = null;
 
       async function load() {
         const res = await fetch('./public/graph.json', { cache: 'no-store' });
@@ -115,8 +116,8 @@
           setupTopicsArea(FULL);
           setupControls();
           rerender(FULL);
-        // 리사이즈 시 레이아웃 높이 초기화 문제 방지
-          window.addEventListener('resize', () => rerender());
+        // 리사이즈 시 치수만 초기화 후 재렌더
+          window.addEventListener('resize', () => { GRAPH_W = null; GRAPH_H = null; rerender(); });
       }
 
       let state = { archive: 'ALL', topics: new Set(), multi: false };
@@ -151,10 +152,11 @@
         if (archiveParam) setSelectedArchive(archiveParam);
         const container = document.getElementById('archives');
         const list = data.archives || [];
-        container.innerHTML = list.map(a => `<button class="btn" data-arch="${a}">${a}</button>`).join('');
+        const label = (a) => (a === '(default)') ? '기본' : a;
+        container.innerHTML = list.map(a => `<button class="btn" data-arch="${a}">${label(a)}</button>`).join('');
         const buttons = container.querySelectorAll('button');
         function refreshActive(){ buttons.forEach(b => b.classList.toggle('active', b.getAttribute('data-arch')===getSelectedArchive())); }
-        buttons.forEach(btn => btn.addEventListener('click', () => { setSelectedArchive(btn.getAttribute('data-arch')); setSelectedTopic('ALL'); refreshActive(); rerender(); }));
+        buttons.forEach(btn => btn.addEventListener('click', () => { setSelectedArchive(btn.getAttribute('data-arch')); clearTopics(); refreshActive(); rerender(); }));
         if (!archiveParam && list.length) { setSelectedArchive(list[0]); refreshActive(); }
         refreshActive();
       }
@@ -257,8 +259,14 @@
       }
 
   function renderGraph(data) {
-  const width = document.getElementById('graph').clientWidth;
-  const height = document.getElementById('graph').clientHeight;
+  const box = document.getElementById('graph');
+  if (GRAPH_W == null || GRAPH_H == null) {
+    const rect = box.getBoundingClientRect();
+    GRAPH_W = Math.max(320, Math.floor(rect.width));
+    GRAPH_H = Math.max(320, Math.floor(rect.height));
+  }
+  const width = GRAPH_W;
+  const height = GRAPH_H;
   d3.select('#graph').selectAll('*').remove();
   svg = d3.select('#graph').append('svg').attr('width', width).attr('height', height);
   inner = svg.append('g');
