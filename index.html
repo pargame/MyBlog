@@ -1,30 +1,15 @@
 <!doctype html>
-<html>
+<html lang="ko">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>MyBlog</title>
+    <meta name="description" content="나의 개인 블로그" />
+    <link rel="stylesheet" href="./assets/css/styles.css" />
     <meta http-equiv="refresh" content="0; url=./graph.html" />
   </head>
   <body>
-    <p>Redirecting to <a href="./graph.html">graph.html</a>…</p>
     <script>location.replace('./graph.html');</script>
-  </body>
-</html>
-<!doctype html>
-<html lang="ko">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>MyBlog</title>
-    <meta name="description" content="나의 개인 블로그" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/css/styles.css" />
-  </head>
-  <body>
-  <script>location.replace('./graph.html');</script>
     <header class="site-header">
       <div class="container">
         <h1>MyBlog</h1>
@@ -34,10 +19,7 @@
     <main class="container">
       <article class="card">
         <h2>첫 글에 오신 것을 환영합니다 👋</h2>
-        <p>이 페이지는 GitHub Pages로 배포되는 최소 템플릿입니다. <code>index.html</code>을 수정해 첫 글을 작성해 보세요.</p>
         <ul>
-          <li><strong>스타일</strong>: <code>assets/css/styles.css</code></li>
-          <li><strong>워크플로</strong>: <code>.github/workflows/pages.yml</code></li>
           <li><strong>문서 그래프</strong>: <a href="./graph.html">graph.html</a></li>
           <li><strong>문서 뷰어</strong>: <a href="./viewer.html?id=AActor">viewer.html?id=AActor</a></li>
         </ul>
@@ -45,11 +27,23 @@
     </main>
     <footer class="site-footer">
       <div class="container">
-        <span>© <span id="year"></span> MyBlog</span>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between">
+          <div>
+            <span>© <span id="footer-year"></span> MyBlog</span>
+          </div>
+          <div>
+            <span id="footer-email"></span>
+            <span> · </span>
+            <span id="footer-version"></span>
+            <span> </span>
+            <span id="footer-commit"></span>
+          </div>
+        </div>
       </div>
     </footer>
+    <script src="./assets/js/footer.js"></script>
     <script>
-      document.getElementById('year').textContent = new Date().getFullYear();
+      window.populateFooter && window.populateFooter({ repo: 'pargame/MyBlog' });
     </script>
   </body>
-  </html>
+</html>

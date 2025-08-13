@@ -11,8 +11,6 @@
       .md pre { background: #0b1020; padding: 12px; border-radius: 8px; overflow: auto; }
       .md code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
     </style>
-  <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script>
   </head>
   <body>
     <header class="site-header">
@@ -30,8 +28,26 @@
       </div>
     </main>
     <footer class="site-footer">
-      <div class="container"><a href="./index.html">← 홈</a></div>
+      <div class="container">
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between">
+          <div>
+            <a href="./index.html">← 홈</a>
+          </div>
+          <div>
+            <span>© <span id="footer-year"></span> MyBlog</span>
+            <span> · </span>
+            <span id="footer-email"></span>
+            <span> · </span>
+            <span id="footer-version"></span>
+            <span> </span>
+            <span id="footer-commit"></span>
+          </div>
+        </div>
+      </div>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script>
+    <script src="./assets/js/footer.js"></script>
     <script>
       function getParam(name) {
         const u = new URL(location.href);
@@ -169,6 +185,7 @@
       }
 
       load();
+      window.populateFooter && window.populateFooter({ repo: 'pargame/MyBlog' });
     </script>
   </body>
   </html>

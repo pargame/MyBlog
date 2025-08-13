@@ -74,10 +74,26 @@
       </div>
     </main>
     <footer class="site-footer">
-      <div class="container"><a href="./index.html">← 홈으로</a></div>
+      <div class="container">
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between">
+          <div>
+            <a href="./index.html">← 홈으로</a>
+          </div>
+          <div>
+            <span>© <span id="footer-year"></span> MyBlog</span>
+            <span> · </span>
+            <span id="footer-email"></span>
+            <span> · </span>
+            <span id="footer-version"></span>
+            <span> </span>
+            <span id="footer-commit"></span>
+          </div>
+        </div>
+      </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="./assets/js/footer.js"></script>
     <script>
       async function load() {
         const res = await fetch('./public/graph.json', { cache: 'no-store' });
@@ -298,7 +314,9 @@
         }));
       }
 
-      load();
+  load();
+  // populate footer with repo info
+  window.populateFooter && window.populateFooter({ repo: 'pargame/MyBlog' });
     </script>
   </body>
   </html>
