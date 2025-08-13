@@ -1,6 +1,21 @@
 {
   "nodes": [
     {
+      "id": "2025/dev-journal",
+      "label": "Blog Development Journal",
+      "base": "dev-journal",
+      "file": "posts/2025/dev-journal.md",
+      "archive": "2025",
+      "topics": [
+        "2025",
+        "devlog",
+        "blog"
+      ],
+      "mtime": 1755080838696.7776,
+      "date": "2025-08-13",
+      "author": "Pargame"
+    },
+    {
       "id": "2025/hello-world",
       "label": "Hello, world",
       "base": "hello-world",
@@ -12,7 +27,8 @@
         "intro"
       ],
       "mtime": 1755078370108.3872,
-      "date": "2025-08-13"
+      "date": "2025-08-13",
+      "author": null
     },
     {
       "id": "README",
@@ -22,7 +38,8 @@
       "archive": "(default)",
       "topics": [],
       "mtime": 1755075543029.272,
-      "date": null
+      "date": null,
+      "author": null
     },
     {
       "id": "Unreal/AActor",
@@ -34,7 +51,8 @@
         "Unreal"
       ],
       "mtime": 1755002166683.8376,
-      "date": null
+      "date": null,
+      "author": null
     },
     {
       "id": "Unreal/APawn",
@@ -46,10 +64,19 @@
         "Unreal"
       ],
       "mtime": 1755002166683.8623,
-      "date": null
+      "date": null,
+      "author": null
     }
   ],
   "edges": [
+    {
+      "source": "2025/dev-journal",
+      "target": "Unreal/AActor"
+    },
+    {
+      "source": "2025/dev-journal",
+      "target": "Unreal/APawn"
+    },
     {
       "source": "2025/hello-world",
       "target": "Unreal/APawn"
@@ -72,12 +99,14 @@
     "2025",
     "Unreal",
     "blog",
+    "devlog",
     "intro"
   ],
   "topicsByArchive": {
     "2025": [
       "2025",
       "blog",
+      "devlog",
       "intro"
     ],
     "(default)": [],

@@ -45,6 +45,11 @@
         const f = (node && node.file) ? String(node.file).replace(/^\.\//, '') : '';
         return f.startsWith('posts/');
       }
+      function pickDateStr(n){
+        const d = (n && n.date) ? String(n.date) : '';
+        if (d) return d.slice(0,10);
+        try { return new Date(n.mtime||Date.now()).toISOString().slice(0,10); } catch { return ''; }
+      }
 
   async function loadRecent(){
         try {
@@ -66,7 +71,9 @@
           ul.innerHTML = nodes.map(n => {
             const u = new URL('./viewer.html', location.href);
             u.searchParams.set('id', n.id);
-            return `<li><a href="${u.toString()}">${(n.label||n.id)}</a></li>`;
+            const author = (n.author && String(n.author).trim()) ? n.author.trim() : 'Pargame';
+            const date = pickDateStr(n);
+            return `<li><a href="${u.toString()}">${(n.label||n.id)}</a> <span class="legend">— ${author}${date ? ` · ${date}`:''}</span></li>`;
           }).join('');
         } catch {}
       }
