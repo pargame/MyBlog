@@ -4,7 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>문서 뷰어</title>
-    <link rel="stylesheet" href="./assets/css/styles.css" />
+  <link rel="stylesheet" href="./assets/css/styles.css" />
+  <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
     <style>
       .md { background: var(--card); border: 1px solid #1e2749; border-radius: 12px; padding: 20px; margin: 24px 0; }
       .md h1, .md h2, .md h3 { margin-top: 1.2em; }
@@ -48,8 +49,10 @@
         </div>
       </div>
     </footer>
-    <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark-dimmed.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/highlight.min.js"></script>
     <script src="./assets/js/footer.js"></script>
     <script>
       function getParam(name) {
@@ -115,6 +118,10 @@
         const rawHtml = marked.parse(preprocessed, { mangle: false, headerIds: true });
         const safeHtml = DOMPurify.sanitize(rawHtml);
         document.getElementById('content').innerHTML = safeHtml;
+        // 코드 하이라이트 적용
+        document.querySelectorAll('#content pre code').forEach((el) => {
+          try { window.hljs && window.hljs.highlightElement(el); } catch {}
+        });
 
         const title = /^#\s+(.+)$/m.exec(text)?.[1] || id;
         document.getElementById('title').textContent = title;

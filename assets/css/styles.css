@@ -60,6 +60,15 @@ a:hover { text-decoration: underline; }
 #A-de { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; }
 #doc-list { list-style: none; padding-left: 16px; margin: 0; }
 #doc-list li { margin: 6px 0; }
+#doc-list a { display:inline-block; padding: 2px 4px; border-radius: 6px; }
+#doc-list a:hover { background: rgba(110,168,254,0.12); text-decoration: none; }
+
+/* 코드 블록(기본 토큰 색) */
+.md pre code { display:block; }
+.md code .token.keyword { color: #9fd2ff; }
+.md code .token.string { color: #c3fba4; }
+.md code .token.number { color: #ffd97d; }
+.md code .token.function { color: #a0c1ff; }
 
 @media (max-width: 820px) {
   #A-de { grid-template-columns: 1fr; }
