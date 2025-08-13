@@ -8,6 +8,9 @@
   <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
     <style>
   .legend { color: var(--muted); font-size: 14px; }
+  /* Page: Graph — header should NOT stick on long scroll */
+  .site-header { position: static !important; top: auto !important; z-index: auto !important; backdrop-filter: none !important; }
+  .site-header .container { padding: 16px 16px; }
       .node { cursor: pointer; }
   .node circle { fill: #6ea8fe; }
   .node.topic-ROOT circle { fill: #6ea8fe; }
