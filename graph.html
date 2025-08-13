@@ -74,6 +74,11 @@
           </section>
           <section id="panel-docs" style="flex:1 1 420px;min-width:320px">
             <h3>Documents</h3>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0 8px">
+              <input id="doc-search" type="search" placeholder="Filter documents..." aria-label="Filter documents" style="min-width:220px;padding:6px 8px;border:1px solid #1e2749;border-radius:6px;background:#0b1020;color:#e7ecff" />
+              <span id="doc-count" class="legend"></span>
+              <button id="doc-more" class="btn" style="margin-left:auto;display:none">Load more</button>
+            </div>
             <ul id="doc-list"></ul>
           </section>
         </div>
@@ -110,6 +115,11 @@
         let degMap = null;
   let selectedId = null;
   let GRAPH_W = null, GRAPH_H = null;
+  // Doc list state
+  const DOC_LIMIT_STEP = 50;
+  let docLimit = DOC_LIMIT_STEP;
+  let docFilter = '';
+  let lastDocKey = '';
 
   async function load() {
         const res = await fetch('./public/graph.json', { cache: 'no-store' });
@@ -385,16 +395,56 @@
       function renderDocList(full){
         const arch = getSelectedArchive();
         const topic = getSelectedTopic();
+        // Reset limit if context key changed
+        const key = `${arch}|${topic}|${docFilter}`;
+        if (key !== lastDocKey) { docLimit = DOC_LIMIT_STEP; lastDocKey = key; }
+
+        // Wire controls once
+        const searchEl = document.getElementById('doc-search');
+        if (searchEl && !searchEl.dataset.wired) {
+          searchEl.addEventListener('input', () => {
+            docFilter = String(searchEl.value||'').trim().toLowerCase();
+            docLimit = DOC_LIMIT_STEP;
+            rerender();
+          });
+          searchEl.dataset.wired = '1';
+        }
+        const moreEl = document.getElementById('doc-more');
+        if (moreEl && !moreEl.dataset.wired) {
+          moreEl.addEventListener('click', () => { docLimit += DOC_LIMIT_STEP; rerender(); });
+          moreEl.dataset.wired = '1';
+        }
+
         let nodes = (full.nodes || []).filter(n => !isPost(n));
         if (arch && arch !== 'ALL') nodes = nodes.filter(n => n.archive === arch);
         if (topic) nodes = nodes.filter(n => (n.topics||[]).includes(topic));
-    nodes = nodes.sort((a,b)=> (a.label||a.id).localeCompare(b.label||b.id));
+        // Filter by text
+        if (docFilter) {
+          const q = docFilter;
+          nodes = nodes.filter(n => {
+            const label = (n.label||'').toLowerCase();
+            const id = (n.id||'').toLowerCase();
+            const topics = (n.topics||[]).join(' ').toLowerCase();
+            return label.includes(q) || id.includes(q) || topics.includes(q);
+          });
+        }
+
+        nodes = nodes.sort((a,b)=> (a.label||a.id).localeCompare(b.label||b.id));
+        const total = nodes.length;
+        const shown = Math.min(docLimit, total);
+        const slice = nodes.slice(0, shown);
+
         const ul = document.getElementById('doc-list');
-          ul.innerHTML = nodes.map(n => {
-            const topics = (n.topics || []).filter(t => t !== n.archive);
-      const meta = topics.length ? `(${topics.join(', ')})` : '';
-            return `<li><a data-id="${n.id}" href="#">${n.label || n.id}</a>${meta ? ` <span class=\"legend\">${meta}</span>` : ''}</li>`;
-          }).join('');
+        ul.innerHTML = slice.map(n => {
+          const topics = (n.topics || []).filter(t => t !== n.archive);
+          const meta = topics.length ? `(${topics.join(', ')})` : '';
+          return `<li><a data-id="${n.id}" href="#">${n.label || n.id}</a>${meta ? ` <span class=\"legend\">${meta}</span>` : ''}</li>`;
+        }).join('');
+        // update count and more button
+        const countEl = document.getElementById('doc-count');
+        if (countEl) countEl.textContent = total ? `Showing ${shown} of ${total}` : 'No documents';
+        if (moreEl) moreEl.style.display = (shown < total) ? '' : 'none';
+
         ul.querySelectorAll('a').forEach(a => a.addEventListener('click', (e) => {
           e.preventDefault();
           const id = a.getAttribute('data-id');
@@ -403,6 +453,8 @@
           if (topic) url.searchParams.set('topic', topic);
           if (arch && arch !== 'ALL') url.searchParams.set('archive', arch);
           document.getElementById('doc-view').src = url.toString();
+          // Scroll viewer into view for convenience
+          document.getElementById('panel-viewer').scrollIntoView({ behavior:'smooth', block:'start' });
         }));
       }
 
