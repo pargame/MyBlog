@@ -31,6 +31,14 @@ a:hover { text-decoration: underline; }
 input[type="range"]{ accent-color: var(--accent); }
 .legend { color: var(--muted); font-size: 14px; }
 
+/* 그래프 컨트롤 레이아웃 */
+.ctrls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.ctrls > strong { flex-basis: 100%; }
+.ctrls > label { display: inline-flex; align-items: center; gap: 6px; min-width: 260px; }
+.ctrls > .legend { flex-basis: 100%; }
+.ctrls .flex-break { flex-basis: 100%; height: 0; }
+.ctrls input[type="range"] { width: 180px; }
+
 /* 버튼 */
 .btn {
   display: inline-block;
