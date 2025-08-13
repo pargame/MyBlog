@@ -1,0 +1,10 @@
+{
+  "chat.tools.terminal.autoApprove": {
+    "autoApprove": true
+  },
+  "terminal.integrated.confirmationRequests.never": [
+    "git",
+    "npm",
+    "node"
+  ]
+}
