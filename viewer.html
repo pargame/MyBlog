@@ -129,13 +129,22 @@
         }
         const text = await res.text();
         await renderMarkdown(text, graph, arch, topic);
-        finalize(title, graph, id, topic, arch);
+        // Avoid passing accidental global 'title' element; let finalize extract from content
+        finalize(null, graph, id, topic, arch);
       }
 
       async function renderMarkdown(text, graph, arch, topic) {
+        // 0) frontmatter 제거(--- ... --- 첫 블록)
+        function stripFrontmatter(src){
+          if (!src.startsWith('---')) return src;
+          const end = src.indexOf('\n---', 3);
+          if (end === -1) return src;
+          return src.slice(end + 4);
+        }
+        const withoutFM = stripFrontmatter(text);
         // 1) 위키링크를 viewer 내부 링크로 선치환
         const linkRegex = /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g;
-        const preprocessed = text.replace(linkRegex, (_, p1, alias) => {
+        const preprocessed = withoutFM.replace(linkRegex, (_, p1, alias) => {
           const base = (p1 || '').trim();
           const resolved = resolveByBasename(base, graph, arch, topic) || base;
           const u2 = new URL('./viewer.html', location.href);
