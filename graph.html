@@ -26,7 +26,10 @@
   /* Graph overlay controls (subtle) */
   #graph-area { position: relative; }
   #graph { position: relative; overflow: hidden; }
-  #graph-ctl { position: absolute; top: 12px; right: 12px; z-index: 10; background: rgba(11,16,32,0.8); border: 1px solid #1e2749; border-radius: 10px; padding: 6px; backdrop-filter: blur(4px); }
+  #graph-ctl { position: absolute; top: 12px; right: 12px; z-index: 10; background: rgba(11,16,32,0.7); border: none; border-radius: 10px; padding: 6px; backdrop-filter: blur(4px); }
+  /* Prevent overlay from blocking clicks outside controls */
+  #graph-ctl { pointer-events: none; }
+  #graph-ctl .row button, #graph-ctl input, #graph-ctl label { pointer-events: auto; }
   #graph-ctl .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
   #graph-ctl .body { display: none; margin-top: 6px; }
   #graph-ctl.show .body { display: block; }
@@ -338,8 +341,7 @@
           document.getElementById('doc-view').src = url.toString();
           document.getElementById('doc-view').scrollIntoView({ behavior:'smooth', block:'start' });
     // 선택 상태 표시
-    selectedId = d.id;
-    nodeSel.classed('selected', n => n.id === selectedId);
+    setSelected(d.id);
         });
 
   simulation.on('tick', () => {
@@ -404,6 +406,11 @@
         updateStyles();
       }
 
+      function setSelected(id){
+        selectedId = id;
+        if (nodeSel) nodeSel.classed('selected', n => n.id === selectedId);
+      }
+
       function renderDocList(full){
   const arch = getSelectedArchive();
   const topic = getSelectedTopic();
@@ -441,7 +448,7 @@
           const meta = topics.length ? `(${topics.join(', ')})` : '';
           return `<li><a data-id="${n.id}" href="#">${n.label || n.id}</a>${meta ? ` <span class=\"legend\">${meta}</span>` : ''}</li>`;
         }).join('');
-        // update count and more button
+  // update count
         const countEl = document.getElementById('doc-count');
   if (countEl) countEl.textContent = total ? `${total} documents` : 'No documents';
 
@@ -455,6 +462,8 @@
           document.getElementById('doc-view').src = url.toString();
           // Scroll viewer into view for convenience
           document.getElementById('panel-viewer').scrollIntoView({ behavior:'smooth', block:'start' });
+          // Highlight selected node in graph, if present
+          setSelected(id);
         }));
       }
 
@@ -494,6 +503,25 @@
   load();
   // populate footer with repo info
   window.populateFooter && window.populateFooter({ repo: 'pargame/MyBlog' });
+  // Sync overlay visibility with scroll to avoid overlaying other sections
+  function syncOverlayVisibility(){
+    const area = document.getElementById('graph-area');
+    const ctl = document.getElementById('graph-ctl');
+    if (!area || !ctl) return;
+    const r = area.getBoundingClientRect();
+    const visible = r.bottom > 0 && r.top < (window.innerHeight || document.documentElement.clientHeight);
+    ctl.style.visibility = visible ? 'visible' : 'hidden';
+  }
+  window.addEventListener('scroll', syncOverlayVisibility, { passive: true });
+  window.addEventListener('resize', syncOverlayVisibility);
+  syncOverlayVisibility();
+  // Receive navigation messages from viewer to update highlight
+  window.addEventListener('message', (ev) => {
+    try {
+      const d = ev.data || {};
+      if (d && d.type === 'viewer:navigate' && d.id) setSelected(String(d.id));
+    } catch {}
+  });
     </script>
   </body>
   </html>

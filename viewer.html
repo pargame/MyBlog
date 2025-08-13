@@ -135,8 +135,10 @@
         }
         const text = await res.text();
         await renderMarkdown(text, graph, arch, topic);
-        // Avoid passing accidental global 'title' element; let finalize extract from content
-        finalize(null, graph, id, topic, arch);
+  // Avoid passing accidental global 'title' element; let finalize extract from content
+  finalize(null, graph, id, topic, arch);
+  // Inform parent (graph page) of current id to sync highlight
+  try { if (window.parent && window.parent !== window) window.parent.postMessage({ type: 'viewer:navigate', id }, '*'); } catch {}
       }
 
       async function renderMarkdown(text, graph, arch, topic) {
