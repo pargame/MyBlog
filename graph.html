@@ -166,8 +166,8 @@
           const pool = (data.nodes || []).filter(n => !isPost(n)).filter(n => (curArch==='ALL' ? true : n.archive === curArch));
           const set = new Set();
           for (const n of pool) for (const t of (n.topics||[])) set.add(t);
-          // 아카이브 이름과 'Posts' 토픽 제외
-          const list = Array.from(set).filter(t => t !== curArch && t !== 'Posts').sort();
+          // 아카이브 이름과 'Posts'/'Docs' 토픽 제외 (루트 라벨은 노출하지 않음)
+          const list = Array.from(set).filter(t => t !== curArch && t !== 'Posts' && t !== 'Docs').sort();
           const wrap = document.getElementById('topics');
           wrap.innerHTML = list.map(t => `<button class="btn" data-topic="${t}">${t}</button>`).join('');
           const buttons = wrap.querySelectorAll('button');
@@ -386,11 +386,11 @@
         let nodes = (full.nodes || []).filter(n => !isPost(n));
         if (arch && arch !== 'ALL') nodes = nodes.filter(n => n.archive === arch);
         if (topic) nodes = nodes.filter(n => (n.topics||[]).includes(topic));
-        nodes = nodes.sort((a,b)=> (a.label||a.id).localeCompare(b.label||b.id));
+    nodes = nodes.sort((a,b)=> (a.label||a.id).localeCompare(b.label||b.id));
         const ul = document.getElementById('doc-list');
           ul.innerHTML = nodes.map(n => {
-            const topics = n.topics || [];
-            const meta = topics.length ? `(${topics.join(', ')})` : '';
+      const topics = (n.topics || []).filter(t => t !== 'Posts' && t !== 'Docs' && t !== n.archive);
+      const meta = topics.length ? `(${topics.join(', ')})` : '';
             return `<li><a data-id="${n.id}" href="#">${n.label || n.id}</a>${meta ? ` <span class=\"legend\">${meta}</span>` : ''}</li>`;
           }).join('');
         ul.querySelectorAll('a').forEach(a => a.addEventListener('click', (e) => {
