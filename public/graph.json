@@ -6,7 +6,9 @@
       "base": "AActor",
       "file": "docs/AActor.md",
       "archive": "(default)",
-      "topics": []
+      "topics": [],
+      "mtime": 1755002166683.8376,
+      "date": null
     },
     {
       "id": "APawn",
@@ -14,7 +16,9 @@
       "base": "APawn",
       "file": "docs/APawn.md",
       "archive": "(default)",
-      "topics": []
+      "topics": [],
+      "mtime": 1755002166683.8623,
+      "date": null
     }
   ],
   "edges": [

@@ -75,6 +75,19 @@ function parseFrontMatterTags(raw) {
   return tags;
 }
 
+function parseFrontMatterDate(raw) {
+  if (!raw.startsWith('---')) return null;
+  const end = raw.indexOf('\n---', 3);
+  if (end === -1) return null;
+  const header = raw.slice(3, end).split('\n');
+  for (const lineRaw of header) {
+    const line = lineRaw.trim();
+    const m = /^date\s*:\s*(.+)$/i.exec(line);
+    if (m) return m[1].trim();
+  }
+  return null;
+}
+
 function parseSimpleTags(raw) {
   // 파일 상단 20줄 내 "tags: [a, b]" 패턴 지원
   const head = raw.split('\n').slice(0, 20).join('\n');
@@ -107,9 +120,12 @@ function main() {
   const archive = folders.length ? folders[0] : '(default)';
     archives.add(archive);
 
-    const raw = fs.readFileSync(file, 'utf8');
+  const raw = fs.readFileSync(file, 'utf8');
     const firstHeading = /^\s*#\s+(.+)$/m.exec(raw)?.[1]?.trim();
     const title = firstHeading || base;
+  const stat = fs.statSync(file);
+  const mtime = stat.mtimeMs || Date.now();
+  const dateStr = parseFrontMatterDate(raw);
 
   // 문서 상단 태그 파싱(front matter 또는 간단 tags: [..]) + 모든 폴더명을 토픽으로
   const tagSet = new Set();
@@ -119,7 +135,7 @@ function main() {
     for (const t of tagSet) topics.add(t);
 
     const id = relFromDocs.replace(/\\/g, '/').replace(/\.md$/i, '');
-    const node = { id, label: title, base, file: relFromRepo, archive, topics: [...tagSet] };
+  const node = { id, label: title, base, file: relFromRepo, archive, topics: [...tagSet], mtime, date: dateStr };
     nodeIndex.set(id, nodes.length);
     nodes.push(node);
 

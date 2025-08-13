@@ -17,13 +17,10 @@
       </div>
     </header>
     <main class="container">
-      <article class="card">
-        <h2>첫 글에 오신 것을 환영합니다 👋</h2>
-        <ul>
-          <li><strong>문서 그래프</strong>: <a href="./graph.html">graph.html</a></li>
-          <li><strong>문서 뷰어</strong>: <a href="./viewer.html?id=AActor">viewer.html?id=AActor</a></li>
-        </ul>
-      </article>
+      <section class="card">
+        <h2>최근 글</h2>
+        <ul id="recent-list"></ul>
+      </section>
     </main>
     <footer class="site-footer">
       <div class="container">
@@ -43,6 +40,21 @@
     </footer>
     <script src="./assets/js/footer.js"></script>
     <script>
+      async function loadRecent(){
+        try {
+          const res = await fetch('./public/graph.json', { cache: 'no-store' });
+          if (!res.ok) return;
+          const g = await res.json();
+          const nodes = (g.nodes||[]).slice().sort((a,b)=> (b.mtime||0)-(a.mtime||0)).slice(0, 20);
+          const ul = document.getElementById('recent-list');
+          ul.innerHTML = nodes.map(n => {
+            const u = new URL('./viewer.html', location.href);
+            u.searchParams.set('id', n.id);
+            return `<li><a href="${u.toString()}">${(n.label||n.id)}</a> <span class="legend">${n.archive}${(n.topics&&n.topics.length)?' · '+n.topics.join(', '):''}</span></li>`;
+          }).join('');
+        } catch {}
+      }
+      loadRecent();
       window.populateFooter && window.populateFooter({ repo: 'pargame/MyBlog' });
     </script>
   </body>
