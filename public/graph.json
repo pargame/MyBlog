@@ -1,6 +1,21 @@
 {
   "nodes": [
     {
+      "id": "2025/hello-world",
+      "label": "Hello, world",
+      "base": "hello-world",
+      "file": "posts/2025/hello-world.md",
+      "archive": "2025",
+      "topics": [
+        "Posts",
+        "2025",
+        "blog",
+        "intro"
+      ],
+      "mtime": 1755078269904.703,
+      "date": "2025-08-13"
+    },
+    {
       "id": "README",
       "label": "Posts",
       "base": "README",
@@ -41,6 +56,10 @@
   ],
   "edges": [
     {
+      "source": "2025/hello-world",
+      "target": "Unreal/APawn"
+    },
+    {
       "source": "Unreal/AActor",
       "target": "Unreal/APawn"
     },
@@ -51,14 +70,24 @@
   ],
   "archives": [
     "(default)",
+    "2025",
     "Unreal"
   ],
   "topics": [
+    "2025",
     "Docs",
     "Posts",
-    "Unreal"
+    "Unreal",
+    "blog",
+    "intro"
   ],
   "topicsByArchive": {
+    "2025": [
+      "2025",
+      "Posts",
+      "blog",
+      "intro"
+    ],
     "(default)": [
       "Posts"
     ],
