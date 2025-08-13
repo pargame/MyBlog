@@ -26,7 +26,7 @@
             <a href="./index.html" class="btn">Pargame's Blog</a>
             <h1 id="title" style="margin:6px 0 0">Document Viewer</h1>
             <div id="title-meta" class="legend" style="margin-top:4px"></div>
-            <p class="tagline" style="margin:4px 0 0"><a href="./graph.html">← Back to Graph</a></p>
+            <p class="tagline" id="back-link" style="margin:4px 0 0; display:none"><a id="back-to-graph" href="./graph.html">← Back to Graph</a></p>
           </div>
           <nav>
             <a href="./graph.html" class="btn">Graph</a>
@@ -72,6 +72,10 @@
       function getArchiveParam() {
         const u = new URL(location.href);
         return u.searchParams.get('archive');
+      }
+      function getFromParam() {
+        const u = new URL(location.href);
+        return u.searchParams.get('from');
       }
 
       async function load() {
@@ -142,12 +146,11 @@
       }
 
       async function renderMarkdown(text, graph, arch, topic) {
-        // 0) frontmatter 제거(--- ... --- 첫 블록)
+        // 0) frontmatter 제거(파일 맨 위의 YAML 블록 --- ... ---)
         function stripFrontmatter(src){
-          if (!src.startsWith('---')) return src;
-          const end = src.indexOf('\n---', 3);
-          if (end === -1) return src;
-          return src.slice(end + 4);
+          // BOM/공백, LF/CRLF 모두 허용
+          const re = /^(?:\uFEFF)?\s*---[ \t]*\r?\n[\s\S]*?\r?\n---[ \t]*\r?\n?/;
+          return src.replace(re, '');
         }
         const withoutFM = stripFrontmatter(text);
         // 1) 위키링크를 viewer 내부 링크로 선치환
@@ -159,6 +162,8 @@
           u2.searchParams.set('id', resolved);
           if (topic) u2.searchParams.set('topic', topic);
           if (arch) u2.searchParams.set('archive', arch);
+          const from = getFromParam();
+          if (from) u2.searchParams.set('from', from);
           const label = (alias || '').trim() || base;
           return `[${label}](${u2.toString()})`;
         });
@@ -190,13 +195,22 @@
           metaEl.textContent = parts.join(' · ');
           metaEl.style.display = parts.length ? '' : 'none';
         } catch {}
-        const back = document.querySelector('.tagline a');
-        if (back) {
-          const u = new URL('./graph.html', location.href);
-          if (topic) u.searchParams.set('topic', topic);
-          if (arch) u.searchParams.set('archive', arch);
-          back.href = u.toString();
-        }
+        // Back to Graph: 독립 페이지일 땐 숨김, 그래프에서 온 경우에만 표시
+        try {
+          const from = getFromParam();
+          const isEmbedded = document.body.getAttribute('data-embedded') === '1';
+          const backWrap = document.getElementById('back-link');
+          const back = document.getElementById('back-to-graph');
+          if (!isEmbedded && from === 'graph' && back && backWrap) {
+            const u = new URL('./graph.html', location.href);
+            if (topic) u.searchParams.set('topic', topic);
+            if (arch) u.searchParams.set('archive', arch);
+            back.href = u.toString();
+            backWrap.style.display = '';
+          } else if (backWrap) {
+            backWrap.style.display = 'none';
+          }
+        } catch {}
         if (graph) {
           const backlinks = findBacklinks(graph, id);
           if (backlinks.length) {

@@ -354,6 +354,7 @@
           if (sel) url.searchParams.set('topic', sel);
           const arch = getSelectedArchive();
           if (arch && arch !== 'ALL') url.searchParams.set('archive', arch);
+          url.searchParams.set('from', 'graph');
           document.getElementById('doc-view').src = url.toString();
           document.getElementById('doc-view').scrollIntoView({ behavior:'smooth', block:'start' });
     // 선택 상태 표시
@@ -499,6 +500,7 @@
           url.searchParams.set('id', id);
           if (topic) url.searchParams.set('topic', topic);
           if (arch && arch !== 'ALL') url.searchParams.set('archive', arch);
+          url.searchParams.set('from', 'graph');
           document.getElementById('doc-view').src = url.toString();
           // Scroll viewer into view for convenience
           document.getElementById('panel-viewer').scrollIntoView({ behavior:'smooth', block:'start' });
