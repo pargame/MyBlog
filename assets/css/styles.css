@@ -1,10 +1,12 @@
 /* 기본 스타일 */
 :root {
   --bg: #0b1020;
-  --card: #121933;
+  --card: #111938;
   --text: #e7ecff;
   --muted: #9fb0ff;
   --accent: #6ea8fe;
+  --border: #1e2749;
+  --shadow: 0 12px 32px rgba(0,0,0,0.25);
 }
 
 * { box-sizing: border-box; }
@@ -12,13 +14,13 @@ html, body { margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Pretendard, Roboto, Helvetica, Arial, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
 
 .container { max-width: 920px; margin: 0 auto; padding: 0 16px; }
-.site-header { border-bottom: 1px solid #1e2749; background: linear-gradient(180deg, #0b1020 0%, #0f1530 100%); }
+.site-header { border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #0b1020 0%, #0f1530 100%); position: sticky; top: 0; z-index: 10; backdrop-filter: blur(6px); }
 .site-header .container { padding: 32px 16px; }
-.site-header h1 { margin: 0; font-size: 28px; }
+.site-header h1 { margin: 0; font-size: 28px; letter-spacing: 0.2px; }
 .tagline { margin: 6px 0 0; color: var(--muted); }
 
-.card { background: var(--card); border: 1px solid #1e2749; border-radius: 12px; padding: 20px; margin: 24px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
-.site-footer { border-top: 1px solid #1e2749; color: var(--muted); }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin: 24px 0; box-shadow: var(--shadow); }
+.site-footer { border-top: 1px solid var(--border); color: var(--muted); }
 .site-footer .container { padding: 20px 16px; }
 
 /* 링크 */
@@ -30,14 +32,14 @@ a:hover { text-decoration: underline; }
   display: inline-block;
   margin: 4px 6px 0 0;
   padding: 6px 12px;
-  border: 1px solid #1e2749;
+  border: 1px solid var(--border);
   border-radius: 16px;
-  background: #121933;
+  background: #111a3d;
   color: #e7ecff;
   cursor: pointer;
   text-decoration: none;
 }
-.btn:hover { background: #162045; }
+.btn:hover { background: #152452; box-shadow: 0 6px 18px rgba(0,0,0,0.2); }
 .btn.active { outline: 2px solid var(--accent); }
 
 /* 그래프 컨테이너 */
@@ -45,7 +47,7 @@ a:hover { text-decoration: underline; }
   height: 60vh;
   min-height: 420px;
   background: #0b1020;
-  border: 1px solid #1e2749;
+  border: 1px solid var(--border);
   border-radius: 12px;
 }
 #graph {
