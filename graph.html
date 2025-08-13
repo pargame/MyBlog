@@ -58,6 +58,7 @@
       <!-- A-c: 주제 버튼들 -->
       <div class="card" id="A-c">
         <strong>주제:</strong>
+        <label style="margin-left:8px"><input type="checkbox" id="topic-multi" /> 다중 선택(AND)</label>
         <button id="topic-reset" class="btn">reset</button>
         <span id="topics"></span>
       </div>
@@ -109,21 +110,35 @@
         rerender(data);
       }
 
-      let state = { archive: 'ALL', topic: 'ALL' };
+      let state = { archive: 'ALL', topics: new Set(), multi: false };
       function getSelectedArchive(){ return state.archive; }
-      function getSelectedTopic(){ return state.topic; }
+      function getSelectedTopics(){ return [...state.topics]; }
+      function isMulti(){ return !!state.multi; }
       function setSelectedArchive(a){ state.archive = a || 'ALL'; setURL(); }
-      function setSelectedTopic(t){ state.topic = t || 'ALL'; setURL(); }
+      function clearTopics(){ state.topics.clear(); setURL(); }
+      function setSingleTopic(t){ state.topics.clear(); if (t && t !== 'ALL') state.topics.add(t); setURL(); }
+      function toggleTopic(t){ if (!t) return; if (state.topics.has(t)) state.topics.delete(t); else state.topics.add(t); setURL(); }
       function setURL(){
         const u = new URL(location.href);
         if (state.archive && state.archive !== 'ALL') u.searchParams.set('archive', state.archive); else u.searchParams.delete('archive');
-        if (state.topic && state.topic !== 'ALL') u.searchParams.set('topic', state.topic); else u.searchParams.delete('topic');
+        // sync topics
+        if (isMulti()) {
+          const arr = getSelectedTopics();
+          u.searchParams.delete('topic');
+          if (arr.length) u.searchParams.set('topics', arr.join(',')); else u.searchParams.delete('topics');
+          u.searchParams.set('multi', '1');
+        } else {
+          u.searchParams.delete('topics');
+          u.searchParams.delete('multi');
+          const arr = getSelectedTopics();
+          if (arr.length) u.searchParams.set('topic', arr[0]); else u.searchParams.delete('topic');
+        }
         history.replaceState({}, '', u);
       }
 
       function setupArchives(data){
-        const u = new URL(location.href);
-        const archiveParam = u.searchParams.get('archive');
+  const u = new URL(location.href);
+  const archiveParam = u.searchParams.get('archive');
         if (archiveParam) setSelectedArchive(archiveParam);
         const container = document.getElementById('archives');
         const list = data.archives || [];
@@ -137,7 +152,15 @@
 
       function setupTopicsArea(data){
         const u = new URL(location.href);
+        const multiParam = u.searchParams.get('multi') === '1';
+        state.multi = multiParam;
+        const ck = document.getElementById('topic-multi');
+        if (ck) {
+          ck.checked = multiParam;
+          ck.addEventListener('change', () => { state.multi = ck.checked; clearTopics(); renderTopics(); rerender(); });
+        }
         const topicParam = u.searchParams.get('topic');
+        const topicsParam = u.searchParams.get('topics');
         const topicsAll = data.topicsByArchive || {};
         function renderTopics(){
           const curArch = getSelectedArchive();
@@ -145,10 +168,24 @@
           const wrap = document.getElementById('topics');
           wrap.innerHTML = list.map(t => `<button class="btn" data-topic="${t}">${t}</button>`).join('');
           const buttons = wrap.querySelectorAll('button');
-          function refreshActive(){ buttons.forEach(b => b.classList.toggle('active', b.getAttribute('data-topic')===getSelectedTopic())); }
-          buttons.forEach(btn => btn.addEventListener('click', () => { setSelectedTopic(btn.getAttribute('data-topic')); refreshActive(); rerender(); }));
-          document.getElementById('topic-reset').onclick = () => { setSelectedTopic('ALL'); refreshActive(); rerender(); };
-          if (topicParam && list.includes(topicParam)) { setSelectedTopic(topicParam); }
+          function refreshActive(){
+            const sel = new Set(getSelectedTopics());
+            buttons.forEach(b => b.classList.toggle('active', sel.has(b.getAttribute('data-topic'))));
+          }
+          buttons.forEach(btn => btn.addEventListener('click', () => {
+            const t = btn.getAttribute('data-topic');
+            if (isMulti()) toggleTopic(t); else setSingleTopic(t);
+            refreshActive();
+            rerender();
+          }));
+          document.getElementById('topic-reset').onclick = () => { clearTopics(); refreshActive(); rerender(); };
+          // initialize from URL
+          if (isMulti() && topicsParam) {
+            clearTopics();
+            topicsParam.split(',').map(s=>s.trim()).filter(s=>s && list.includes(s)).forEach(s => state.topics.add(s));
+          } else if (!isMulti() && topicParam && list.includes(topicParam)) {
+            setSingleTopic(topicParam);
+          }
           refreshActive();
         }
         renderTopics();
@@ -157,10 +194,14 @@
         observer.observe(document.getElementById('archives'), { childList:true, subtree:true });
       }
 
-      function filter(data, archive, topic) {
+      function filter(data, archive, topics, multi) {
         let nodes = data.nodes;
         if (archive && archive !== 'ALL') nodes = nodes.filter(n => n.archive === archive);
-        if (topic && topic !== 'ALL') nodes = nodes.filter(n => (n.topics||[]).includes(topic));
+        const sel = new Set(topics||[]);
+        if (sel.size > 0) {
+          if (multi) nodes = nodes.filter(n => [...sel].every(t => (n.topics||[]).includes(t)));
+          else nodes = nodes.filter(n => (n.topics||[]).includes([...sel][0]));
+        }
         const ids = new Set(nodes.map(n => n.id));
         const edges = data.edges.filter(e => ids.has(e.source) && ids.has(e.target));
         return { nodes, edges };
@@ -185,11 +226,11 @@
         // full 데이터가 없으면 다시 불러옴
         if (!full) {
           fetch('./public/graph.json', { cache: 'no-store' }).then(r=>r.json()).then(data => {
-            renderGraph(filter(data, getSelectedArchive(), getSelectedTopic()));
+            renderGraph(filter(data, getSelectedArchive(), getSelectedTopics(), isMulti()));
             renderDocList(data);
           });
         } else {
-          renderGraph(filter(full, getSelectedArchive(), getSelectedTopic()));
+          renderGraph(filter(full, getSelectedArchive(), getSelectedTopics(), isMulti()));
           renderDocList(full);
         }
       }
@@ -244,8 +285,8 @@
           // 아래 C 뷰어 영역에 문서를 연다
           const url = new URL('./viewer.html', location.href);
           url.searchParams.set('id', d.id);
-          const topic = getSelectedTopic();
-          if (topic && topic !== 'ALL') url.searchParams.set('topic', topic);
+          const sel = getSelectedTopics();
+          if (sel.length) url.searchParams.set('topic', sel[0]);
           const arch = getSelectedArchive();
           if (arch && arch !== 'ALL') url.searchParams.set('archive', arch);
           document.getElementById('doc-view').src = url.toString();
@@ -306,10 +347,14 @@
 
       function renderDocList(full){
         const arch = getSelectedArchive();
-        const topic = getSelectedTopic();
+        const topics = getSelectedTopics();
+        const multi = isMulti();
         let nodes = full.nodes;
         if (arch && arch !== 'ALL') nodes = nodes.filter(n => n.archive === arch);
-        if (topic && topic !== 'ALL') nodes = nodes.filter(n => (n.topics||[]).includes(topic));
+        if (topics.length) {
+          if (multi) nodes = nodes.filter(n => topics.every(t => (n.topics||[]).includes(t)));
+          else nodes = nodes.filter(n => (n.topics||[]).includes(topics[0]));
+        }
         nodes = nodes.sort((a,b)=> (a.label||a.id).localeCompare(b.label||b.id));
         const ul = document.getElementById('doc-list');
         ul.innerHTML = nodes.map(n => `<li><a data-id="${n.id}" href="#">${n.label || n.id}</a> <span class=\"legend\">(${(n.topics||[]).join(', ')})</span></li>`).join('');
@@ -318,7 +363,7 @@
           const id = a.getAttribute('data-id');
           const url = new URL('./viewer.html', location.href);
           url.searchParams.set('id', id);
-          if (topic && topic !== 'ALL') url.searchParams.set('topic', topic);
+          if (topics.length) url.searchParams.set('topic', topics[0]);
           if (arch && arch !== 'ALL') url.searchParams.set('archive', arch);
           document.getElementById('doc-view').src = url.toString();
         }));
