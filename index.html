@@ -6,14 +6,19 @@
     <title>MyBlog</title>
     <meta name="description" content="나의 개인 블로그" />
     <link rel="stylesheet" href="./assets/css/styles.css" />
-    <meta http-equiv="refresh" content="0; url=./graph.html" />
   </head>
   <body>
-    <script>location.replace('./graph.html');</script>
     <header class="site-header">
       <div class="container">
-        <h1>MyBlog</h1>
-        <p class="tagline">생각을 기록하고 공유하는 공간</p>
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div>
+            <h1 style="margin:0">Pargame's Blog</h1>
+            <p class="tagline" style="margin:4px 0 0">생각을 기록하고 공유하는 공간</p>
+          </div>
+          <nav>
+            <a href="./graph.html" class="btn">그래프(A)</a>
+          </nav>
+        </div>
       </div>
     </header>
     <main class="container">
