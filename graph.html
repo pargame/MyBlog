@@ -260,7 +260,10 @@
         simulation = d3.forceSimulation(data.nodes)
           .force('link', d3.forceLink(data.edges).id(d => d.id).distance(distance))
           .force('charge', d3.forceManyBody().strength(charge))
-          .force('center', d3.forceCenter(width / 2, height / 2));
+          .force('center', d3.forceCenter(width / 2, height / 2))
+          .alpha(1)
+          .alphaDecay(0.03)
+          .velocityDecay(0.2);
 
         linkSel = inner.append('g').selectAll('line')
           .data(data.edges)
@@ -290,6 +293,9 @@
           degMap.set(t, (degMap.get(t) || 0) + 1);
         }
   const radius = d => Math.max(sizeBase, Math.min(sizeBase+16, sizeBase + Math.sqrt(degMap.get(d.id) || 0) * 4));
+
+  // 충돌 방지(물리감 향상)
+  simulation.force('collide', d3.forceCollide(radius).strength(0.7));
 
   nodeSel.append('circle').attr('r', radius).attr('stroke-width', Math.max(1, linkWidth/2));
   nodeSel.append('text').attr('x', 12).attr('y', 4).text(d => d.label || d.id);
@@ -413,6 +419,12 @@
         linkSel.attr('stroke-width', linkWidth);
         const radius = d => Math.max(sizeBase, Math.min(sizeBase+16, sizeBase + Math.sqrt(degMap ? (degMap.get(d.id) || 0) : 0) * 4));
         nodeSel.select('circle').attr('r', radius).attr('stroke-width', Math.max(1, linkWidth/2));
+        // 충돌 반경도 갱신
+        if (simulation) {
+          const col = simulation.force('collide');
+          if (col) col.radius(radius);
+          simulation.alpha(0.15).restart();
+        }
         // 선택 노드 강조 유지
         nodeSel.classed('selected', n => n.id === selectedId);
       }
