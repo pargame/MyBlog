@@ -48,20 +48,20 @@
 
       <!-- 그래프 컨트롤 + 그래프 -->
       <div class="card ctrls" id="controls">
-        <strong>그래프 설정</strong>
-        <label>링크 거리 <input id="ctl-distance" type="range" min="40" max="240" value="120" data-default="120" /></label>
-        <label>반발력 <input id="ctl-charge" type="range" min="-800" max="-50" value="-320" data-default="-320" /></label>
-        <label>링크 굵기 <input id="ctl-width" type="range" min="1" max="6" value="2" data-default="2" /></label>
-        <label>노드 크기 <input id="ctl-size" type="range" min="6" max="26" value="6" data-default="6" /></label>
-        <button id="ctl-reset" class="btn">Reset</button>
-        <span class="legend">드래그/휠로 이동·확대/축소. 노드 클릭 시 아래 뷰어에 문서가 열립니다.</span>
+  <strong>그래프 설정</strong>
+  <label>링크 거리 <input id="ctl-distance" type="range" min="40" max="240" value="120" data-default="120" /> <span id="val-distance" class="legend"></span></label>
+  <label>반발력 <input id="ctl-charge" type="range" min="-800" max="-50" value="-320" data-default="-320" /> <span id="val-charge" class="legend"></span></label>
+  <label>링크 굵기 <input id="ctl-width" type="range" min="1" max="6" value="2" data-default="2" /> <span id="val-width" class="legend"></span></label>
+  <label>노드 크기 <input id="ctl-size" type="range" min="6" max="26" value="6" data-default="6" /> <span id="val-size" class="legend"></span></label>
+  <button id="ctl-reset" class="btn">reset</button>
+  <span class="legend">드래그/휠로 이동·확대/축소. 노드 클릭 시 아래 뷰어에 문서가 열립니다.</span>
       </div>
       <div class="graph-wrap" id="graph"></div>
 
       <!-- 주제 선택 -->
       <div class="card" id="A-c">
-        <strong>주제</strong>
-        <label style="margin-left:8px"><input type="checkbox" id="topic-multi" /> 다중 선택(AND)</label>
+  <strong>주제</strong>
+  <label style="margin-left:8px"><input type="checkbox" id="topic-multi" /> 다중 선택(AND)</label>
         <button id="topic-reset" class="btn">reset</button>
         <span id="topics"></span>
       </div>
@@ -217,10 +217,16 @@
       }
 
       function setupControls(){
-        document.getElementById('ctl-distance').addEventListener('input', () => updateForces());
-        document.getElementById('ctl-charge').addEventListener('input', () => updateForces());
-        document.getElementById('ctl-width').addEventListener('input', () => updateStyles());
-        document.getElementById('ctl-size').addEventListener('input', () => updateStyles());
+        const vd = document.getElementById('val-distance');
+        const vc = document.getElementById('val-charge');
+        const vw = document.getElementById('val-width');
+        const vs = document.getElementById('val-size');
+        function syncVals(){ if(vd) vd.textContent = document.getElementById('ctl-distance').value; if(vc) vc.textContent = document.getElementById('ctl-charge').value; if(vw) vw.textContent = document.getElementById('ctl-width').value; if(vs) vs.textContent = document.getElementById('ctl-size').value; }
+        syncVals();
+        document.getElementById('ctl-distance').addEventListener('input', () => { syncVals(); updateForces(); });
+        document.getElementById('ctl-charge').addEventListener('input', () => { syncVals(); updateForces(); });
+        document.getElementById('ctl-width').addEventListener('input', () => { syncVals(); updateStyles(); });
+        document.getElementById('ctl-size').addEventListener('input', () => { syncVals(); updateStyles(); });
         const btn = document.getElementById('ctl-reset');
         if (btn) btn.addEventListener('click', () => {
           ['ctl-distance','ctl-charge','ctl-width','ctl-size'].forEach(id => {
@@ -228,6 +234,7 @@
             const def = el.getAttribute('data-default');
             if (def != null) el.value = def;
           });
+          syncVals();
           updateStyles();
           updateForces();
         });

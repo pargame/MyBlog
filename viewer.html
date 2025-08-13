@@ -11,6 +11,11 @@
       .md h1, .md h2, .md h3 { margin-top: 1.2em; }
       .md pre { background: #0b1020; padding: 12px; border-radius: 8px; overflow: auto; }
       .md code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+      /* 그래프 페이지에 임베드된 경우(iframe) 상단 헤더를 압축 표시 */
+      @media (max-width: 99999px) {
+        :root:has(body[data-embedded="1"]) .site-header .container { padding: 12px 16px; }
+        :root:has(body[data-embedded="1"]) .site-header h1 { font-size: 22px; }
+      }
     </style>
   </head>
   <body>
@@ -55,7 +60,7 @@
   <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/highlight.min.js"></script>
     <script src="./assets/js/footer.js"></script>
     <script>
-      function getParam(name) {
+  function getParam(name) {
         const u = new URL(location.href);
         return u.searchParams.get(name);
       }
@@ -69,6 +74,8 @@
       }
 
       async function load() {
+        // 임베드 여부 표시(그래프 페이지 iframe에서 열릴 때)
+        try { if (window.self !== window.top) document.body.setAttribute('data-embedded', '1'); } catch {}
         const idRaw = getParam('id');
         if (!idRaw) {
           document.getElementById('content').textContent = 'id 파라미터가 없습니다.';
