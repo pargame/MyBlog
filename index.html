@@ -66,14 +66,20 @@
           const cols = await getPostsCollections();
           const nodes = (g.nodes||[])
             .filter(n => inPostsCollection(n, cols))
+            // Exclude index/README docs from homepage
+            .filter(n => (n.base||'').toLowerCase() !== 'readme' && !/\/?README$/i.test(n.id||''))
             .slice()
             .sort((a,b)=> (b.mtime||0)-(a.mtime||0))
             .slice(0, 20);
           const ul = document.getElementById('recent-list');
+          if (!nodes.length) {
+            ul.innerHTML = '<li class="legend">No posts yet.</li>';
+            return;
+          }
           ul.innerHTML = nodes.map(n => {
             const u = new URL('./viewer.html', location.href);
             u.searchParams.set('id', n.id);
-            return `<li><a href="${u.toString()}">${(n.label||n.id)}</a> <span class="legend">${n.archive}${(n.topics&&n.topics.length)?' · '+n.topics.join(', '):''}</span></li>`;
+            return `<li><a href="${u.toString()}">${(n.label||n.id)}</a></li>`;
           }).join('');
         } catch {}
       }
