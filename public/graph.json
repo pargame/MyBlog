@@ -14,17 +14,6 @@
       "author": "GPT-5"
     },
     {
-      "id": "README",
-      "label": "Posts",
-      "base": "README",
-      "file": "posts/README.md",
-      "archive": "(default)",
-      "topics": [],
-      "mtime": 1755075543029.272,
-      "date": null,
-      "author": null
-    },
-    {
       "id": "Unreal/AActor",
       "label": "AActor",
       "base": "AActor",
@@ -62,7 +51,6 @@
     }
   ],
   "archives": [
-    "(default)",
     "2025",
     "Unreal"
   ],
@@ -74,7 +62,6 @@
     "2025": [
       "2025"
     ],
-    "(default)": [],
     "Unreal": [
       "Unreal"
     ]
