@@ -34,7 +34,7 @@
       </div>
     </header>
     <main class="container">
-  <div class="card legend">Clicking [[links]] prioritizes the same archive/topic.</div>
+  <div id="link-legend" class="card legend">Clicking [[links]] prioritizes the same archive/topic.</div>
   <div id="content" class="md">Loading…</div>
       <div id="backlinks" class="card" style="display:none">
   <h3>Backlinks</h3>
@@ -89,8 +89,11 @@
           if (g.ok) graph = await g.json();
         } catch {}
 
-        const topic = getTopicParam();
-        const arch = getArchiveParam();
+  const topic = getTopicParam();
+  const arch = getArchiveParam();
+  // Hide legend if no archive/topic context (e.g., opened from Home)
+  const lg = document.getElementById('link-legend');
+  if (lg) lg.style.display = (topic || arch) ? '' : 'none';
         const id = resolveCanonicalId(idRaw, graph, arch, topic);
 
         // 그래프의 노드 정보로 실제 파일 경로를 우선 사용 (posts/... 또는 docs/...)
@@ -166,7 +169,9 @@
       }
 
       function finalize(titleCandidate, graph, id, topic, arch) {
-        const title = titleCandidate || /^#\s+(.+)$/m.exec(document.getElementById('content').textContent || '')?.[1] || id;
+        // Prefer the first H1 inside content; fallback to candidate or id
+        const h1 = document.querySelector('#content h1');
+        const title = (titleCandidate && String(titleCandidate)) || (h1 && h1.textContent && h1.textContent.trim()) || id;
         document.getElementById('title').textContent = title;
         const back = document.querySelector('.tagline a');
         if (back) {
