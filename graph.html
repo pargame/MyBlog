@@ -26,13 +26,14 @@
   /* Graph overlay controls (subtle) */
   #graph-area { position: relative; }
   #graph { position: relative; overflow: hidden; }
-  #graph-ctl { position: absolute; top: 12px; right: 12px; z-index: 10; background: rgba(11,16,32,0.7); border: none; border-radius: 10px; padding: 6px; backdrop-filter: blur(4px); }
+  #graph-ctl { position: absolute; top: 12px; right: 12px; z-index: 10; background: rgba(11,16,32,0.48); border: none; border-radius: 10px; padding: 6px; backdrop-filter: blur(4px); transition: opacity .25s ease; }
   /* Prevent overlay from blocking clicks outside controls */
   #graph-ctl { pointer-events: none; }
   #graph-ctl .row button, #graph-ctl input, #graph-ctl label { pointer-events: auto; }
   #graph-ctl .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
   #graph-ctl .body { display: none; margin-top: 6px; }
   #graph-ctl.show .body { display: block; }
+  #graph-ctl.dim { opacity: .35; }
   #ctl-toggle { font-size: 14px; padding: 4px 8px; }
     </style>
   </head>
@@ -61,7 +62,7 @@
       <!-- Graph (full-bleed) with subtle overlay settings -->
       <div class="card fullbleed" id="graph-area">
         <div class="graph-wrap" id="graph"></div>
-        <div id="graph-ctl" class="show">
+  <div id="graph-ctl">
           <div class="row">
             <button id="ctl-toggle" class="btn" title="Toggle graph settings" aria-label="Toggle graph settings">⚙ Settings</button>
             <button id="ctl-reset" class="btn">Reset</button>
@@ -72,6 +73,8 @@
             <div class="row"><label>Repulsion <input id="ctl-charge" type="range" min="-800" max="-50" value="-320" data-default="-320" /> <span id="val-charge" class="legend"></span></label></div>
             <div class="row"><label>Link width <input id="ctl-width" type="range" min="1" max="6" value="2" data-default="2" /> <span id="val-width" class="legend"></span></label></div>
             <div class="row"><label>Node size <input id="ctl-size" type="range" min="6" max="26" value="6" data-default="6" /> <span id="val-size" class="legend"></span></label></div>
+            <div class="row"><label>Focus zoom <input id="ctl-focus" type="range" min="0.8" max="2" step="0.1" value="1.2" data-default="1.2" /> <span id="val-focus" class="legend"></span></label></div>
+            <div class="row"><label>Overlay idle <input id="ctl-timeout" type="range" min="1" max="6" step="0.5" value="2.5" data-default="2.5" /> <span id="val-timeout" class="legend"></span><span class="legend">s</span></label></div>
           </div>
         </div>
       </div>
@@ -125,7 +128,8 @@
         let FULL = null; // 전체 데이터
         let CUR = null;  // 필터된 현재 데이터
         let simulation = null;
-        let svg = null, inner = null, linkSel = null, nodeSel = null;
+  let svg = null, inner = null, linkSel = null, nodeSel = null;
+  let zoomBehavior = null;
         let degMap = null;
   let selectedId = null;
   let GRAPH_W = null, GRAPH_H = null;
@@ -234,17 +238,28 @@
         const vc = document.getElementById('val-charge');
         const vw = document.getElementById('val-width');
         const vs = document.getElementById('val-size');
+        const vf = document.getElementById('val-focus');
+        const vt = document.getElementById('val-timeout');
   const wrap = document.getElementById('graph-ctl');
   const toggle = document.getElementById('ctl-toggle');
-        function syncVals(){ if(vd) vd.textContent = document.getElementById('ctl-distance').value; if(vc) vc.textContent = document.getElementById('ctl-charge').value; if(vw) vw.textContent = document.getElementById('ctl-width').value; if(vs) vs.textContent = document.getElementById('ctl-size').value; }
+        function syncVals(){
+          if(vd) vd.textContent = document.getElementById('ctl-distance').value;
+          if(vc) vc.textContent = document.getElementById('ctl-charge').value;
+          if(vw) vw.textContent = document.getElementById('ctl-width').value;
+          if(vs) vs.textContent = document.getElementById('ctl-size').value;
+          if(vf) vf.textContent = document.getElementById('ctl-focus').value;
+          if(vt) vt.textContent = document.getElementById('ctl-timeout').value;
+        }
         syncVals();
         document.getElementById('ctl-distance').addEventListener('input', () => { syncVals(); updateForces(); });
         document.getElementById('ctl-charge').addEventListener('input', () => { syncVals(); updateForces(); });
         document.getElementById('ctl-width').addEventListener('input', () => { syncVals(); updateStyles(); });
         document.getElementById('ctl-size').addEventListener('input', () => { syncVals(); updateStyles(); });
+        document.getElementById('ctl-focus').addEventListener('input', () => { syncVals(); });
+        document.getElementById('ctl-timeout').addEventListener('input', () => { syncVals(); bumpOverlay(); });
         const btn = document.getElementById('ctl-reset');
         if (btn) btn.addEventListener('click', () => {
-          ['ctl-distance','ctl-charge','ctl-width','ctl-size'].forEach(id => {
+          ['ctl-distance','ctl-charge','ctl-width','ctl-size','ctl-focus','ctl-timeout'].forEach(id => {
             const el = document.getElementById(id);
             const def = el.getAttribute('data-default');
             if (def != null) el.value = def;
@@ -252,8 +267,9 @@
           syncVals();
           updateStyles();
           updateForces();
+          bumpOverlay();
         });
-  if (toggle && wrap) toggle.addEventListener('click', () => { wrap.classList.toggle('show'); });
+  if (toggle && wrap) toggle.addEventListener('click', () => { wrap.classList.toggle('show'); bumpOverlay(); });
       }
 
       function rerender(full){
@@ -373,9 +389,11 @@
         }
 
         // 줌/팬
-        svg.call(d3.zoom().scaleExtent([0.2, 3]).on('zoom', (ev) => {
+        zoomBehavior = d3.zoom().scaleExtent([0.2, 3]).on('zoom', (ev) => {
           inner.attr('transform', ev.transform);
-        }));
+          bumpOverlay();
+        });
+        svg.call(zoomBehavior);
 
         // 이웃 하이라이트
         const adj = new Map();
@@ -409,6 +427,28 @@
       function setSelected(id){
         selectedId = id;
         if (nodeSel) nodeSel.classed('selected', n => n.id === selectedId);
+      }
+
+      function getFocusScale(){
+        const el = document.getElementById('ctl-focus');
+        if (!el) return 1.2;
+        const v = parseFloat(el.value);
+        return isNaN(v) ? 1.2 : v;
+      }
+
+      function focusNodeById(id, opts={}){
+        try {
+          if (!svg || !inner || !zoomBehavior || !CUR) return;
+          const n = (CUR.nodes||[]).find(x => x.id === id);
+          if (!n || typeof n.x !== 'number' || typeof n.y !== 'number') return;
+          const scale = typeof opts.scale === 'number' ? opts.scale : getFocusScale();
+          const width = GRAPH_W||inner.node().ownerSVGElement.clientWidth||600;
+          const height = GRAPH_H||inner.node().ownerSVGElement.clientHeight||600;
+          const tx = (width/2) - n.x * scale;
+          const ty = (height/2) - n.y * scale;
+          const t = d3.zoomIdentity.translate(tx, ty).scale(scale);
+          svg.transition().duration(450).call(zoomBehavior.transform, t);
+        } catch {}
       }
 
       function renderDocList(full){
@@ -462,8 +502,10 @@
           document.getElementById('doc-view').src = url.toString();
           // Scroll viewer into view for convenience
           document.getElementById('panel-viewer').scrollIntoView({ behavior:'smooth', block:'start' });
-          // Highlight selected node in graph, if present
+          // Highlight and focus selected node in graph, if present
           setSelected(id);
+          focusNodeById(id);
+          bumpOverlay();
         }));
       }
 
@@ -519,9 +561,32 @@
   window.addEventListener('message', (ev) => {
     try {
       const d = ev.data || {};
-      if (d && d.type === 'viewer:navigate' && d.id) setSelected(String(d.id));
+      if (d && d.type === 'viewer:navigate' && d.id) { setSelected(String(d.id)); focusNodeById(String(d.id)); bumpOverlay(); }
     } catch {}
   });
+
+  // Overlay auto-hide: dim and collapse body after inactivity
+  let overlayTimer = null;
+  function getOverlayTimeoutMs(){
+    const el = document.getElementById('ctl-timeout');
+    if (!el) return 2500;
+    const v = parseFloat(el.value);
+    return isNaN(v) ? 2500 : Math.max(500, Math.round(v * 1000));
+  }
+  function bumpOverlay(){
+    const wrap = document.getElementById('graph-ctl');
+    if (!wrap) return;
+    wrap.classList.remove('dim');
+    if (overlayTimer) clearTimeout(overlayTimer);
+    overlayTimer = setTimeout(() => { wrap.classList.add('dim'); wrap.classList.remove('show'); }, getOverlayTimeoutMs());
+  }
+  // Nudge overlay visibility on graph interactions
+  const graphBox = document.getElementById('graph');
+  if (graphBox){
+    graphBox.addEventListener('mousemove', bumpOverlay, { passive: true });
+    graphBox.addEventListener('wheel', bumpOverlay, { passive: true });
+  }
+  bumpOverlay();
     </script>
   </body>
   </html>
