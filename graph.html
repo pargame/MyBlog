@@ -20,12 +20,8 @@
       .link { stroke: #3a4b86; stroke-opacity: .6; }
       .link:hover { stroke-opacity: 1; }
   .faded { opacity: 0.15; }
-  .btn { display:inline-block; margin: 4px 6px 0 0; padding: 6px 10px; border:1px solid #1e2749; border-radius: 16px; background:#121933; color:#e7ecff; cursor:pointer; }
-  .btn.active { outline:2px solid var(--accent); }
+  .node.selected circle { stroke: #ffd97d; stroke-width: 3px; }
   .ctrls label { margin-right: 16px; }
-  #A-de { display:grid; grid-template-columns: 1fr 2fr; gap: 16px; }
-  #doc-list { list-style: none; padding-left: 16px; }
-  #doc-list li { margin: 6px 0; }
     </style>
   </head>
   <body>
@@ -99,19 +95,28 @@
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
   <script src="./assets/js/footer.js"></script>
     <script>
+        // 그래프 전역 상태/선택자
+        let FULL = null; // 전체 데이터
+        let CUR = null;  // 필터된 현재 데이터
+        let simulation = null;
+        let svg = null, inner = null, linkSel = null, nodeSel = null;
+        let degMap = null;
+        let selectedId = null;
+
       async function load() {
         const res = await fetch('./public/graph.json', { cache: 'no-store' });
         if (!res.ok) {
           document.getElementById('graph').innerHTML = '그래프가 아직 생성되지 않았습니다. (graph.json 없음)';
           return;
         }
-        const data = await res.json();
-        setupArchives(data);
-        setupTopicsArea(data);
-        setupControls();
-        rerender(data);
+          const data = await res.json();
+          FULL = data;
+          setupArchives(FULL);
+          setupTopicsArea(FULL);
+          setupControls();
+          rerender(FULL);
         // 리사이즈 시 레이아웃 높이 초기화 문제 방지
-        window.addEventListener('resize', () => rerender());
+          window.addEventListener('resize', () => rerender());
       }
 
       let state = { archive: 'ALL', topics: new Set(), multi: false };
@@ -212,9 +217,10 @@
       }
 
       function setupControls(){
-        ['ctl-distance','ctl-charge','ctl-width','ctl-size'].forEach(id => {
-          document.getElementById(id).addEventListener('input', () => rerender());
-        });
+        document.getElementById('ctl-distance').addEventListener('input', () => updateForces());
+        document.getElementById('ctl-charge').addEventListener('input', () => updateForces());
+        document.getElementById('ctl-width').addEventListener('input', () => updateStyles());
+        document.getElementById('ctl-size').addEventListener('input', () => updateStyles());
         const btn = document.getElementById('ctl-reset');
         if (btn) btn.addEventListener('click', () => {
           ['ctl-distance','ctl-charge','ctl-width','ctl-size'].forEach(id => {
@@ -222,17 +228,17 @@
             const def = el.getAttribute('data-default');
             if (def != null) el.value = def;
           });
-          rerender();
+          updateStyles();
+          updateForces();
         });
       }
 
       function rerender(full){
         // full 데이터가 없으면 다시 불러옴
         if (!full) {
-          fetch('./public/graph.json', { cache: 'no-store' }).then(r=>r.json()).then(data => {
-            renderGraph(filter(data, getSelectedArchive(), getSelectedTopics(), isMulti()));
-            renderDocList(data);
-          });
+          if (!FULL) return;
+          renderGraph(filter(FULL, getSelectedArchive(), getSelectedTopics(), isMulti()));
+          renderDocList(FULL);
         } else {
           renderGraph(filter(full, getSelectedArchive(), getSelectedTopics(), isMulti()));
           renderDocList(full);
@@ -243,29 +249,30 @@
   const width = document.getElementById('graph').clientWidth;
   const height = document.getElementById('graph').clientHeight;
   d3.select('#graph').selectAll('*').remove();
-  const svg = d3.select('#graph').append('svg').attr('width', width).attr('height', height);
-  const inner = svg.append('g');
+  svg = d3.select('#graph').append('svg').attr('width', width).attr('height', height);
+  inner = svg.append('g');
 
         const distance = +document.getElementById('ctl-distance').value;
         const charge = +document.getElementById('ctl-charge').value;
         const linkWidth = +document.getElementById('ctl-width').value;
         const sizeBase = +document.getElementById('ctl-size').value;
 
-        const simulation = d3.forceSimulation(data.nodes)
+        simulation = d3.forceSimulation(data.nodes)
           .force('link', d3.forceLink(data.edges).id(d => d.id).distance(distance))
           .force('charge', d3.forceManyBody().strength(charge))
           .force('center', d3.forceCenter(width / 2, height / 2));
 
-        const link = inner.append('g').selectAll('line')
+        linkSel = inner.append('g').selectAll('line')
           .data(data.edges)
           .enter().append('line')
-          .attr('class', 'link');
+          .attr('class', 'link')
+          .attr('stroke-width', linkWidth);
 
         const topicKey = (topics) => {
           const t = (topics && topics.length) ? topics[0] : '(root)';
           return (t && t !== '(root)') ? `topic-${(Math.abs(hashCode(t)) % 5) + 1}` : 'topic-ROOT';
         };
-        const node = inner.append('g').selectAll('g')
+  nodeSel = inner.append('g').selectAll('g')
           .data(data.nodes)
           .enter().append('g')
           .attr('class', d => `node ${topicKey(d.topics)}`)
@@ -275,17 +282,19 @@
             .on('end', dragended));
 
         // 차수 기반 반지름 계산
-  const deg = new Map(data.nodes.map(n => [n.id, 0]));
+        degMap = new Map(data.nodes.map(n => [n.id, 0]));
         for (const e of data.edges) {
-          deg.set(e.source, (deg.get(e.source) || 0) + 1);
-          deg.set(e.target, (deg.get(e.target) || 0) + 1);
+          const s = e.source.id || e.source;
+          const t = e.target.id || e.target;
+          degMap.set(s, (degMap.get(s) || 0) + 1);
+          degMap.set(t, (degMap.get(t) || 0) + 1);
         }
-  const radius = d => Math.max(sizeBase, Math.min(sizeBase+16, sizeBase + Math.sqrt(deg.get(d.id) || 0) * 4));
+  const radius = d => Math.max(sizeBase, Math.min(sizeBase+16, sizeBase + Math.sqrt(degMap.get(d.id) || 0) * 4));
 
-  node.append('circle').attr('r', radius).attr('stroke-width', linkWidth/2);
-  node.append('text').attr('x', 12).attr('y', 4).text(d => d.label || d.id);
+  nodeSel.append('circle').attr('r', radius).attr('stroke-width', Math.max(1, linkWidth/2));
+  nodeSel.append('text').attr('x', 12).attr('y', 4).text(d => d.label || d.id);
 
-        node.on('click', (_, d) => {
+  nodeSel.on('click', (_, d) => {
           // 아래 C 뷰어 영역에 문서를 연다
           const url = new URL('./viewer.html', location.href);
           url.searchParams.set('id', d.id);
@@ -295,15 +304,18 @@
           if (arch && arch !== 'ALL') url.searchParams.set('archive', arch);
           document.getElementById('doc-view').src = url.toString();
           document.getElementById('doc-view').scrollIntoView({ behavior:'smooth', block:'start' });
+    // 선택 상태 표시
+    selectedId = d.id;
+    nodeSel.classed('selected', n => n.id === selectedId);
         });
 
   simulation.on('tick', () => {
-          link
+    linkSel
             .attr('x1', d => d.source.x)
             .attr('y1', d => d.source.y)
             .attr('x2', d => d.target.x)
             .attr('y2', d => d.target.y);
-          node.attr('transform', d => `translate(${d.x},${d.y})`);
+    nodeSel.attr('transform', d => `translate(${d.x},${d.y})`);
         });
 
         function dragstarted(event) {
@@ -334,19 +346,29 @@
         const adj = new Map();
         for (const n of data.nodes) adj.set(n.id, new Set());
         for (const e of data.edges) {
-          adj.get(e.source).add(e.target);
-          adj.get(e.target).add(e.source);
+          const s = e.source.id || e.source;
+          const t = e.target.id || e.target;
+          adj.get(s).add(t);
+          adj.get(t).add(s);
         }
-        node.on('mouseover', (_, d) => highlight(d.id));
-        node.on('mouseout', clearHighlight);
+        nodeSel.on('mouseover', (_, d) => highlight(d.id));
+        nodeSel.on('mouseout', clearHighlight);
         function highlight(id){
-          node.classed('faded', n => (n.id !== id && !adj.get(id).has(n.id)));
-          link.classed('faded', e => !(e.source.id === id || e.target.id === id || e.source === id || e.target === id || adj.get(id).has(e.source.id || e.source) || adj.get(id).has(e.target.id || e.target)));
+          nodeSel.classed('faded', n => (n.id !== id && !adj.get(id).has(n.id)));
+          linkSel.classed('faded', e => {
+            const s = e.source.id || e.source;
+            const t = e.target.id || e.target;
+            return !(s === id || t === id);
+          });
         }
         function clearHighlight(){
-          node.classed('faded', false);
-          link.classed('faded', false);
+          nodeSel.classed('faded', false);
+          linkSel.classed('faded', false);
         }
+
+        CUR = data;
+        // 초기 스타일 동기화
+        updateStyles();
       }
 
       function renderDocList(full){
@@ -371,6 +393,28 @@
           if (arch && arch !== 'ALL') url.searchParams.set('archive', arch);
           document.getElementById('doc-view').src = url.toString();
         }));
+      }
+
+      function updateForces(){
+        if (!simulation) return;
+        const distance = +document.getElementById('ctl-distance').value;
+        const charge = +document.getElementById('ctl-charge').value;
+        const linkForce = simulation.force('link');
+        if (linkForce) linkForce.distance(distance);
+        const chargeForce = simulation.force('charge');
+        if (chargeForce) chargeForce.strength(charge);
+        simulation.alpha(0.3).restart();
+      }
+
+      function updateStyles(){
+        if (!linkSel || !nodeSel) return;
+        const linkWidth = +document.getElementById('ctl-width').value;
+        const sizeBase = +document.getElementById('ctl-size').value;
+        linkSel.attr('stroke-width', linkWidth);
+        const radius = d => Math.max(sizeBase, Math.min(sizeBase+16, sizeBase + Math.sqrt(degMap ? (degMap.get(d.id) || 0) : 0) * 4));
+        nodeSel.select('circle').attr('r', radius).attr('stroke-width', Math.max(1, linkWidth/2));
+        // 선택 노드 강조 유지
+        nodeSel.classed('selected', n => n.id === selectedId);
       }
 
   load();
