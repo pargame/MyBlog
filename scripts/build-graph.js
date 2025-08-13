@@ -10,7 +10,8 @@ const fs = require('fs');
 const path = require('path');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
-const DOCS_DIR = path.resolve(REPO_ROOT, 'docs');
+const POSTS_DIR = path.resolve(REPO_ROOT, 'posts');
+const DOCS_DIR = path.resolve(REPO_ROOT, 'docs'); // legacy
 const OUT_DIR = path.resolve(REPO_ROOT, 'public');
 const OUT_FILE = path.join(OUT_DIR, 'graph.json');
 
@@ -97,11 +98,18 @@ function parseSimpleTags(raw) {
 }
 
 function main() {
-  if (!fs.existsSync(DOCS_DIR)) {
-    console.error('docs 폴더가 없습니다.');
+  // Collect content roots: posts (primary) and docs (legacy)
+  const roots = [];
+  if (fs.existsSync(POSTS_DIR)) roots.push({ dir: POSTS_DIR, label: 'Posts' });
+  if (fs.existsSync(DOCS_DIR)) roots.push({ dir: DOCS_DIR, label: 'Docs' });
+  if (!roots.length) {
+    console.error('No content roots found. Create a posts/ folder with Markdown files.');
     process.exit(0);
   }
-  const files = listMarkdownFiles(DOCS_DIR);
+  const filesLabeled = [];
+  for (const r of roots) {
+    for (const f of listMarkdownFiles(r.dir)) filesLabeled.push({ file: f, root: r.dir, label: r.label });
+  }
 
   const nodes = [];
   const nodeIndex = new Map();
@@ -110,11 +118,14 @@ function main() {
   const archives = new Set();
   const byBaseName = new Map(); // basename -> [ids]
 
-  for (const file of files) {
+  for (const entry of filesLabeled) {
+    const file = entry.file;
+    const rootDir = entry.root;
+    const rootLabel = entry.label; // 'Posts' | 'Docs'
     const base = path.basename(file, '.md');
-    const relFromRepo = path.relative(REPO_ROOT, file); // docs/.../X.md
-    const relFromDocs = path.relative(DOCS_DIR, file);  // .../X.md
-  const segs = relFromDocs.split(path.sep);
+    const relFromRepo = path.relative(REPO_ROOT, file); // posts/.../X.md or docs/.../X.md
+    const relFromRoot = path.relative(rootDir, file);  // .../X.md
+  const segs = relFromRoot.split(path.sep);
   // 아카이브 및 폴더 기반 토픽 추출: 모든 폴더명을 토픽으로 포함
   const folders = segs.slice(0, Math.max(0, segs.length - 1));
   const archive = folders.length ? folders[0] : '(default)';
@@ -129,12 +140,14 @@ function main() {
 
   // 문서 상단 태그 파싱(front matter 또는 간단 tags: [..]) + 모든 폴더명을 토픽으로
   const tagSet = new Set();
+  // Include source root label as a topic so collections can be filtered (e.g., 'Posts')
+  if (rootLabel) tagSet.add(rootLabel);
   for (const f of folders) tagSet.add(f);
     for (const t of parseFrontMatterTags(raw)) tagSet.add(t);
     for (const t of parseSimpleTags(raw)) tagSet.add(t);
     for (const t of tagSet) topics.add(t);
 
-    const id = relFromDocs.replace(/\\/g, '/').replace(/\.md$/i, '');
+    const id = relFromRoot.replace(/\\/g, '/').replace(/\.md$/i, '');
   const node = { id, label: title, base, file: relFromRepo, archive, topics: [...tagSet], mtime, date: dateStr };
     nodeIndex.set(id, nodes.length);
     nodes.push(node);
@@ -145,9 +158,11 @@ function main() {
   }
 
   // 위키링크 -> edges
-  for (const file of files) {
-    const relFromDocs = path.relative(DOCS_DIR, file);
-    const srcId = relFromDocs.replace(/\\/g, '/').replace(/\.md$/i, '');
+  for (const entry of filesLabeled) {
+    const file = entry.file;
+    const rootDir = entry.root;
+    const relFromRoot = path.relative(rootDir, file);
+    const srcId = relFromRoot.replace(/\\/g, '/').replace(/\.md$/i, '');
     const content = fs.readFileSync(file, 'utf8');
     const links = parseWikiLinks(content);
     for (const target of links) {

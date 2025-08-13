@@ -99,15 +99,37 @@
           .split('/')
           .map(encodeURIComponent)
           .join('/');
-        const url = `./docs/${safe}.md`;
+        // If the id already contains a slash, assume it includes its root (posts/..., docs/..., etc.)
+        // Otherwise, prefer posts/ then fallback to docs/
+        let url = '';
+        if (id.includes('/')) {
+          url = `./${safe}.md`;
+        } else {
+          url = `./posts/${safe}.md`;
+        }
 
         const res = await fetch(url);
         if (!res.ok) {
-          document.getElementById('content').textContent = '문서를 불러오지 못했습니다: ' + url;
+          // fallback to docs for legacy content when short id is used
+          if (!id.includes('/')) {
+            const url2 = `./docs/${safe}.md`;
+            const res2 = await fetch(url2);
+            if (res2.ok) {
+              const text2 = await res2.text();
+              await renderMarkdown(text2);
+              finalize(title, graph, id, topic, arch);
+              return;
+            }
+          }
+          document.getElementById('content').textContent = 'Failed to load: ' + url;
           return;
         }
         const text = await res.text();
+        await renderMarkdown(text);
+        finalize(title, graph, id, topic, arch);
+      }
 
+      async function renderMarkdown(text) {
         // 1) 위키링크를 viewer 내부 링크로 선치환
         const linkRegex = /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g;
         const preprocessed = text.replace(linkRegex, (_, p1, alias) => {
@@ -129,10 +151,11 @@
         document.querySelectorAll('#content pre code').forEach((el) => {
           try { window.hljs && window.hljs.highlightElement(el); } catch {}
         });
+      }
 
-        const title = /^#\s+(.+)$/m.exec(text)?.[1] || id;
+      function finalize(titleCandidate, graph, id, topic, arch) {
+        const title = titleCandidate || /^#\s+(.+)$/m.exec(document.getElementById('content').textContent || '')?.[1] || id;
         document.getElementById('title').textContent = title;
-
         const back = document.querySelector('.tagline a');
         if (back) {
           const u = new URL('./graph.html', location.href);
@@ -140,8 +163,6 @@
           if (arch) u.searchParams.set('archive', arch);
           back.href = u.toString();
         }
-
-        // 역링크 표시
         if (graph) {
           const backlinks = findBacklinks(graph, id);
           if (backlinks.length) {

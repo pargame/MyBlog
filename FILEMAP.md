@@ -6,11 +6,7 @@ Top-level
 - viewer.html — Markdown viewer (secure)
 - .nojekyll — Disable Jekyll on Pages
 - README.md — Project overview and quickstart
-- BUILD.md — Build and versioning guide
-- SYSTEM.md — System architecture and data contracts
-- FILEMAP.md — This file
-- ARCHITECTURE.md — Narrative architecture & decisions
-- CONTRIBUTING.md — Contrib workflow and conventions
+- handbook/** — All project docs (moved from root)
 
 Public data
 - public/graph.json — Built graph data
@@ -29,5 +25,5 @@ Automation
 - .github/workflows/pages.yml — GitHub Pages deploy pipeline
 - .vscode/settings.json — Terminal auto-approve for git/npm/node prompts
 
-Content
-- docs/** — Source markdown content. Folders contribute topics; #tags inside docs also become topics.
+- posts/** — Primary source markdown content. Folders contribute topics; #tags inside posts also become topics.
+- docs/** — Legacy content folder (still supported for backward compatibility).

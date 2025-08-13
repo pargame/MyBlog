@@ -4,9 +4,11 @@
       "id": "AActor",
       "label": "AActor",
       "base": "AActor",
-      "file": "docs/AActor.md",
+      "file": "posts/AActor.md",
       "archive": "(default)",
-      "topics": [],
+      "topics": [
+        "Posts"
+      ],
       "mtime": 1755002166683.8376,
       "date": null
     },
@@ -14,10 +16,24 @@
       "id": "APawn",
       "label": "APawn",
       "base": "APawn",
-      "file": "docs/APawn.md",
+      "file": "posts/APawn.md",
       "archive": "(default)",
-      "topics": [],
+      "topics": [
+        "Posts"
+      ],
       "mtime": 1755002166683.8623,
+      "date": null
+    },
+    {
+      "id": "README",
+      "label": "Posts",
+      "base": "README",
+      "file": "posts/README.md",
+      "archive": "(default)",
+      "topics": [
+        "Posts"
+      ],
+      "mtime": 1755075430495.3474,
       "date": null
     }
   ],
@@ -34,8 +50,12 @@
   "archives": [
     "(default)"
   ],
-  "topics": [],
+  "topics": [
+    "Posts"
+  ],
   "topicsByArchive": {
-    "(default)": []
+    "(default)": [
+      "Posts"
+    ]
   }
 }
