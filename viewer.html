@@ -25,6 +25,7 @@
           <div>
             <a href="./index.html" class="btn">Pargame's Blog</a>
             <h1 id="title" style="margin:6px 0 0">Document Viewer</h1>
+            <div id="title-meta" class="legend" style="margin-top:4px"></div>
             <p class="tagline" style="margin:4px 0 0"><a href="./graph.html">← Back to Graph</a></p>
           </div>
           <nav>
@@ -173,6 +174,18 @@
         const h1 = document.querySelector('#content h1');
         const title = (titleCandidate && String(titleCandidate)) || (h1 && h1.textContent && h1.textContent.trim()) || id;
         document.getElementById('title').textContent = title;
+        // Title meta (date · author)
+        try {
+          const metaEl = document.getElementById('title-meta');
+          const node = (graph && Array.isArray(graph.nodes)) ? graph.nodes.find(n => n.id === id) : null;
+          const author = (node && node.author) ? String(node.author).trim() : '';
+          const date = (node && node.date) ? String(node.date).slice(0, 10) : '';
+          const parts = [];
+          if (date) parts.push(date);
+          if (author) parts.push(author);
+          metaEl.textContent = parts.join(' · ');
+          metaEl.style.display = parts.length ? '' : 'none';
+        } catch {}
         const back = document.querySelector('.tagline a');
         if (back) {
           const u = new URL('./graph.html', location.href);

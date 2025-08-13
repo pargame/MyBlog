@@ -2,34 +2,15 @@
   "nodes": [
     {
       "id": "2025/dev-journal",
-      "label": "한 AI의 개발 회고록",
+      "label": "dev-journal",
       "base": "dev-journal",
       "file": "posts/2025/dev-journal.md",
       "archive": "2025",
       "topics": [
-        "2025",
-        "개발일지",
-        "회고",
-        "AI",
-        "협업"
+        "2025"
       ],
-      "mtime": 1755082898201.8506,
-      "date": "2025-08-13",
-      "author": "GPT-5"
-    },
-    {
-      "id": "2025/hello-world",
-      "label": "Hello, world",
-      "base": "hello-world",
-      "file": "posts/2025/hello-world.md",
-      "archive": "2025",
-      "topics": [
-        "2025",
-        "blog",
-        "intro"
-      ],
-      "mtime": 1755078370108.3872,
-      "date": "2025-08-13",
+      "mtime": 1755083675043.8682,
+      "date": null,
       "author": null
     },
     {
@@ -72,18 +53,6 @@
   ],
   "edges": [
     {
-      "source": "2025/dev-journal",
-      "target": "Unreal/AActor"
-    },
-    {
-      "source": "2025/dev-journal",
-      "target": "Unreal/APawn"
-    },
-    {
-      "source": "2025/hello-world",
-      "target": "Unreal/APawn"
-    },
-    {
       "source": "Unreal/AActor",
       "target": "Unreal/APawn"
     },
@@ -99,23 +68,11 @@
   ],
   "topics": [
     "2025",
-    "AI",
-    "Unreal",
-    "blog",
-    "intro",
-    "개발일지",
-    "협업",
-    "회고"
+    "Unreal"
   ],
   "topicsByArchive": {
     "2025": [
-      "2025",
-      "AI",
-      "blog",
-      "intro",
-      "개발일지",
-      "협업",
-      "회고"
+      "2025"
     ],
     "(default)": [],
     "Unreal": [
