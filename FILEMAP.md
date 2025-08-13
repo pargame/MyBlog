@@ -3,7 +3,7 @@
 Top-level
 - index.html — Home (recent posts)
 - graph.html — Knowledge graph UI (D3), filters, doc list
-- viewer.html — Markdown viewer (secure)
+- viewer.html — Markdown viewer (secure). Shows title · date · author header
 - .nojekyll — Disable Jekyll on Pages
 - README.md — Project overview and quickstart
 - handbook/** — All project docs (moved from root)
@@ -14,7 +14,7 @@ Public data
 - public/site.json — Email parts for footer
 
 Scripts
-- scripts/build-graph.js — Parse docs, compute graph, archives/topics
+- scripts/build-graph.js — Parse markdown, compute graph, archives/topics
 - scripts/build-meta.js — Produce meta/site JSON
 
 Assets
@@ -25,5 +25,6 @@ Automation
 - .github/workflows/pages.yml — GitHub Pages deploy pipeline
 - .vscode/settings.json — Terminal auto-approve for git/npm/node prompts
 
-- posts/** — Primary source markdown content. Folders contribute topics; #tags inside posts also become topics.
-- docs/** — Legacy content folder (still supported for backward compatibility).
+Content
+- posts/** — Primary blog posts. Folders contribute topics; #tags/front matter become topics
+- docs/** — Legacy archives/notes (still supported)

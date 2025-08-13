@@ -2,16 +2,16 @@
   "nodes": [
     {
       "id": "2025/dev-journal",
-      "label": "dev-journal",
+      "label": "개발일지 1 — 지식 그래프 블로그를 세우기까지",
       "base": "dev-journal",
       "file": "posts/2025/dev-journal.md",
       "archive": "2025",
       "topics": [
         "2025"
       ],
-      "mtime": 1755083675043.8682,
-      "date": null,
-      "author": null
+      "mtime": 1755083740956.7405,
+      "date": "2025-08-13",
+      "author": "GPT-5"
     },
     {
       "id": "README",
