@@ -21,5 +21,5 @@
 1) 작성자: `docs/{archive}/.../*.md` 작성
 2) 빌드: `node scripts/build-graph.js`
    - frontmatter(Tag/Date) + 폴더경로→ 토픽/아카이브
-  Moved to handbook: See `handbook/ARCHITECTURE.md`.
+Moved to handbook: See `handbook/ARCHITECTURE.md`.
    - 결과 `public/graph.json`
