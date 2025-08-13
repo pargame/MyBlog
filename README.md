@@ -2,8 +2,13 @@
 
 개인 블로그 저장소입니다. GitHub Pages로 자동 배포됩니다.
 
-전체 구조/데이터 플로우/배포 파이프라인은 `ARCHITECTURE.md`를 먼저 참고하세요.
-작업 흐름/로컬 빌드 팁은 `CONTRIBUTING.md`를 보세요.
+## 문서
+- [BUILD.md](BUILD.md) — 빌드 단계, 산출물, 버전 관리
+- [SYSTEM.md](SYSTEM.md) — 아키텍처, 데이터 계약, 동작
+- [FILEMAP.md](FILEMAP.md) — 파일 역할 개요
+- [REQUIREMENTS.md](REQUIREMENTS.md) — 사용자 요구 사항 스냅샷
+- [ARCHITECTURE.md](ARCHITECTURE.md) — 배경 및 결정 사항
+- [CONTRIBUTING.md](CONTRIBUTING.md) — 기여 워크플로우
 
 ## 로컬 미리보기
 정적 HTML이므로 브라우저로 `index.html`을 열어보면 됩니다.
