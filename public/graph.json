@@ -2,18 +2,21 @@
   "nodes": [
     {
       "id": "2025/dev-journal",
-      "label": "Blog Development Journal",
+      "label": "블로그 개발 일지",
       "base": "dev-journal",
       "file": "posts/2025/dev-journal.md",
       "archive": "2025",
       "topics": [
         "2025",
-        "devlog",
-        "blog"
+        "개발일지",
+        "블로그",
+        "그래프",
+        "D3",
+        "Markdown"
       ],
-      "mtime": 1755080838696.7776,
+      "mtime": 1755081174539.8901,
       "date": "2025-08-13",
-      "author": "Pargame"
+      "author": "GPT-5"
     },
     {
       "id": "2025/hello-world",
@@ -97,17 +100,25 @@
   ],
   "topics": [
     "2025",
+    "D3",
+    "Markdown",
     "Unreal",
     "blog",
-    "devlog",
-    "intro"
+    "intro",
+    "개발일지",
+    "그래프",
+    "블로그"
   ],
   "topicsByArchive": {
     "2025": [
       "2025",
+      "D3",
+      "Markdown",
       "blog",
-      "devlog",
-      "intro"
+      "intro",
+      "개발일지",
+      "그래프",
+      "블로그"
     ],
     "(default)": [],
     "Unreal": [

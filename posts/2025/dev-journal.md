@@ -1,33 +1,61 @@
 ---
-title: Blog Development Journal
+title: 블로그 개발 일지
 date: 2025-08-13
-author: Pargame
-tags: [devlog, blog]
+author: GPT-5
+tags: [개발일지, 블로그, 그래프, D3, Markdown]
 ---
 
-# Blog Development Journal
+# 블로그 개발 일지
 
-A running log of building and polishing this blog.
+“메모가 쌓이면 지식이 되고, 연결되면 아이디어가 된다.” 이 한 줄을 실제로 굴러가게 만들고 싶었습니다. 홈에선 가볍게 글을 읽고, 그래프 페이지에선 아카이브 문서들을 옵시디언처럼 탐색할 수 있는 최소하지만 단단한 시스템. 아래는 이번에 구축한 구조와 시행착오, 그리고 다음 계획입니다.
 
-## Highlights
-- GitHub Pages deployment and minimal static scaffold
-- Knowledge Graph page using D3.js (hover neighbors, select outline)
-- Markdown builder: parses frontmatter tags/date, backlinks via [[WikiLinks]]
-- Viewer security: DOMPurify + marked + highlight.js
-- Collections split: posts/ (home) vs docs/Unreal (graph-only)
-- Homepage shows only posts, excludes README/index
-- Footer: version/commit + obfuscated email display
+## 1) 아키텍처 개요
+- 정적 웹: GitHub Pages에 배포되는 순수 정적 사이트입니다.
+- 주요 페이지
+	- 홈(`index.html`): 최근 글 목록(게시글 전용)
+	- 그래프(`graph.html`): 아카이브 문서 전용 지식 그래프(포스트는 제외)
+	- 뷰어(`viewer.html`): 마크다운 문서를 안전하게 렌더링하는 페이지
 
-## Recent changes (2025-08-13)
-- Fixed viewer to load markdown via graph node file path
-- Scoped wiki-link resolution by archive/topic context
-- Separated Posts from the Graph; added All archive option
-- Cleaned Topics: removed root labels; posts filtered by file path
-- Homepage now shows author and date for posts
+## 2) 콘텐츠 파이프라인
+- 폴더 역할
+	- `posts/`: 일반 포스트(홈에 노출)
+	- `docs/Unreal/`: 그래프용 아카이브(홈에 미노출)
+- 빌더(`scripts/build-graph.js`)
+	- 모든 마크다운을 스캔해 `public/graph.json`을 생성합니다.
+	- 노드 필드: `id, label, file, archive, topics, mtime, date, author`
+	- 토픽: 상위 폴더명 + frontmatter tags (루트 라벨 Posts/Docs는 토픽에 주입하지 않음)
+	- 링크: `[[WikiLink]]`를 basename 매칭으로 에지로 변환
+	- 포스트 판별: 토픽이 아니라 파일 경로(`posts/…`)로 일관되게 구분
 
-## Next
-- Add RSS feed
-- Add search across posts
-- Improve mobile graph interactions
+## 3) 뷰어(viewer.html)
+- 보안 렌더링: `marked` → `DOMPurify` → `highlight.js`
+- 위키링크 처리: 그래프 데이터로 canonical id를 찾고, `archive/topic` 컨텍스트를 우선 적용
+- 로딩 경로: 노드의 `file` 경로(예: `posts/2025/dev-journal.md`)를 우선 사용해 404를 방지
+- 역링크: 해당 노드로 들어오는 에지를 역으로 수집해 표시
 
-Back to [[AActor]] or [[APawn]] for Unreal docs.
+## 4) 그래프(graph.html)
+- D3 포스 레이아웃: 거리/반발/굵기/노드 크기 슬라이더 제공, 이웃 하이라이트 및 선택 강조
+- 아카이브 분리: posts/는 그래프에서 제외, `All`/개별 아카이브 전환 가능
+- 토픽 목록: 현재 아카이브 문서에서만 추출(루트 라벨/아카이브명은 숨김)
+- 문서 리스트: 알파벳 정렬, 메타엔 실제 토픽만 표시
+
+## 5) 홈(index.html)
+- 데이터 소스: `graph.json`의 노드 중 `file`이 `posts/`로 시작하는 항목만
+- 정렬/표시: 최신 수정 시간 기준 정렬, 제목 옆에 `author · date(YYYY-MM-DD)` 표시
+- 잡동사니 제거: README/index 류 문서는 홈에서 제외
+
+## 6) 발자국과 해결
+- 홈에 README/index가 끼어드는 문제 → 필터로 제어
+- 뷰어가 `./2025/hello-world.md` 같은 잘못된 경로로 접근 → 그래프의 `node.file` 우선 사용으로 해결
+- Topics에 ‘Docs’가 노출 → 빌더가 루트 라벨을 토픽에 넣지 않도록 변경, UI에서도 제외 처리
+- 그래프에 posts가 보이는 문제 → posts를 파일 경로 기준으로 완전히 배제
+
+## 7) 앞으로
+- RSS 피드/오픈그래프 메타
+- 전역 검색(포스트/아카이브 통합)
+- 모바일에서 그래프 상호작용 개선(핀치 확대/축소, 노드 선택 UX 강화)
+- 태그 페이지/연도별 아카이브
+
+작은 정적 블로그지만, 연결된 문서 위에서 생각이 커지는 재미가 느껴집니다. 다음 이정표는 “검색”입니다. 찾고-연결하고-기억하는 흐름을 완성해 보겠습니다.
+
+참고 링크: [[AActor]], [[APawn]]
