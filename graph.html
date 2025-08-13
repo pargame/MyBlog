@@ -21,6 +21,16 @@
       .link:hover { stroke-opacity: 1; }
   .faded { opacity: 0.15; }
   .node.selected circle { stroke: #ffd97d; stroke-width: 3px; }
+  /* Full-bleed card to make graph span full viewport width */
+  .fullbleed { position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; width: 100vw; border-radius: 0; }
+  /* Graph overlay controls (subtle) */
+  #graph-area { position: relative; }
+  #graph { position: relative; overflow: hidden; }
+  #graph-ctl { position: absolute; top: 12px; right: 12px; z-index: 10; background: rgba(11,16,32,0.8); border: 1px solid #1e2749; border-radius: 10px; padding: 6px; backdrop-filter: blur(4px); }
+  #graph-ctl .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  #graph-ctl .body { display: none; margin-top: 6px; }
+  #graph-ctl.show .body { display: block; }
+  #ctl-toggle { font-size: 14px; padding: 4px 8px; }
     </style>
   </head>
   <body>
@@ -45,21 +55,23 @@
         <span id="archives"></span>
       </div>
 
-      <!-- Graph controls + graph -->
-      <div class="card ctrls" id="controls">
-  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-    <strong>Graph settings</strong>
-    <button id="ctl-reset" class="btn">Reset</button>
-  </div>
-  <span class="flex-break" aria-hidden="true"></span>
-  <label>Link distance <input id="ctl-distance" type="range" min="40" max="240" value="120" data-default="120" /> <span id="val-distance" class="legend"></span></label>
-  <label>Repulsion <input id="ctl-charge" type="range" min="-800" max="-50" value="-320" data-default="-320" /> <span id="val-charge" class="legend"></span></label>
-  <span class="flex-break" aria-hidden="true"></span>
-  <label>Link width <input id="ctl-width" type="range" min="1" max="6" value="2" data-default="2" /> <span id="val-width" class="legend"></span></label>
-  <label>Node size <input id="ctl-size" type="range" min="6" max="26" value="6" data-default="6" /> <span id="val-size" class="legend"></span></label>
-  <span class="legend">Drag/wheel to pan/zoom. Click a node to open the document below.</span>
+      <!-- Graph (full-bleed) with subtle overlay settings -->
+      <div class="card fullbleed" id="graph-area">
+        <div class="graph-wrap" id="graph"></div>
+        <div id="graph-ctl" class="show">
+          <div class="row">
+            <button id="ctl-toggle" class="btn" title="Toggle graph settings" aria-label="Toggle graph settings">⚙ Settings</button>
+            <button id="ctl-reset" class="btn">Reset</button>
+            <span class="legend">Drag/wheel to pan/zoom</span>
+          </div>
+          <div class="body">
+            <div class="row"><label>Link distance <input id="ctl-distance" type="range" min="40" max="240" value="120" data-default="120" /> <span id="val-distance" class="legend"></span></label></div>
+            <div class="row"><label>Repulsion <input id="ctl-charge" type="range" min="-800" max="-50" value="-320" data-default="-320" /> <span id="val-charge" class="legend"></span></label></div>
+            <div class="row"><label>Link width <input id="ctl-width" type="range" min="1" max="6" value="2" data-default="2" /> <span id="val-width" class="legend"></span></label></div>
+            <div class="row"><label>Node size <input id="ctl-size" type="range" min="6" max="26" value="6" data-default="6" /> <span id="val-size" class="legend"></span></label></div>
+          </div>
+        </div>
       </div>
-      <div class="graph-wrap" id="graph"></div>
 
       <!-- Topics + Documents (two columns) -->
       <div class="card" id="panel-top">
@@ -219,6 +231,8 @@
         const vc = document.getElementById('val-charge');
         const vw = document.getElementById('val-width');
         const vs = document.getElementById('val-size');
+  const wrap = document.getElementById('graph-ctl');
+  const toggle = document.getElementById('ctl-toggle');
         function syncVals(){ if(vd) vd.textContent = document.getElementById('ctl-distance').value; if(vc) vc.textContent = document.getElementById('ctl-charge').value; if(vw) vw.textContent = document.getElementById('ctl-width').value; if(vs) vs.textContent = document.getElementById('ctl-size').value; }
         syncVals();
         document.getElementById('ctl-distance').addEventListener('input', () => { syncVals(); updateForces(); });
@@ -236,6 +250,7 @@
           updateStyles();
           updateForces();
         });
+  if (toggle && wrap) toggle.addEventListener('click', () => { wrap.classList.toggle('show'); });
       }
 
       function rerender(full){
