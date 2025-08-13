@@ -109,7 +109,7 @@
   let selectedId = null;
   let GRAPH_W = null, GRAPH_H = null;
 
-      async function load() {
+  async function load() {
         const res = await fetch('./public/graph.json', { cache: 'no-store' });
         if (!res.ok) {
           document.getElementById('graph').innerHTML = 'Graph is not generated yet. (missing graph.json)';
@@ -140,27 +140,34 @@
       }
 
       function setupArchives(data){
-  const u = new URL(location.href);
-  const archiveParam = u.searchParams.get('archive');
+        const u = new URL(location.href);
+        const archiveParam = u.searchParams.get('archive');
         if (archiveParam) setSelectedArchive(archiveParam);
         const container = document.getElementById('archives');
-        const list = data.archives || [];
-  const label = (a) => (a === '(default)') ? 'Default' : a;
-        container.innerHTML = list.map(a => `<button class="btn" data-arch="${a}">${label(a)}</button>`).join('');
+        // Archive 목록은 Posts 토픽이 붙은 노드를 제외한 데이터로부터 유도
+        const docNodes = (data.nodes || []).filter(n => !isPost(n));
+        const uniq = Array.from(new Set(docNodes.map(n => n.archive))).sort();
+        const label = (a) => (a === '(default)') ? 'Default' : a;
+        const btns = ['ALL', ...uniq].map(a => `<button class="btn" data-arch="${a}">${a === 'ALL' ? 'All' : label(a)}</button>`).join('');
+        container.innerHTML = btns;
         const buttons = container.querySelectorAll('button');
         function refreshActive(){ buttons.forEach(b => b.classList.toggle('active', b.getAttribute('data-arch')===getSelectedArchive())); }
-  buttons.forEach(btn => btn.addEventListener('click', () => { setSelectedArchive(btn.getAttribute('data-arch')); clearTopic(); refreshActive(); rerender(); }));
-        if (!archiveParam && list.length) { setSelectedArchive(list[0]); refreshActive(); }
+        buttons.forEach(btn => btn.addEventListener('click', () => { setSelectedArchive(btn.getAttribute('data-arch')); clearTopic(); refreshActive(); rerender(); }));
+        // 기본값은 All 유지 (URL 파라미터가 있으면 반영)
         refreshActive();
       }
 
       function setupTopicsArea(data){
         const u = new URL(location.href);
         const topicParam = u.searchParams.get('topic');
-        const topicsAll = data.topicsByArchive || {};
+        // topics은 Posts를 제외한 노드로부터 동적으로 계산
         function renderTopics(){
           const curArch = getSelectedArchive();
-          const list = (topicsAll[curArch] || []).filter(t => t !== curArch); // exclude archive name
+          const pool = (data.nodes || []).filter(n => !isPost(n)).filter(n => (curArch==='ALL' ? true : n.archive === curArch));
+          const set = new Set();
+          for (const n of pool) for (const t of (n.topics||[])) set.add(t);
+          // 아카이브 이름과 'Posts' 토픽 제외
+          const list = Array.from(set).filter(t => t !== curArch && t !== 'Posts').sort();
           const wrap = document.getElementById('topics');
           wrap.innerHTML = list.map(t => `<button class="btn" data-topic="${t}">${t}</button>`).join('');
           const buttons = wrap.querySelectorAll('button');
@@ -186,7 +193,8 @@
       }
 
       function filter(data, archive, topic) {
-        let nodes = data.nodes;
+        // Posts 컬렉션 노드는 그래프에서 제외
+        let nodes = (data.nodes || []).filter(n => !isPost(n));
         if (archive && archive !== 'ALL') nodes = nodes.filter(n => n.archive === archive);
         if (topic) nodes = nodes.filter(n => (n.topics||[]).includes(topic));
         const ids = new Set(nodes.map(n => n.id));
@@ -375,7 +383,7 @@
       function renderDocList(full){
         const arch = getSelectedArchive();
         const topic = getSelectedTopic();
-        let nodes = full.nodes;
+        let nodes = (full.nodes || []).filter(n => !isPost(n));
         if (arch && arch !== 'ALL') nodes = nodes.filter(n => n.archive === arch);
         if (topic) nodes = nodes.filter(n => (n.topics||[]).includes(topic));
         nodes = nodes.sort((a,b)=> (a.label||a.id).localeCompare(b.label||b.id));
@@ -394,6 +402,10 @@
           if (arch && arch !== 'ALL') url.searchParams.set('archive', arch);
           document.getElementById('doc-view').src = url.toString();
         }));
+      }
+
+      function isPost(n){
+        return (n && Array.isArray(n.topics)) ? n.topics.includes('Posts') : false;
       }
 
       function updateForces(){
