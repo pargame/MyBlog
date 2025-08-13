@@ -46,24 +46,29 @@
         <span id="archives"></span>
       </div>
 
-  <!-- Graph controls + graph -->
+      <!-- Graph controls + graph -->
       <div class="card ctrls" id="controls">
-  <strong>Graph settings</strong>
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <strong>Graph settings</strong>
+    <button id="ctl-reset" class="btn">Reset</button>
+  </div>
+  <span class="flex-break" aria-hidden="true"></span>
   <label>Link distance <input id="ctl-distance" type="range" min="40" max="240" value="120" data-default="120" /> <span id="val-distance" class="legend"></span></label>
   <label>Repulsion <input id="ctl-charge" type="range" min="-800" max="-50" value="-320" data-default="-320" /> <span id="val-charge" class="legend"></span></label>
   <span class="flex-break" aria-hidden="true"></span>
   <label>Link width <input id="ctl-width" type="range" min="1" max="6" value="2" data-default="2" /> <span id="val-width" class="legend"></span></label>
   <label>Node size <input id="ctl-size" type="range" min="6" max="26" value="6" data-default="6" /> <span id="val-size" class="legend"></span></label>
-  <button id="ctl-reset" class="btn">Reset</button>
   <span class="legend">Drag/wheel to pan/zoom. Click a node to open the document below.</span>
       </div>
       <div class="graph-wrap" id="graph"></div>
 
-  <!-- Topic selection -->
-      <div class="card" id="A-c">
-  <strong>Topics</strong>
-  <label style="margin-left:8px"><input type="checkbox" id="topic-multi" /> Multi-select (AND)</label>
-        <button id="topic-reset" class="btn">Reset</button>
+      <!-- Topic selection -->
+      <div class="card ctrls" id="A-c">
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <strong>Topics</strong>
+    <button id="topic-reset" class="btn">Reset</button>
+  </div>
+        <span class="flex-break" aria-hidden="true"></span>
         <span id="topics"></span>
       </div>
 
@@ -121,29 +126,17 @@
           window.addEventListener('resize', () => { GRAPH_W = null; GRAPH_H = null; rerender(); });
       }
 
-      let state = { archive: 'ALL', topics: new Set(), multi: false };
+      let state = { archive: 'ALL', topic: null };
       function getSelectedArchive(){ return state.archive; }
-      function getSelectedTopics(){ return [...state.topics]; }
-      function isMulti(){ return !!state.multi; }
+      function getSelectedTopic(){ return state.topic || null; }
       function setSelectedArchive(a){ state.archive = a || 'ALL'; setURL(); }
-      function clearTopics(){ state.topics.clear(); setURL(); }
-      function setSingleTopic(t){ state.topics.clear(); if (t && t !== 'ALL') state.topics.add(t); setURL(); }
-      function toggleTopic(t){ if (!t) return; if (state.topics.has(t)) state.topics.delete(t); else state.topics.add(t); setURL(); }
+      function clearTopic(){ state.topic = null; setURL(); }
+      function setSingleTopic(t){ state.topic = (t && t !== 'ALL') ? t : null; setURL(); }
       function setURL(){
         const u = new URL(location.href);
         if (state.archive && state.archive !== 'ALL') u.searchParams.set('archive', state.archive); else u.searchParams.delete('archive');
-        // sync topics
-        if (isMulti()) {
-          const arr = getSelectedTopics();
-          u.searchParams.delete('topic');
-          if (arr.length) u.searchParams.set('topics', arr.join(',')); else u.searchParams.delete('topics');
-          u.searchParams.set('multi', '1');
-        } else {
-          u.searchParams.delete('topics');
-          u.searchParams.delete('multi');
-          const arr = getSelectedTopics();
-          if (arr.length) u.searchParams.set('topic', arr[0]); else u.searchParams.delete('topic');
-        }
+        // sync single topic
+        if (state.topic) u.searchParams.set('topic', state.topic); else u.searchParams.delete('topic');
         history.replaceState({}, '', u);
       }
 
@@ -157,22 +150,14 @@
         container.innerHTML = list.map(a => `<button class="btn" data-arch="${a}">${label(a)}</button>`).join('');
         const buttons = container.querySelectorAll('button');
         function refreshActive(){ buttons.forEach(b => b.classList.toggle('active', b.getAttribute('data-arch')===getSelectedArchive())); }
-        buttons.forEach(btn => btn.addEventListener('click', () => { setSelectedArchive(btn.getAttribute('data-arch')); clearTopics(); refreshActive(); rerender(); }));
+  buttons.forEach(btn => btn.addEventListener('click', () => { setSelectedArchive(btn.getAttribute('data-arch')); clearTopic(); refreshActive(); rerender(); }));
         if (!archiveParam && list.length) { setSelectedArchive(list[0]); refreshActive(); }
         refreshActive();
       }
 
       function setupTopicsArea(data){
         const u = new URL(location.href);
-        const multiParam = u.searchParams.get('multi') === '1';
-        state.multi = multiParam;
-        const ck = document.getElementById('topic-multi');
-        if (ck) {
-          ck.checked = multiParam;
-          ck.addEventListener('change', () => { state.multi = ck.checked; clearTopics(); renderTopics(); rerender(); });
-        }
         const topicParam = u.searchParams.get('topic');
-        const topicsParam = u.searchParams.get('topics');
         const topicsAll = data.topicsByArchive || {};
         function renderTopics(){
           const curArch = getSelectedArchive();
@@ -181,23 +166,18 @@
           wrap.innerHTML = list.map(t => `<button class="btn" data-topic="${t}">${t}</button>`).join('');
           const buttons = wrap.querySelectorAll('button');
           function refreshActive(){
-            const sel = new Set(getSelectedTopics());
-            buttons.forEach(b => b.classList.toggle('active', sel.has(b.getAttribute('data-topic'))));
+            const sel = getSelectedTopic();
+            buttons.forEach(b => b.classList.toggle('active', b.getAttribute('data-topic') === sel));
           }
           buttons.forEach(btn => btn.addEventListener('click', () => {
             const t = btn.getAttribute('data-topic');
-            if (isMulti()) toggleTopic(t); else setSingleTopic(t);
+            setSingleTopic(t);
             refreshActive();
             rerender();
           }));
-          document.getElementById('topic-reset').onclick = () => { clearTopics(); refreshActive(); rerender(); };
+          document.getElementById('topic-reset').onclick = () => { clearTopic(); refreshActive(); rerender(); };
           // initialize from URL
-          if (isMulti() && topicsParam) {
-            clearTopics();
-            topicsParam.split(',').map(s=>s.trim()).filter(s=>s && list.includes(s)).forEach(s => state.topics.add(s));
-          } else if (!isMulti() && topicParam && list.includes(topicParam)) {
-            setSingleTopic(topicParam);
-          }
+          if (topicParam && list.includes(topicParam)) setSingleTopic(topicParam);
           refreshActive();
         }
         renderTopics();
@@ -206,14 +186,10 @@
         observer.observe(document.getElementById('archives'), { childList:true, subtree:true });
       }
 
-      function filter(data, archive, topics, multi) {
+      function filter(data, archive, topic) {
         let nodes = data.nodes;
         if (archive && archive !== 'ALL') nodes = nodes.filter(n => n.archive === archive);
-        const sel = new Set(topics||[]);
-        if (sel.size > 0) {
-          if (multi) nodes = nodes.filter(n => [...sel].every(t => (n.topics||[]).includes(t)));
-          else nodes = nodes.filter(n => (n.topics||[]).includes([...sel][0]));
-        }
+        if (topic) nodes = nodes.filter(n => (n.topics||[]).includes(topic));
         const ids = new Set(nodes.map(n => n.id));
         const edges = data.edges.filter(e => {
           const s = (e && e.source && e.source.id) ? e.source.id : e.source;
@@ -251,10 +227,10 @@
         // full 데이터가 없으면 다시 불러옴
         if (!full) {
           if (!FULL) return;
-          renderGraph(filter(FULL, getSelectedArchive(), getSelectedTopics(), isMulti()));
+          renderGraph(filter(FULL, getSelectedArchive(), getSelectedTopic()));
           renderDocList(FULL);
         } else {
-          renderGraph(filter(full, getSelectedArchive(), getSelectedTopics(), isMulti()));
+          renderGraph(filter(full, getSelectedArchive(), getSelectedTopic()));
           renderDocList(full);
         }
       }
@@ -324,8 +300,8 @@
           // 아래 C 뷰어 영역에 문서를 연다
           const url = new URL('./viewer.html', location.href);
           url.searchParams.set('id', d.id);
-          const sel = getSelectedTopics();
-          if (sel.length) url.searchParams.set('topic', sel[0]);
+          const sel = getSelectedTopic();
+          if (sel) url.searchParams.set('topic', sel);
           const arch = getSelectedArchive();
           if (arch && arch !== 'ALL') url.searchParams.set('archive', arch);
           document.getElementById('doc-view').src = url.toString();
@@ -399,14 +375,10 @@
 
       function renderDocList(full){
         const arch = getSelectedArchive();
-        const topics = getSelectedTopics();
-        const multi = isMulti();
+        const topic = getSelectedTopic();
         let nodes = full.nodes;
         if (arch && arch !== 'ALL') nodes = nodes.filter(n => n.archive === arch);
-        if (topics.length) {
-          if (multi) nodes = nodes.filter(n => topics.every(t => (n.topics||[]).includes(t)));
-          else nodes = nodes.filter(n => (n.topics||[]).includes(topics[0]));
-        }
+        if (topic) nodes = nodes.filter(n => (n.topics||[]).includes(topic));
         nodes = nodes.sort((a,b)=> (a.label||a.id).localeCompare(b.label||b.id));
         const ul = document.getElementById('doc-list');
           ul.innerHTML = nodes.map(n => {
@@ -419,7 +391,7 @@
           const id = a.getAttribute('data-id');
           const url = new URL('./viewer.html', location.href);
           url.searchParams.set('id', id);
-          if (topics.length) url.searchParams.set('topic', topics[0]);
+          if (topic) url.searchParams.set('topic', topic);
           if (arch && arch !== 'ALL') url.searchParams.set('archive', arch);
           document.getElementById('doc-view').src = url.toString();
         }));

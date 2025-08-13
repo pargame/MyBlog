@@ -23,8 +23,8 @@
     if (site && site.emailUser && site.emailDomain) {
       const user = site.emailUser;
       const domain = site.emailDomain;
-      const span = document.createElement('span');
-      span.textContent = `${user} at ${domain.replace(/\./g, ' dot ')}`;
+  const span = document.createElement('span');
+  span.textContent = 'Email';
       span.style.cursor = 'pointer';
   span.title = 'Send email';
       span.addEventListener('click', () => {
