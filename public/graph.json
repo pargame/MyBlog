@@ -7,7 +7,6 @@
       "file": "posts/2025/hello-world.md",
       "archive": "2025",
       "topics": [
-        "Posts",
         "2025",
         "blog",
         "intro"
@@ -21,9 +20,7 @@
       "base": "README",
       "file": "posts/README.md",
       "archive": "(default)",
-      "topics": [
-        "Posts"
-      ],
+      "topics": [],
       "mtime": 1755075543029.272,
       "date": null
     },
@@ -34,7 +31,6 @@
       "file": "docs/Unreal/AActor.md",
       "archive": "Unreal",
       "topics": [
-        "Docs",
         "Unreal"
       ],
       "mtime": 1755002166683.8376,
@@ -47,7 +43,6 @@
       "file": "docs/Unreal/APawn.md",
       "archive": "Unreal",
       "topics": [
-        "Docs",
         "Unreal"
       ],
       "mtime": 1755002166683.8623,
@@ -75,8 +70,6 @@
   ],
   "topics": [
     "2025",
-    "Docs",
-    "Posts",
     "Unreal",
     "blog",
     "intro"
@@ -84,15 +77,11 @@
   "topicsByArchive": {
     "2025": [
       "2025",
-      "Posts",
       "blog",
       "intro"
     ],
-    "(default)": [
-      "Posts"
-    ],
+    "(default)": [],
     "Unreal": [
-      "Docs",
       "Unreal"
     ]
   }

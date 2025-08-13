@@ -41,31 +41,18 @@
     </footer>
     <script src="./assets/js/footer.js"></script>
     <script>
-      async function getPostsCollections() {
-        try {
-          const r = await fetch('./public/site.json', { cache: 'no-store' });
-          if (!r.ok) return ['Posts'];
-          const s = await r.json();
-          const v = s.postsCollection;
-          if (Array.isArray(v) && v.length) return v;
-          if (typeof v === 'string' && v.trim()) return [v.trim()];
-          return ['Posts'];
-        } catch { return ['Posts']; }
+      function isPostNode(node){
+        const f = (node && node.file) ? String(node.file).replace(/^\.\//, '') : '';
+        return f.startsWith('posts/');
       }
 
-      function inPostsCollection(node, cols) {
-        const topics = node.topics || [];
-        return cols.some(c => node.archive === c || topics.includes(c));
-      }
-
-      async function loadRecent(){
+  async function loadRecent(){
         try {
           const res = await fetch('./public/graph.json', { cache: 'no-store' });
           if (!res.ok) return;
           const g = await res.json();
-          const cols = await getPostsCollections();
           const nodes = (g.nodes||[])
-            .filter(n => inPostsCollection(n, cols))
+    .filter(n => isPostNode(n))
             // Exclude index/README docs from homepage
             .filter(n => (n.base||'').toLowerCase() !== 'readme' && !/\/?README$/i.test(n.id||''))
             .slice()

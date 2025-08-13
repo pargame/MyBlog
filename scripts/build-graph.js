@@ -140,8 +140,7 @@ function main() {
 
   // 문서 상단 태그 파싱(front matter 또는 간단 tags: [..]) + 모든 폴더명을 토픽으로
   const tagSet = new Set();
-  // Include source root label as a topic so collections can be filtered (e.g., 'Posts')
-  if (rootLabel) tagSet.add(rootLabel);
+  // 주: 그래프 토픽 순수화를 위해 루트 라벨(Posts/Docs)은 주입하지 않음
   for (const f of folders) tagSet.add(f);
     for (const t of parseFrontMatterTags(raw)) tagSet.add(t);
     for (const t of parseSimpleTags(raw)) tagSet.add(t);
