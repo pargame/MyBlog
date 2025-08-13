@@ -14,6 +14,19 @@
       "author": "GPT-5"
     },
     {
+      "id": "Unreal/AAIController",
+      "label": "AAIController",
+      "base": "AAIController",
+      "file": "docs/Unreal/AAIController.md",
+      "archive": "Unreal",
+      "topics": [
+        "Unreal"
+      ],
+      "mtime": 1755084165405.3523,
+      "date": null,
+      "author": null
+    },
+    {
       "id": "Unreal/AActor",
       "label": "AActor",
       "base": "AActor",
@@ -23,6 +36,19 @@
         "Unreal"
       ],
       "mtime": 1755002166683.8376,
+      "date": null,
+      "author": null
+    },
+    {
+      "id": "Unreal/ACharacter",
+      "label": "ACharacter",
+      "base": "ACharacter",
+      "file": "docs/Unreal/ACharacter.md",
+      "archive": "Unreal",
+      "topics": [
+        "Unreal"
+      ],
+      "mtime": 1755084161061.9563,
       "date": null,
       "author": null
     },
@@ -38,16 +64,53 @@
       "mtime": 1755002166683.8623,
       "date": null,
       "author": null
+    },
+    {
+      "id": "Unreal/UCharacterMovementComponent",
+      "label": "UCharacterMovementComponent",
+      "base": "UCharacterMovementComponent",
+      "file": "docs/Unreal/UCharacterMovementComponent.md",
+      "archive": "Unreal",
+      "topics": [
+        "Unreal"
+      ],
+      "mtime": 1755084163244.3167,
+      "date": null,
+      "author": null
     }
   ],
   "edges": [
+    {
+      "source": "Unreal/AAIController",
+      "target": "Unreal/APawn"
+    },
     {
       "source": "Unreal/AActor",
       "target": "Unreal/APawn"
     },
     {
+      "source": "Unreal/ACharacter",
+      "target": "Unreal/APawn"
+    },
+    {
+      "source": "Unreal/ACharacter",
+      "target": "Unreal/UCharacterMovementComponent"
+    },
+    {
+      "source": "Unreal/ACharacter",
+      "target": "Unreal/AActor"
+    },
+    {
       "source": "Unreal/APawn",
       "target": "Unreal/AActor"
+    },
+    {
+      "source": "Unreal/UCharacterMovementComponent",
+      "target": "Unreal/ACharacter"
+    },
+    {
+      "source": "Unreal/UCharacterMovementComponent",
+      "target": "Unreal/UCharacterMovementComponent"
     }
   ],
   "archives": [

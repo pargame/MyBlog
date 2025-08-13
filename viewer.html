@@ -117,7 +117,9 @@
 
         let primaryUrl = null;
         if (nodeObj && nodeObj.file) {
-          primaryUrl = `./${nodeObj.file.replace(/^\.\//, '')}`;
+          const clean = nodeObj.file.replace(/^\.\//, '');
+          // Encode each segment to support spaces and special characters in filenames
+          primaryUrl = `./${clean.split('/').map(encodeURIComponent).join('/')}`;
         }
         const safe = buildSafe(id);
         const candidates = [];
