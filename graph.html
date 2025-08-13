@@ -28,8 +28,9 @@
   .fullbleed { position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; width: 100vw; border-radius: 0; }
   /* Graph overlay controls (subtle) */
   #graph-area { position: relative; }
+  .graph-wrap { position: relative; }
   #graph { position: relative; overflow: hidden; }
-  #graph-ctl { position: absolute; top: 12px; right: 12px; z-index: 10; background: rgba(11,16,32,0.48); border: none; border-radius: 10px; padding: 6px; backdrop-filter: blur(4px); transition: opacity .25s ease; }
+  #graph-ctl { position: absolute; top: 12px; right: 12px; left: 12px; z-index: 10; background: rgba(11,16,32,0.48); border: none; border-radius: 10px; padding: 6px; backdrop-filter: blur(4px); transition: opacity .25s ease; max-width: calc(100% - 24px); }
   /* Prevent overlay from blocking clicks outside controls */
   #graph-ctl { pointer-events: none; }
   #graph-ctl .row button, #graph-ctl input, #graph-ctl label { pointer-events: auto; }
@@ -64,8 +65,9 @@
 
       <!-- Graph (full-bleed) with subtle overlay settings -->
       <div class="card fullbleed" id="graph-area">
-        <div class="graph-wrap" id="graph"></div>
-  <div id="graph-ctl">
+        <div class="graph-wrap">
+          <div id="graph"></div>
+          <div id="graph-ctl">
           <div class="row">
             <button id="ctl-toggle" class="btn" title="Toggle graph settings" aria-label="Toggle graph settings">⚙ Settings</button>
             <button id="ctl-reset" class="btn">Reset</button>
@@ -78,6 +80,7 @@
             <div class="row"><label>Node size <input id="ctl-size" type="range" min="6" max="26" value="6" data-default="6" /> <span id="val-size" class="legend"></span></label></div>
             <div class="row"><label>Focus zoom <input id="ctl-focus" type="range" min="0.8" max="2" step="0.1" value="1.2" data-default="1.2" /> <span id="val-focus" class="legend"></span></label></div>
             <div class="row"><label>Overlay idle <input id="ctl-timeout" type="range" min="1" max="6" step="0.5" value="2.5" data-default="2.5" /> <span id="val-timeout" class="legend"></span><span class="legend">s</span></label></div>
+          </div>
           </div>
         </div>
       </div>
