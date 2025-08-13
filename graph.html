@@ -212,7 +212,11 @@
           else nodes = nodes.filter(n => (n.topics||[]).includes([...sel][0]));
         }
         const ids = new Set(nodes.map(n => n.id));
-        const edges = data.edges.filter(e => ids.has(e.source) && ids.has(e.target));
+        const edges = data.edges.filter(e => {
+          const s = (e && e.source && e.source.id) ? e.source.id : e.source;
+          const t = (e && e.target && e.target.id) ? e.target.id : e.target;
+          return ids.has(s) && ids.has(t);
+        });
         return { nodes, edges };
       }
 
