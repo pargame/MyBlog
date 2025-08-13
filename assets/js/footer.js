@@ -24,9 +24,11 @@
       const user = site.emailUser;
       const domain = site.emailDomain;
   const span = document.createElement('span');
-  span.textContent = 'Email';
-      span.style.cursor = 'pointer';
+  span.className = 'email';
+  span.setAttribute('data-user', user);
+  span.setAttribute('data-domain', domain);
   span.title = 'Send email';
+  span.style.cursor = 'pointer';
       span.addEventListener('click', () => {
         const mail = `${user}@${domain}`;
         location.href = `mailto:${mail}`;

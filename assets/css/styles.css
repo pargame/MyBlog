@@ -75,6 +75,11 @@ input[type="range"]{ accent-color: var(--accent); }
 #doc-list a { display:inline-block; padding: 2px 4px; border-radius: 6px; }
 #doc-list a:hover { background: rgba(110,168,254,0.12); text-decoration: none; }
 
+/* Obfuscate email text for basic scrapers */
+.email::before {
+  content: attr(data-user) "@" attr(data-domain);
+}
+
 /* Code block (base token colors) */
 .md pre code { display:block; }
 .md code .token.keyword { color: #9fd2ff; }
