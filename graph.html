@@ -396,7 +396,11 @@
         }
         nodes = nodes.sort((a,b)=> (a.label||a.id).localeCompare(b.label||b.id));
         const ul = document.getElementById('doc-list');
-        ul.innerHTML = nodes.map(n => `<li><a data-id="${n.id}" href="#">${n.label || n.id}</a> <span class=\"legend\">(${(n.topics||[]).join(', ')})</span></li>`).join('');
+          ul.innerHTML = nodes.map(n => {
+            const topics = n.topics || [];
+            const meta = topics.length ? `(${topics.join(', ')})` : '';
+            return `<li><a data-id="${n.id}" href="#">${n.label || n.id}</a>${meta ? ` <span class=\"legend\">${meta}</span>` : ''}</li>`;
+          }).join('');
         ul.querySelectorAll('a').forEach(a => a.addEventListener('click', (e) => {
           e.preventDefault();
           const id = a.getAttribute('data-id');

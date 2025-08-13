@@ -26,8 +26,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Install deps
+        run: npm ci || npm install
       - name: Build graph
         run: node scripts/build-graph.js
+      - name: Build meta
+        run: node scripts/build-meta.js
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
