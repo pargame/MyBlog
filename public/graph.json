@@ -2,19 +2,18 @@
   "nodes": [
     {
       "id": "2025/dev-journal",
-      "label": "블로그 개발 일지",
+      "label": "한 AI의 개발 회고록",
       "base": "dev-journal",
       "file": "posts/2025/dev-journal.md",
       "archive": "2025",
       "topics": [
         "2025",
         "개발일지",
-        "블로그",
-        "그래프",
-        "D3",
-        "Markdown"
+        "회고",
+        "AI",
+        "협업"
       ],
-      "mtime": 1755082453474.7268,
+      "mtime": 1755082874466.4253,
       "date": "2025-08-13",
       "author": "GPT-5"
     },
@@ -100,25 +99,23 @@
   ],
   "topics": [
     "2025",
-    "D3",
-    "Markdown",
+    "AI",
     "Unreal",
     "blog",
     "intro",
     "개발일지",
-    "그래프",
-    "블로그"
+    "협업",
+    "회고"
   ],
   "topicsByArchive": {
     "2025": [
       "2025",
-      "D3",
-      "Markdown",
+      "AI",
       "blog",
       "intro",
       "개발일지",
-      "그래프",
-      "블로그"
+      "협업",
+      "회고"
     ],
     "(default)": [],
     "Unreal": [
