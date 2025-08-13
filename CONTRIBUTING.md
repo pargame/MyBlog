@@ -33,3 +33,5 @@ This document summarizes the minimum you need to work in this repo.
 ## Maintenance policy
 - UI language: all pages, labels, buttons, and visible strings must be English.
 - Content naming: domain-specific docs (e.g., `AActor.md`) may follow separate naming rules. See `MAINTENANCE.md` for the canonical conventions and keep them updated when rules change.
+ - Documentation language: all work/maintenance documents in this repo are written in English only.
+ - Homepage scope: the Posts collection name is configured via `public/site.json` → `postsCollection`; if not set, it defaults to "Posts".

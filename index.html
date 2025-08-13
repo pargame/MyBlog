@@ -41,12 +41,34 @@
     </footer>
     <script src="./assets/js/footer.js"></script>
     <script>
+      async function getPostsCollections() {
+        try {
+          const r = await fetch('./public/site.json', { cache: 'no-store' });
+          if (!r.ok) return ['Posts'];
+          const s = await r.json();
+          const v = s.postsCollection;
+          if (Array.isArray(v) && v.length) return v;
+          if (typeof v === 'string' && v.trim()) return [v.trim()];
+          return ['Posts'];
+        } catch { return ['Posts']; }
+      }
+
+      function inPostsCollection(node, cols) {
+        const topics = node.topics || [];
+        return cols.some(c => node.archive === c || topics.includes(c));
+      }
+
       async function loadRecent(){
         try {
           const res = await fetch('./public/graph.json', { cache: 'no-store' });
           if (!res.ok) return;
           const g = await res.json();
-          const nodes = (g.nodes||[]).slice().sort((a,b)=> (b.mtime||0)-(a.mtime||0)).slice(0, 20);
+          const cols = await getPostsCollections();
+          const nodes = (g.nodes||[])
+            .filter(n => inPostsCollection(n, cols))
+            .slice()
+            .sort((a,b)=> (b.mtime||0)-(a.mtime||0))
+            .slice(0, 20);
           const ul = document.getElementById('recent-list');
           ul.innerHTML = nodes.map(n => {
             const u = new URL('./viewer.html', location.href);

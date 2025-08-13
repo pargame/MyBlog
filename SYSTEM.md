@@ -25,7 +25,8 @@ A static, client-rendered site with a generated knowledge graph derived from Mar
 - public/meta.json
   - { version: string, commit: string }
 - public/site.json
-  - { emailUser: string, emailDomain: string }
+  - { emailUser: string, emailDomain: string, postsCollection?: string | string[] }
+  - postsCollection: Name(s) of the folder/tag used as the Posts collection (default: "Posts"). The homepage shows only items within these collections.
 
 ## UI behavior highlights
 - Graph (graph.html):

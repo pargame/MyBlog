@@ -25,7 +25,8 @@ npm run build:meta    # writes public/meta.json (version/commit) and public/site
 Outputs
 - public/graph.json: graph data (nodes, edges, archives, topicsByArchive)
 - public/meta.json: { version (from package.json), commit (from git) }
-- public/site.json: { emailUser, emailDomain } (created if missing)
+- public/site.json: { emailUser, emailDomain, postsCollection? } (created if missing)
+  - postsCollection: string or string[] naming the Posts collection(s). If omitted, defaults to "Posts".
 
 ## Versioning
 - Version is read from package.json: "version"

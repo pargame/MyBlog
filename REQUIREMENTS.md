@@ -4,6 +4,7 @@ User goals
 - Personal blog hosted on GitHub Pages
 - Knowledge graph view like Obsidian (separate page)
 - Homepage shows recent posts, not the graph
+	- Only list items within the Posts collection (configurable via site.json `postsCollection`, default "Posts")
 - Consistent header/footer; footer shows email + version + commit
 - Topic filter: multi-select from folder hierarchy + #tags
 - Archive filter: years and months, human-friendly labels
