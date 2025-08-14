@@ -35,25 +35,25 @@
     background: rgba(11,16,32,0.85);
     border: 1px solid rgba(30,39,73,0.6);
     border-radius: 12px;
-    padding: 10px; /* compact when collapsed; expanded states override */
+    padding: 8px; /* compact for link-style controls */
     backdrop-filter: blur(8px);
   transition: all .25s ease;
     pointer-events: auto;
     overflow: visible; /* prevent inner button focus/active rings from clipping */
   }
-  /* Expanded overlays: add breathing room */
+  /* Expanded overlays: moderate breathing room */
   .graph-overlay.show,
-  .graph-overlay.search-box.active { padding: 16px; }
+  .graph-overlay.search-box.active { padding: 12px; }
 
   /* Archive overlay: center align buttons */
   #archive-ctl { text-align: center; }
   #archive-ctl > .btn { display: inline-block; }
-  #archive-ctl .body { padding-top: 6px; }
+  #archive-ctl .body { padding-top: 4px; }
   #archive-ctl #archives {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     overflow: visible;
   }
   
