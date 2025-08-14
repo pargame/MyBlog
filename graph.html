@@ -197,7 +197,7 @@
   .node.topic-3 circle { fill: #ffd97d; }
   .node.topic-4 circle { fill: #aaf683; }
   .node.topic-5 circle { fill: #57c7ff; }
-      .node text { fill: #e7ecff; font-size: 12px; }
+  .node text { fill: #e7ecff; font-size: 12px; pointer-events: none; }
   .link { stroke: #3a4b86; stroke-opacity: .6; transition: opacity .18s ease, stroke-opacity .18s ease; }
   .faded { opacity: 0.15; }
   .node.selected circle { stroke: #ffd97d; stroke-width: 3px; }
@@ -639,12 +639,12 @@
   // Collision to improve feel
   simulation.force('collide', d3.forceCollide(radius).strength(0.7));
 
-  nodeSel.append('circle').attr('r', radius).attr('stroke-width', Math.max(1, linkWidth/2));
+  const circleSel = nodeSel.append('circle').attr('r', radius).attr('stroke-width', Math.max(1, linkWidth/2));
   nodeSel.append('text').attr('x', 12).attr('y', 4).text(d => d.label || d.id);
   nodeSel.classed('isolated', d => isolatedIds.has(d.id));
 
   // Node click opens overlay instead of iframe
-  nodeSel.on('click', (_, d) => {
+  circleSel.on('click', (_, d) => {
     openDocumentOverlay(d.id);
   });
 
@@ -697,11 +697,11 @@
           adj.get(t).add(s);
         }
         let hoverTimer = null;
-        nodeSel.on('mouseover', (_, d) => {
+  circleSel.on('mouseover', (_, d) => {
           if (hoverTimer) { clearTimeout(hoverTimer); hoverTimer = null; }
           applyHighlight(d.id);
         });
-        nodeSel.on('mouseout', () => {
+  circleSel.on('mouseout', () => {
           // defer clearing slightly for smoother feel
           if (hoverTimer) clearTimeout(hoverTimer);
           hoverTimer = setTimeout(() => clearHighlight(), 90);
