@@ -138,6 +138,7 @@
   let zoomBehavior = null;
         let degMap = null;
   let selectedId = null;
+  let pendingFocus = null;
   let GRAPH_W = null, GRAPH_H = null;
   // Doc list state (filter only)
   let docFilter = '';
@@ -447,7 +448,18 @@
         try {
           if (!svg || !inner || !zoomBehavior || !CUR) return;
           const n = (CUR.nodes||[]).find(x => x.id === id);
-          if (!n || typeof n.x !== 'number' || typeof n.y !== 'number') return;
+          if (!n) return;
+          if (typeof n.x !== 'number' || typeof n.y !== 'number') {
+            // Retry a few times until layout stabilizes
+            const tries = (pendingFocus && pendingFocus.id === id) ? pendingFocus.tries + 1 : 0;
+            if (tries < 15) {
+              pendingFocus = { id, tries };
+              setTimeout(() => focusNodeById(id, opts), 80);
+            } else {
+              pendingFocus = null;
+            }
+            return;
+          }
           const scale = typeof opts.scale === 'number' ? opts.scale : getFocusScale();
           const width = GRAPH_W||inner.node().ownerSVGElement.clientWidth||600;
           const height = GRAPH_H||inner.node().ownerSVGElement.clientHeight||600;
@@ -455,6 +467,7 @@
           const ty = (height/2) - n.y * scale;
           const t = d3.zoomIdentity.translate(tx, ty).scale(scale);
           svg.transition().duration(450).call(zoomBehavior.transform, t);
+          pendingFocus = null;
         } catch {}
       }
 
@@ -507,12 +520,12 @@
           if (topic) url.searchParams.set('topic', topic);
           if (arch && arch !== 'ALL') url.searchParams.set('archive', arch);
           url.searchParams.set('from', 'graph');
-          document.getElementById('doc-view').src = url.toString();
-          // Scroll viewer into view for convenience
-          document.getElementById('panel-viewer').scrollIntoView({ behavior:'smooth', block:'start' });
-          // Highlight and focus selected node in graph, if present
+          // Highlight and focus first, so camera moves before page scrolls
           setSelected(id);
           focusNodeById(id);
+          // Then open in viewer and scroll
+          document.getElementById('doc-view').src = url.toString();
+          document.getElementById('panel-viewer').scrollIntoView({ behavior:'smooth', block:'start' });
           bumpOverlay();
         }));
       }
