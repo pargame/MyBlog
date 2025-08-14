@@ -419,8 +419,9 @@
         frame.src = url.toString();
         overlay.classList.add('open');
         
-        // Listen for navigation messages from the iframe
-        window.addEventListener('message', handleViewerNavigation);
+  // Listen for navigation messages from the iframe (avoid duplicates)
+  window.removeEventListener('message', handleViewerNavigation);
+  window.addEventListener('message', handleViewerNavigation);
       }
 
       function closeDocumentOverlay() {
@@ -603,16 +604,13 @@
         }
 
         // 팬 + 버튼 줌만 허용 (휠 줌 비활성화)
-        zoomBehavior = d3.zoom()
-          .scaleExtent([0.2, 3])
-          .filter(event => {
-            // Allow pan but disable wheel zoom
-            return event.type !== 'wheel';
-          })
-          .on('zoom', (ev) => {
-            currentTransform = ev.transform;
-            inner.attr('transform', currentTransform);
-          });
+          // 줌/팬: 휠/더블클릭 확대 허용
+          zoomBehavior = d3.zoom()
+            .scaleExtent([0.2, 3])
+            .on('zoom', (ev) => {
+              currentTransform = ev.transform;
+              inner.attr('transform', currentTransform);
+            });
         svg.call(zoomBehavior);
         // Reapply any existing transform after (re)binding zoom
         try { if (currentTransform) svg.call(zoomBehavior.transform, currentTransform); } catch {}
@@ -724,18 +722,6 @@
   load();
   // populate footer with repo info
   window.populateFooter && window.populateFooter({ repo: 'pargame/MyBlog' });
-  // Sync overlay visibility with scroll to avoid overlaying other sections
-  function syncOverlayVisibility(){
-    const area = document.getElementById('graph-area');
-    const ctl = document.getElementById('graph-ctl');
-    if (!area || !ctl) return;
-    const r = area.getBoundingClientRect();
-    const visible = r.bottom > 0 && r.top < (window.innerHeight || document.documentElement.clientHeight);
-    ctl.style.visibility = visible ? 'visible' : 'hidden';
-  }
-  window.addEventListener('scroll', syncOverlayVisibility, { passive: true });
-  window.addEventListener('resize', syncOverlayVisibility);
-  syncOverlayVisibility();
   // Receive navigation messages from viewer to update highlight
   window.addEventListener('message', (ev) => {
     try {
