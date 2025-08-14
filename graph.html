@@ -136,6 +136,7 @@
         let simulation = null;
   let svg = null, inner = null, linkSel = null, nodeSel = null;
   let zoomBehavior = null;
+  let currentTransform = d3.zoomIdentity;
         let degMap = null;
   let selectedId = null;
   let pendingFocus = null;
@@ -304,6 +305,8 @@
   d3.select('#graph').selectAll('*').remove();
   svg = d3.select('#graph').append('svg').attr('width', width).attr('height', height);
   inner = svg.append('g');
+  // Apply previous transform so zoom/pan persists across rerenders
+  try { if (currentTransform) inner.attr('transform', currentTransform); } catch {}
 
         const distance = +document.getElementById('ctl-distance').value;
         const charge = +document.getElementById('ctl-charge').value;
@@ -398,10 +401,13 @@
 
         // 줌/팬
         zoomBehavior = d3.zoom().scaleExtent([0.2, 3]).on('zoom', (ev) => {
-          inner.attr('transform', ev.transform);
+          currentTransform = ev.transform;
+          inner.attr('transform', currentTransform);
           bumpOverlay();
         });
         svg.call(zoomBehavior);
+        // Reapply any existing transform after (re)binding zoom
+        try { if (currentTransform) svg.call(zoomBehavior.transform, currentTransform); } catch {}
 
         // 이웃 하이라이트
         const adj = new Map();
