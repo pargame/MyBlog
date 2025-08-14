@@ -1,6 +1,19 @@
 {
   "nodes": [
     {
+      "id": "2025/actions-autodeploy-check",
+      "label": "GitHub Actions 자동 배포 점검",
+      "base": "actions-autodeploy-check",
+      "file": "posts/2025/actions-autodeploy-check.md",
+      "archive": "2025",
+      "topics": [
+        "2025"
+      ],
+      "mtime": 1755156268016.4104,
+      "date": "2025-08-14",
+      "author": "pargame"
+    },
+    {
       "id": "2025/dev-journal",
       "label": "개발일지 1 — 지식 그래프 블로그를 세우기까지",
       "base": "dev-journal",
@@ -1738,6 +1751,14 @@
     }
   ],
   "edges": [
+    {
+      "source": "2025/actions-autodeploy-check",
+      "target": "2025/hello-world"
+    },
+    {
+      "source": "2025/actions-autodeploy-check",
+      "target": "2025/dev-journal"
+    },
     {
       "source": "Unreal/AAIController",
       "target": "APawn"
