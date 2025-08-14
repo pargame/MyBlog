@@ -4,23 +4,8 @@
 		{
 			"label": "Commit & Push (deploy)",
 			"type": "shell",
-			"command": "git",
-			"args": [
-				"add",
-				"-A",
-				"&&",
-				"git",
-				"commit",
-				"-m",
-				"\"chore: commit & push (auto-deploy)\"",
-				"||",
-				"true",
-				"&&",
-				"git",
-				"push",
-				"origin",
-				"main"
-			],
+			"command": "npm",
+			"args": ["run", "deploy"],
 			"isBackground": false,
 			"problemMatcher": [
 				"$eslint-stylish"

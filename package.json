@@ -5,6 +5,7 @@
   "scripts": {
   "build:graph": "node scripts/build-graph.js",
   "build:meta": "node scripts/build-meta.js",
-  "build": "npm run build:graph && npm run build:meta"
+  "build": "npm run build:graph && npm run build:meta",
+  "deploy": "git add -A && git commit -m \"chore: commit & push (auto-deploy)\" || true && git push origin main"
   }
 }

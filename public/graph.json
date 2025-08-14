@@ -2,16 +2,16 @@
   "nodes": [
     {
       "id": "2025/actions-autodeploy-check",
-      "label": "GitHub Actions 자동 배포 점검",
+      "label": "actions-autodeploy-check",
       "base": "actions-autodeploy-check",
       "file": "posts/2025/actions-autodeploy-check.md",
       "archive": "2025",
       "topics": [
         "2025"
       ],
-      "mtime": 1755156372406.0103,
-      "date": "2025-08-14",
-      "author": "pargame"
+      "mtime": 1755158920397.7349,
+      "date": null,
+      "author": null
     },
     {
       "id": "2025/dev-journal",
@@ -25,30 +25,6 @@
       "mtime": 1755083740956.7405,
       "date": "2025-08-13",
       "author": "GPT-5"
-    },
-    {
-      "id": "2025/hello-world",
-      "label": "hello-world",
-      "base": "hello-world",
-      "file": "posts/2025/hello-world.md",
-      "archive": "2025",
-      "topics": [
-        "2025"
-      ],
-      "mtime": 1755151926280.2383,
-      "date": null,
-      "author": null
-    },
-    {
-      "id": "README",
-      "label": "README",
-      "base": "README",
-      "file": "posts/README.md",
-      "archive": "(default)",
-      "topics": [],
-      "mtime": 1755151926255.708,
-      "date": null,
-      "author": null
     },
     {
       "id": "Unreal/AAIController",
@@ -1729,14 +1705,6 @@
     }
   ],
   "edges": [
-    {
-      "source": "2025/actions-autodeploy-check",
-      "target": "2025/hello-world"
-    },
-    {
-      "source": "2025/actions-autodeploy-check",
-      "target": "2025/dev-journal"
-    },
     {
       "source": "Unreal/AAIController",
       "target": "Unreal/APawn"
@@ -3475,7 +3443,6 @@
     }
   ],
   "archives": [
-    "(default)",
     "2025",
     "Unreal"
   ],
@@ -3487,7 +3454,6 @@
     "2025": [
       "2025"
     ],
-    "(default)": [],
     "Unreal": [
       "Unreal"
     ]

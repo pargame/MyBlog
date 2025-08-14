@@ -1,10 +1,31 @@
 # macOS
 .DS_Store
 
+.Spotlight-V100
+.Trashes
+*.swp
+*.swo
+
 # Node tooling (optional)
 node_modules/
+
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
 # Build output (if added later)
 dist/
 .out/
 .next/
+
+# Local env and cache
+.env*
+.cache/
+tmp/
+.temp/
+
+# Editor/IDE
+.idea/
+.vscode/*
+!.vscode/tasks.json
+!.vscode/settings.json
