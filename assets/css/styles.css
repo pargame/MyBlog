@@ -52,7 +52,7 @@ input[type="range"]{ accent-color: var(--accent); }
   text-decoration: none;
 }
 .btn:hover { background: #152452; box-shadow: 0 6px 18px rgba(0,0,0,0.2); }
-.btn.active { outline: 2px solid var(--accent); }
+.btn.active { outline: none; box-shadow: 0 0 0 2px var(--accent); }
 
 /* Graph container */
 .graph-wrap {
