@@ -30,6 +30,18 @@
 권장 운영 흐름
 1) 변경 작업 → 2) `npm run build`로 로컬 확인(선택) → 3) 커밋/푸시 → 4) Actions 로그 확인(필요 시)
 
+## Git 운영 규칙(중요)
+- 기본 원칙: 변경사항은 “모두 스테이징(add -A) → 커밋 → 푸시” 한다.
+- 예외/노이즈 파일은 `.gitignore`로 적극 제외한다. “스테이징을 선별해서 남기는” 방식은 사용하지 않는다.
+- 생성 산출물과 개인 환경 파일은 반드시 ignore:
+	- `public/meta.json` (배포 시 생성)
+	- `node_modules/`, `dist/`, `.out/`, `.next/`
+	- 로그/캐시: `npm-debug.log*`, `yarn-error.log*`, `pnpm-debug.log*`, `.cache/`, `tmp/`, `.temp/`
+	- 로컬/OS/IDE: `.DS_Store`, `.Spotlight-V100`, `.Trashes`, `.idea/`, `.vscode/*` (필요 파일만 예외 허용)
+
+작업 편의
+- VS Code 작업: Tasks의 “Commit & Push (deploy)” 또는 `npm run deploy`를 사용하면 전체 스테이징/푸시가 한 번에 수행된다.
+
 문제 해결(Troubleshooting)
 - 배포 실패: Actions 로그에서 npm install/build 단계 오류 확인
 - 홈에 글 미노출: `public/graph.json` 노드에 file이 `posts/`로 시작하는지, front matter(date/author) 형식 확인
