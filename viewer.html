@@ -18,6 +18,18 @@
       :root:has(body[data-embedded="1"]) .site-header { display: none !important; }
       :root:has(body[data-embedded="1"]) .site-footer { display: none !important; }
       :root:has(body[data-embedded="1"]) main.container { margin-top: 0; padding-top: 8px; }
+      /* 오버레이(임베드)에서는 상단 링크 레전드 숨김 */
+      :root:has(body[data-embedded="1"]) #link-legend { display: none !important; }
+
+      /* Unreal 아카이브 전용(Things 유사) 스타일 살짝 적용 */
+      body[data-archive="Unreal"] .md {
+        background: rgba(13, 18, 38, 0.92);
+        border-color: rgba(110, 168, 254, 0.28);
+      }
+      body[data-archive="Unreal"] .md h1,
+      body[data-archive="Unreal"] .md h2,
+      body[data-archive="Unreal"] .md h3 { letter-spacing: 0.2px; }
+      body[data-archive="Unreal"] .md hr { border: none; height: 1px; background: rgba(110,168,254,0.18); }
     </style>
   </head>
   <body>
@@ -98,9 +110,14 @@
 
   const topic = getTopicParam();
   const arch = getArchiveParam();
-  // Hide legend if no archive/topic context (e.g., opened from Home)
+  // 아카이브 값을 body data-속성으로 노출(테마 제어용)
+  if (arch) { try { document.body.setAttribute('data-archive', arch); } catch {} }
+  // Hide legend if no archive/topic context OR when embedded in overlay
   const lg = document.getElementById('link-legend');
-  if (lg) lg.style.display = (topic || arch) ? '' : 'none';
+  if (lg) {
+    const isEmbedded = document.body.getAttribute('data-embedded') === '1';
+    lg.style.display = isEmbedded ? 'none' : ((topic || arch) ? '' : 'none');
+  }
         const id = resolveCanonicalId(idRaw, graph, arch, topic);
 
         // 그래프의 노드 정보로 실제 파일 경로를 우선 사용 (posts/... 또는 docs/...)
@@ -180,6 +197,17 @@
         const rawHtml = marked.parse(preprocessed, { mangle: false, headerIds: true });
   const safeHtml = DOMPurify.sanitize(rawHtml);
         document.getElementById('content').innerHTML = safeHtml;
+        // Unreal 문서의 시작 부분에 관용적으로 들어간 --- 라인 1~2개 제거
+        try {
+          if (arch === 'Unreal') {
+            const cont = document.getElementById('content');
+            let removed = 0;
+            while (cont.firstElementChild && cont.firstElementChild.tagName === 'HR' && removed < 2) {
+              cont.removeChild(cont.firstElementChild);
+              removed++;
+            }
+          }
+        } catch {}
         // 코드 하이라이트 적용
         document.querySelectorAll('#content pre code').forEach((el) => {
           try { window.hljs && window.hljs.highlightElement(el); } catch {}
