@@ -18,6 +18,9 @@ dist/
 .out/
 .next/
 
+# Generated at build/deploy time
+public/meta.json
+
 # Local env and cache
 .env*
 .cache/

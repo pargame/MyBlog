@@ -7,6 +7,7 @@
 - 그래프(graph.html): 아카이브/노트 전용(Posts 제외), 아카이브/토픽 필터, 역링크 표시
 - 뷰어(viewer.html): 안전한 Markdown 렌더링(DOMPurify), 코드 하이라이트, 상단에 제목 · 날짜 · 작성자 메타 표시
 - 자동 산출물: public/graph.json(그래프), public/meta.json(버전/커밋)
+ - 자동 산출물: public/graph.json(그래프), public/meta.json(버전/커밋; 배포 시 자동 생성·관리, git에선 무시)
 
 ## 콘텐츠 모델
 - posts/: 홈에 보이는 블로그 포스트
