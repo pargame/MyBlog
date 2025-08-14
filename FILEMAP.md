@@ -6,7 +6,7 @@ Top-level
 - viewer.html — Markdown viewer (secure). Shows title · date · author header
 - .nojekyll — Disable Jekyll on Pages
 - README.md — Project overview and quickstart
-- handbook/** — All project docs (moved from root)
+- handbook/** — Canonical project docs (root files are stubs pointing here)
 
 Public data
 - public/graph.json — Built graph data
