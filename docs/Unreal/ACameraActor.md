@@ -23,7 +23,17 @@
 * **디버깅 및 개발:
 ** 개발 중에 특정 위치를 쉽게 확인하기 위한 북마크처럼 사용할 수 있습니다.
 
-### **4. `ACameraActor` vs. [[APlayerCameraManager]]**
+### **4. 관련 클래스**
+* **[[UCameraComponent]]:**
+    `ACameraActor`의 핵심 기능을 제공하는 컴포넌트입니다.
+* **[[APlayerController]]:**
+    `SetViewTarget` 함수를 통해 플레이어의 시점을 이 액터로 전환할 수 있습니다.
+* **[[APlayerCameraManager]]:**
+    플레이어의 최종적인 카메라 뷰를 관리하고, 카메라 효과를 추가하는 역할을 합니다.
+* **[[APawn]]:**
+    플레이어가 직접 조종하는 액터로, 보통 자체적인 카메라 컴포넌트를 가지고 있습니다.
+
+### **5. `ACameraActor` vs. [[APlayerCameraManager]]**
 * **`ACameraActor` (카메라 자체):
 ** 월드에 배치되는 '물리적인' 카메라입니다. 위치와 방향을 가진 단순한 액터입니다.
 * **[[APlayerCameraManager]] (카메라 감독):** 플레이어의 '눈'입니다. 어떤 카메라(`ACameraActor`가 될 수도, [[APawn]]에 달린 카메라 컴포넌트가 될 수도 있음)를 통해 세상을 볼지 결정하고, 화면 흔들림이나 페이드 같은 '효과'를 추가하는 역할을 합니다.

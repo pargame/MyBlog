@@ -26,7 +26,7 @@
 **
 	컴포넌트의 스케일을 고려하지 않은 원본 박스 범위를 반환합니다.
 
-### **3. 주요 서브클래스**
+### **4. 주요 서브클래스**
 > `UBoxComponent`는 `UShapeComponent`를 상속하며, `UShapeComponent`에는 다음과 같은 다른 기본 도형 컴포넌트들이 있습니다.
 * **[[USphereComponent]]:
 **
@@ -37,7 +37,7 @@
 
 이들은 모두 [[UPrimitiveComponent]]를 상속받으므로, `OnComponentBeginOverlap`, `OnComponentEndOverlap`, `OnComponentHit`과 같은 충돌 [[Event]]를 동일하게 사용할 수 있습니다.
 
-### **4. 사용 예시**
+### **5. 사용 예시**
 * **자동문:
 **
 	문 액터 앞에 `UBoxComponent`를 트리거로 배치하고, 플레이어가 오버랩되면 문을 여는 타임라인을 재생합니다.
@@ -47,3 +47,15 @@
 * **강이나 위험 구역:
 **
 	강이나 용암 지대에 걸쳐 넓은 `UBoxComponent`를 배치하고, 플레이어가 오버랩되면 지속적으로 피해를 입히거나 즉사시킵니다.
+
+### **6. 관련 클래스**
+* **[[UPrimitiveComponent]]:**
+    모든 렌더링 가능한 컴포넌트의 부모 클래스입니다.
+* **[[UShapeComponent]]:**
+    기본 도형 충돌 컴포넌트들의 부모 클래스입니다.
+* **[[USphereComponent]]:**
+    구 형태의 충돌 컴포넌트입니다.
+* **[[UCapsuleComponent]]:**
+    캡슐 형태의 충돌 컴포넌트입니다.
+* **[[Event]]:**
+    오버랩 이벤트 등을 처리하는 데 사용됩니다.
