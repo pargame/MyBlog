@@ -1,33 +1,30 @@
 # Maintenance Policy
 
-This document captures conventions that are important for consistency and automation.
+일관성과 자동화를 위해 지켜야 할 운영 규칙을 정리합니다.
 
-## UI language
-- All user-facing text must be English.
+## UI/문서 언어
+- 사용자 노출 텍스트는 한국어 위주로 작성해도 됩니다.
+- 코드/데이터/파일명은 안정성을 위해 임의 변환(자동 번역/리네이밍)을 피합니다.
 
-## Content/document naming
-- Primary content folder: `posts/**`. Legacy `docs/**` is still read by the builder, but prefer `posts/`.
-- Do not auto-translate domain filenames or headings.
-- Wiki links `[[...]]` rely on stable basenames.
+## 콘텐츠/파일 규칙
+- 주 폴더: `posts/**` (권장). 레거시 `docs/**`도 빌더가 읽지만 신규는 `posts/`에 작성.
+- 위키 링크 `[[...]]`는 basename으로 해석되니 파일명은 안정적으로 유지.
 
-## Review checklist
-- [ ] UI additions are in English
-- [ ] Footer/tooltips in English
-- [ ] README/docs consistent with policy
-- [ ] Domain files (e.g., `AActor.md`) respect their own conventions
+## 리뷰 체크리스트
+- [ ] README/handbook/FILEMAP가 최신 상태인지
+- [ ] footer(버전/커밋/이메일) 정상 표기되는지
+- [ ] 그래프/뷰어 동작(검색, 포커스, 오버레이) 이상 없는지
+- [ ] 빌드 산출물(`public/graph.json`, `public/meta.json`) 최신인지
 
+## 자동 배포(GitHub Pages)
+- main 브랜치에 push 되면 `.github/workflows/pages.yml`이 실행되어 자동 배포됩니다.
+- 워크플로 개요: checkout → configure-pages → Node 20 + npm ci → build-graph → build-meta → upload → deploy
 
-## Auto-publish rule (GitHub Pages)
+권장 운영 흐름
+1) 변경 작업 → 2) `npm run build`로 로컬 확인(선택) → 3) 커밋/푸시 → 4) Actions 로그 확인(필요 시)
 
-This site is deployed from the `main` branch. To see changes on the live site, every code/content change must be pushed to `main`.
-
-Operational rule:
-- After you edit or generate files in this workspace, always stage, commit, and push.
-- Prefer small, focused commits with clear messages.
-
-Standard flow:
-1. Stage relevant changes
-2. Commit with a descriptive message
-3. Push to `origin main`
-
-If the working tree has unrelated untracked content you don't want to publish yet, stage only the files you intend to deploy.
+문제 해결(Troubleshooting)
+- 배포 실패: Actions 로그에서 npm install/build 단계 오류 확인
+- 홈에 글 미노출: `public/graph.json` 노드에 file이 `posts/`로 시작하는지, front matter(date/author) 형식 확인
+- 그래프가 비어있음: `scripts/build-graph.js` 실행 여부, `public/graph.json` 파일 존재 여부 확인
+- 중복 워크플로: `.github/workflows/pages.yml`만 남겨 유지(중복은 제거됨)

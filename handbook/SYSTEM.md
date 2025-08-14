@@ -9,7 +9,7 @@ A static, client-rendered site with a generated knowledge graph derived from Mar
   - scripts/build-meta.js → derive meta.json (version/commit), site.json (contact/email)
 - Frontend pages:
   - index.html → recent posts, navigation
-  - graph.html → interactive D3 graph + filters + doc list
+  - graph.html → interactive D3 graph + filters + search + document overlay
   - viewer.html → secure markdown rendering (Marked + DOMPurify + Highlight.js)
 - Assets:
   - assets/css/styles.css → global + components
@@ -32,10 +32,11 @@ A static, client-rendered site with a generated knowledge graph derived from Mar
 - Graph (graph.html):
   - D3 force simulation with collision; sizes/positions stable on filter changes (container size cached)
   - Hover: highlight node + neighbors; Click: select node with outline
-  - Filters: multi-select topics, archive picker; doc list syncs with current filter
+  - Filters/Controls: archive picker, force/size controls; native zoom/pan only
+  - Search: clicking a result opens the document overlay and focuses the node
 - Viewer (viewer.html):
   - Parses markdown to HTML with Marked, sanitizes with DOMPurify, highlights code with highlight.js
-  - Shows backlinks section
+  - Shows backlinks section; posts one-shot message to graph to sync selection
 
 ## Security
 - All markdown rendered through DOMPurify to avoid XSS

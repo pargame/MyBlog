@@ -40,3 +40,8 @@ Outputs
 - GitHub Actions: .github/workflows/pages.yml
   - checkout → configure-pages → (Node 20 + npm ci) → build-graph → build-meta → upload artifact → deploy
 - .nojekyll disables Jekyll on Pages so files are served verbatim
+
+### Troubleshooting
+- CI npm install 실패: lockfile 불일치 시 `npm install`로 갱신 후 커밋(또는 `npm ci` 기준으로 맞추기)
+- 그래프 미생성: `npm run build:graph`가 에러 없는지 확인
+- 메타/이메일 미표시: `public/meta.json`/`public/site.json` 존재 확인

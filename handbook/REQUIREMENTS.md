@@ -9,6 +9,7 @@ User goals
 - Topic filter: multi-select from folder hierarchy + #tags
 - Archive filter: years and months, human-friendly labels
 - Graph UX: neighbor highlight on hover, outline on select, stable container height
+	- Zoom via native gestures only (no ± buttons)
 - Document list synced with filters; clean labels (no stray chars)
 - Secure markdown viewer with code highlighting and backlinks
 - Git automation that “just works” in VS Code terminal
