@@ -27,6 +27,8 @@ coverage/
 
 # Generated at build/deploy time
 public/meta.json
+public/graph.json
+public/site.json
 
 # Local env and cache
 .env*

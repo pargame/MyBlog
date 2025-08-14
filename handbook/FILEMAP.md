@@ -7,7 +7,7 @@ Top-level
 - .nojekyll — Disable Jekyll on Pages
 - README.md — Project overview and quickstart
 - MAINTENANCE.md — Operations/policies summary (canonical: handbook/MAINTENANCE.md)
-- handbook/** — All project docs (root duplicates removed)
+- handbook/** — Single Source of Truth; all project docs. Root duplicates removed.
 
 Public data
 - public/graph.json — Built graph data
@@ -28,5 +28,5 @@ Automation
 	(Duplicate workflows removed; only pages.yml is used)
 
 Content
-- posts/** — Primary blog posts. Folders contribute topics; #tags/front matter become topics.
+- posts/** — Primary blog posts. Folders contribute topics; #tags/front matter become topics
 - docs/** — Legacy archives/notes (still supported)
