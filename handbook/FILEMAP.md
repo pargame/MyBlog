@@ -3,11 +3,10 @@
 Top-level
 - index.html — Home (recent posts)
 - graph.html — Knowledge graph UI (D3), filters, doc list
-- viewer.html — Markdown viewer (secure)
- - viewer.html — Markdown viewer (secure). Shows title · date · author header
+- viewer.html — Markdown viewer (secure). Shows title · date · author header
 - .nojekyll — Disable Jekyll on Pages
 - README.md — Project overview and quickstart
-- MAINTENANCE.md — 운영/정책 요약(자세한 단일 출처는 handbook/MAINTENANCE.md)
+- MAINTENANCE.md — Operations/policies summary (canonical: handbook/MAINTENANCE.md)
 - handbook/** — All project docs (root duplicates removed)
 
 Public data
@@ -28,6 +27,6 @@ Automation
 - .vscode/settings.json — Terminal auto-approve for git/npm/node prompts
 	(Duplicate workflows removed; only pages.yml is used)
 
- Content
+Content
 - posts/** — Primary blog posts. Folders contribute topics; #tags/front matter become topics.
 - docs/** — Legacy archives/notes (still supported)

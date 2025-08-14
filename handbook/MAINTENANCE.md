@@ -1,49 +1,50 @@
 # Maintenance Policy
 
-일관성과 자동화를 위해 지켜야 할 운영 규칙을 정리합니다.
+Operating rules to keep the repo consistent and automated.
 
-## 언어 정책(일관 규칙)
-- 설명/채팅: 한국어로 답변하고 서술합니다.
-- 개발 관련(코드, 식별자, 브랜치/커밋 메시지, API/CLI, 주석): 영어로 통일합니다.
-- 문서 작성(블로그 글, 핸드북/가이드 등 사용자용 문서): 기본 한국어로 작성합니다. 코드블록/스니펫 내부는 영어 유지.
-- 파일/폴더명, 데이터 스키마는 안정성을 위해 임의 변환(자동 번역/리네이밍)을 하지 않습니다.
+## Language policy
+- Default: English for everything unless explicitly noted below.
+- Chat (this assistant): Korean.
+- Blog-facing content (posts under `posts/**` and public docs under `docs/**` that are published): the narrative/explanations are in Korean, but code, APIs, identifiers, commands, and technical keywords stay in English.
+- Internal docs (handbook like ARCHITECTURE, MAINTENANCE, BUILD): English.
+- Never auto-translate filenames, directories, or data schemas.
 
-예시
-- Commit: `feat(graph): improve search overlay animation` (영어)
-- PR 설명/코멘트: 변경 이유와 사용법은 한국어로 서술
-- 블로그 글/핸드북: 본문은 한국어, 코드/명령어는 영어
+Examples
+- Commit: `feat(graph): improve search overlay animation` (English)
+- PR description/discussion: can explain in Korean, but code and identifiers remain English
+- Blog post: paragraphs in Korean, fenced code blocks and inline code/keywords in English
 
-## 콘텐츠/파일 규칙
-- 주 폴더: `posts/**` (권장). 레거시 `docs/**`도 빌더가 읽지만 신규는 `posts/`에 작성.
-- 위키 링크 `[[...]]`는 basename으로 해석되니 파일명은 안정적으로 유지.
+## Content and files
+- Primary folder: `posts/**` (recommended). Legacy `docs/**` is still read, but create new content in `posts/`.
+- Wiki links `[[...]]` resolve by basename — keep filenames stable.
 
-## 리뷰 체크리스트
-- [ ] README/handbook/FILEMAP가 최신 상태인지
-- [ ] footer(버전/커밋/이메일) 정상 표기되는지
-- [ ] 그래프/뷰어 동작(검색, 포커스, 오버레이) 이상 없는지
-- [ ] 빌드 산출물(`public/graph.json`, `public/meta.json`) 최신인지
+## Review checklist
+- [ ] README/handbook/FILEMAP are up to date
+- [ ] Footer (version/commit/email) shows correctly
+- [ ] Graph/viewer work (search, focus, overlay)
+- [ ] Build artifacts (`public/graph.json`, `public/meta.json`) are current
 
-## 자동 배포(GitHub Pages)
-- main 브랜치에 push 되면 `.github/workflows/pages.yml`이 실행되어 자동 배포됩니다.
-- 워크플로 개요: checkout → configure-pages → Node 20 + npm ci → build-graph → build-meta → upload → deploy
+## Auto deploy (GitHub Pages)
+- Pushing to `main` triggers `.github/workflows/pages.yml`.
+- Workflow: checkout → configure-pages → Node 20 + npm ci → build-graph → build-meta → upload → deploy
 
-권장 운영 흐름
-1) 변경 작업 → 2) `npm run build`로 로컬 확인(선택) → 3) 커밋/푸시 → 4) Actions 로그 확인(필요 시)
+Recommended flow
+1) Make changes → 2) optional `npm run build` locally → 3) commit/push → 4) check Actions logs if needed
 
-## Git 운영 규칙(중요)
-- 기본 원칙: 변경사항은 “모두 스테이징(add -A) → 커밋 → 푸시” 한다.
-- 예외/노이즈 파일은 `.gitignore`로 적극 제외한다. “스테이징을 선별해서 남기는” 방식은 사용하지 않는다.
-- 생성 산출물과 개인 환경 파일은 반드시 ignore:
-	- `public/meta.json` (배포 시 생성)
+## Git rules (important)
+- Default: stage everything (add -A) → commit → push.
+- Aggressively use `.gitignore` to exclude noise; don’t cherry-pick staging to “hide” leftovers.
+- Must-ignore generated or personal files, e.g.:
+	- `public/meta.json` (generated at deploy)
 	- `node_modules/`, `dist/`, `.out/`, `.next/`
-	- 로그/캐시: `npm-debug.log*`, `yarn-error.log*`, `pnpm-debug.log*`, `.cache/`, `tmp/`, `.temp/`
-	- 로컬/OS/IDE: `.DS_Store`, `.Spotlight-V100`, `.Trashes`, `.idea/`, `.vscode/*` (필요 파일만 예외 허용)
+	- Logs/cache: `npm-debug.log*`, `yarn-error.log*`, `pnpm-debug.log*`, `.cache/`, `tmp/`, `.temp/`
+	- Local/OS/IDE: `.DS_Store`, `.Spotlight-V100`, `.Trashes`, `.idea/`, `.vscode/*` (allow only required exceptions)
 
-작업 편의
-- VS Code 작업: Tasks의 “Commit & Push (deploy)” 또는 `npm run deploy`를 사용하면 전체 스테이징/푸시가 한 번에 수행된다.
+Convenience
+- VS Code task “Commit & Push (deploy)” or `npm run deploy` performs stage-all + commit + push.
 
-문제 해결(Troubleshooting)
-- 배포 실패: Actions 로그에서 npm install/build 단계 오류 확인
-- 홈에 글 미노출: `public/graph.json` 노드에 file이 `posts/`로 시작하는지, front matter(date/author) 형식 확인
-- 그래프가 비어있음: `scripts/build-graph.js` 실행 여부, `public/graph.json` 파일 존재 여부 확인
-- 중복 워크플로: `.github/workflows/pages.yml`만 남겨 유지(중복은 제거됨)
+Troubleshooting
+- Deploy fails: check npm install/build logs in Actions
+- Post missing on Home: ensure node in `public/graph.json` has file under `posts/` and valid front matter (date/author)
+- Empty graph: run `scripts/build-graph.js` and ensure `public/graph.json` exists
+- One workflow: keep only `.github/workflows/pages.yml`

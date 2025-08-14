@@ -14,14 +14,15 @@
   /* Reader page: header should not stick on scroll */
   .site-header { position: static !important; top: auto !important; z-index: auto !important; backdrop-filter: none !important; }
   .site-header .container { padding: 16px 16px; }
-      /* 그래프 오버레이(iframe)에서는 헤더/푸터를 완전히 숨겨 몰입감 향상 */
+      /* In graph overlay (iframe), hide header/footer for immersion */
       :root:has(body[data-embedded="1"]) .site-header { display: none !important; }
       :root:has(body[data-embedded="1"]) .site-footer { display: none !important; }
       :root:has(body[data-embedded="1"]) main.container { margin-top: 0; padding-top: 8px; }
-      /* 오버레이(임베드)에서는 상단 링크 레전드 숨김 */
+      /* In overlay/embed, hide link legend */
       :root:has(body[data-embedded="1"]) #link-legend { display: none !important; }
 
       /* Unreal 아카이브 전용(Things 유사) 스타일 살짝 적용 */
+      /* Slight Unreal archive themed style */
       body[data-archive="Unreal"] .md {
         background: rgba(13, 18, 38, 0.92);
         border-color: rgba(110, 168, 254, 0.28);

@@ -266,9 +266,9 @@
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
   <script src="./assets/js/footer.js"></script>
     <script>
-    // Graph state/selectors
-        let FULL = null; // 전체 데이터
-        let CUR = null;  // 필터된 현재 데이터
+  // Graph state/selectors
+    let FULL = null; // full dataset
+    let CUR = null;  // filtered current dataset
         let simulation = null;
   let svg = null, inner = null, linkSel = null, nodeSel = null;
   let zoomBehavior = null;
@@ -313,15 +313,15 @@
         history.replaceState({}, '', u);
       }
 
-      function setupArchives(data){
+  function setupArchives(data){
         const u = new URL(location.href);
         const archiveParam = u.searchParams.get('archive');
         if (archiveParam) setSelectedArchive(archiveParam);
         const container = document.getElementById('archives');
-        // Archive 목록은 posts/ 파일을 제외한 데이터로부터 유도
+  // Derive archive list from non-post documents only
         const docNodes = (data.nodes || []).filter(n => !isPost(n));
         let uniq = Array.from(new Set(docNodes.map(n => n.archive))).sort();
-        // 요구사항: All/Default 제거, Unreal만 노출 + 기본 선택
+  // Requirement: remove All/Default, show only Unreal by default
         uniq = uniq.filter(a => a && a !== '(default)');
         const preferred = 'Unreal';
         const shown = uniq.includes(preferred) ? [preferred] : uniq;
@@ -336,7 +336,7 @@
           rerender(); 
           document.getElementById('archive-ctl').classList.remove('show');
         }));
-        // 기본값: Unreal 우선. URL 파라미터 없을 때만 적용
+  // Default: prefer Unreal when no URL param
         if (!archiveParam) {
           if (shown.length) setSelectedArchive(shown[0]);
         }
@@ -549,7 +549,7 @@
       }
 
       function rerender(full){
-        // full 데이터가 없으면 다시 불러옴
+        // If no 'full' provided, reuse cached FULL
         if (!full) {
           if (!FULL) return;
           renderGraph(filter(FULL, getSelectedArchive()));
@@ -607,7 +607,7 @@
             .on('drag', dragged)
             .on('end', dragended));
 
-        // 차수 기반 반지름 계산
+  // Degree-based radius
         degMap = new Map(data.nodes.map(n => [n.id, 0]));
         for (const e of data.edges) {
           const s = e.source.id || e.source;
@@ -619,7 +619,7 @@
   isolatedIds = new Set(data.nodes.filter(n => (degMap.get(n.id) || 0) === 0).map(n => n.id));
   const radius = d => Math.max(sizeBase, Math.min(sizeBase+16, sizeBase + Math.sqrt(degMap.get(d.id) || 0) * 4));
 
-  // 충돌 방지(물리감 향상)
+  // Collision to improve feel
   simulation.force('collide', d3.forceCollide(radius).strength(0.7));
 
   nodeSel.append('circle').attr('r', radius).attr('stroke-width', Math.max(1, linkWidth/2));
@@ -659,7 +659,7 @@
           let h = 0; for (let i=0;i<str.length;i++){h=((h<<5)-h)+str.charCodeAt(i); h|=0;} return h;
         }
 
-          // 줌/팬: 마우스/트랙패드 기본 제스처만 허용 (± 버튼 제거)
+          // Zoom/pan: native gestures only (± buttons removed)
           zoomBehavior = d3.zoom()
             .scaleExtent([0.2, 3])
             .on('zoom', (ev) => {
@@ -670,7 +670,7 @@
         // Reapply any existing transform after (re)binding zoom
         try { if (currentTransform) svg.call(zoomBehavior.transform, currentTransform); } catch {}
 
-        // 이웃 하이라이트
+  // Neighbor highlight
         const adj = new Map();
         for (const n of data.nodes) adj.set(n.id, new Set());
         for (const e of data.edges) {
@@ -703,7 +703,7 @@
         }
 
         CUR = data;
-        // 초기 스타일 동기화
+  // Initial style sync
         updateStyles();
       }      function setSelected(id){
         selectedId = id;
@@ -772,13 +772,13 @@
         linkSel.attr('stroke-width', linkWidth);
         const radius = d => Math.max(sizeBase, Math.min(sizeBase+16, sizeBase + Math.sqrt(degMap ? (degMap.get(d.id) || 0) : 0) * 4));
         nodeSel.select('circle').attr('r', radius).attr('stroke-width', Math.max(1, linkWidth/2));
-        // 충돌 반경도 갱신
+  // Update collision radius as node sizes change
         if (simulation) {
           const col = simulation.force('collide');
           if (col) col.radius(radius);
           simulation.alpha(0.15).restart();
         }
-        // 선택 노드 강조 유지
+  // Keep selected node outline
         nodeSel.classed('selected', n => n.id === selectedId);
       }
 

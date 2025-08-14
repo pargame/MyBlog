@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
- * 마크다운 위키 링크 그래프 생성기
- * - 주제 소스: 상위 폴더명(보관함 포함) + 문서 상단 YAML 프론트매터 tags
- * - 링크: [[FileName]] 또는 [[FileName|Alias]]
- * - 입력: docs 폴더
- * - 출력: public/graph.json (nodes, edges, archives, topicsByArchive)
+ * Markdown wiki-link graph builder
+ * - Topic sources: folder names (including archives) + YAML front matter tags
+ * - Links: [[FileName]] or [[FileName|Alias]]
+ * - Inputs: posts/ (primary) and docs/ (legacy)
+ * - Output: public/graph.json (nodes, edges, archives, topicsByArchive)
  */
 const fs = require('fs');
 const path = require('path');
@@ -39,7 +39,7 @@ function parseWikiLinks(content) {
 }
 
 function parseFrontMatterTags(raw) {
-  // --- ... --- 블록 안의 tags만 간단 파싱
+  // Quick-parse only the tags inside an initial --- ... --- block
   if (!raw.startsWith('---')) return [];
   const end = raw.indexOf('\n---', 3);
   if (end === -1) return [];
@@ -59,7 +59,7 @@ function parseFrontMatterTags(raw) {
         rest.split(/[;,]/).forEach(v => { const t = v.trim(); if (t) tags.push(t); });
         inTags = false;
       } else {
-        inTags = true; // 다음 라인들에서 - item
+        inTags = true; // subsequent lines use "- item"
       }
       continue;
     }
@@ -103,7 +103,7 @@ function parseFrontMatterAuthor(raw) {
 }
 
 function parseSimpleTags(raw) {
-  // 파일 상단 20줄 내 "tags: [a, b]" 패턴 지원
+  // Support a simple "tags: [a, b]" pattern within the first ~20 lines
   const head = raw.split('\n').slice(0, 20).join('\n');
   const m = /^\s*tags\s*:\s*\[(.*?)\].*$/mi.exec(head);
   if (!m) return [];
@@ -139,7 +139,7 @@ function main() {
     const relFromRepo = path.relative(REPO_ROOT, file); // posts/.../X.md or docs/.../X.md
     const relFromRoot = path.relative(rootDir, file);  // .../X.md
   const segs = relFromRoot.split(path.sep);
-  // 아카이브 및 폴더 기반 토픽 추출: 모든 폴더명을 토픽으로 포함
+  // Extract archive and folder-based topics: include all folder names as topics
   const folders = segs.slice(0, Math.max(0, segs.length - 1));
   const archive = folders.length ? folders[0] : '(default)';
     archives.add(archive);
@@ -152,9 +152,9 @@ function main() {
   const dateStr = parseFrontMatterDate(raw);
   const author = parseFrontMatterAuthor(raw);
 
-  // 문서 상단 태그 파싱(front matter 또는 간단 tags: [..]) + 모든 폴더명을 토픽으로
+  // Parse tags (front matter or simple tags: [..]) + include all folder names as topics
   const tagSet = new Set();
-  // 주: 그래프 토픽 순수화를 위해 루트 라벨(Posts/Docs)은 주입하지 않음
+  // Note: to keep topics pure we do not inject root labels (Posts/Docs)
   for (const f of folders) tagSet.add(f);
     for (const t of parseFrontMatterTags(raw)) tagSet.add(t);
     for (const t of parseSimpleTags(raw)) tagSet.add(t);
@@ -170,7 +170,7 @@ function main() {
     byBaseName.set(base, arr);
   }
 
-  // 위키링크 -> edges
+  // Wikilinks -> edges
   for (const entry of filesLabeled) {
     const file = entry.file;
     const rootDir = entry.root;

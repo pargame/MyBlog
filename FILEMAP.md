@@ -6,8 +6,8 @@ Top-level
 - viewer.html — Markdown viewer (secure). Shows title · date · author header
 - .nojekyll — Disable Jekyll on Pages
 - README.md — Project overview and quickstart
-- MAINTENANCE.md — 운영/정책 요약(상세는 `handbook/MAINTENANCE.md`가 단일 출처)
-- handbook/** — 프로젝트 문서의 단일 출처(Single Source of Truth). 루트 중복 문서는 제거됨
+ - MAINTENANCE.md — Operations/policies summary (canonical: `handbook/MAINTENANCE.md`)
+- handbook/** — Single Source of Truth.
 
 Public data
 - public/graph.json — Built graph data
@@ -25,7 +25,7 @@ Assets
 Automation
 - .github/workflows/pages.yml — GitHub Pages deploy pipeline
 - .vscode/settings.json — Terminal auto-approve for git/npm/node prompts
-	(중복 workflow는 제거됨. 배포 파이프라인은 pages.yml 1개만 유지)
+	(Duplicate workflows removed; only pages.yml is used)
 
 Content
 - posts/** — Primary blog posts. Folders contribute topics; #tags/front matter become topics

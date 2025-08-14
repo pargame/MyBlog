@@ -42,6 +42,6 @@ Outputs
 - .nojekyll disables Jekyll on Pages so files are served verbatim
 
 ### Troubleshooting
-- CI npm install 실패: lockfile 불일치 시 `npm install`로 갱신 후 커밋(또는 `npm ci` 기준으로 맞추기)
-- 그래프 미생성: `npm run build:graph`가 에러 없는지 확인
-- 메타/이메일 미표시: `public/meta.json`/`public/site.json` 존재 확인
+- CI npm install fails: if lockfile mismatch, run `npm install` locally, commit changes (or realign to `npm ci` contract)
+- Graph missing: verify `npm run build:graph` succeeds without errors
+- Meta/email not shown: ensure `public/meta.json` and `public/site.json` exist
