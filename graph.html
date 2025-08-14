@@ -5,12 +5,156 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Graph View</title>
   <link rel="stylesheet" href="./assets/css/styles.css" />
-  <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="./public/favicon.svg" typ      function setupZoomControls() {
+        const zoomInBtn = document.getElementById('zoom-in');
+        const zoomOutBtn = document.getElementById('zoom-out');
+        
+        if (zoomInBtn) {
+          zoomInBtn.addEventListener('click', () => {
+            const currentTransform = d3.zoomTransform(svg.node());
+            const newScale = Math.min(3, currentTransform.k * 1.5);
+            const newTransform = currentTransform.scale(newScale / currentTransform.k);
+            svg.transition().duration(300).call(zoomBehavior.transform, newTransform);
+          });
+        }
+        
+        if (zoomOutBtn) {
+          zoomOutBtn.addEventListener('click', () => {
+            const currentTransform = d3.zoomTransform(svg.node());
+            const newScale = Math.max(0.2, currentTransform.k / 1.5);
+            const newTransform = currentTransform.scale(newScale / currentTransform.k);
+            svg.transition().duration(300).call(zoomBehavior.transform, newTransform);
+          });
+        }
+      }
+
+      function setupArchives(data) {="image/svg+xml" />
     <style>
   .legend { color: var(--muted); font-size: 14px; }
   /* Page: Graph — header should NOT stick on long scroll */
   .site-header { position: static !important; top: auto !important; z-index: auto !important; backdrop-filter: none !important; }
   .site-header .container { padding: 16px 16px; }
+  
+  /* Fullscreen immersive graph */
+  .fullscreen-graph { padding: 0; margin: 0; }
+  .graph-container { 
+    position: relative; 
+    width: 100vw; 
+    height: calc(100vh - 120px); /* Account for header */
+    background: var(--bg);
+    overflow: hidden;
+  }
+  
+  #graph { 
+    width: 100%; 
+    height: 100%; 
+    position: relative; 
+  }
+  
+  /* Inline overlays within graph */
+  .graph-overlay {
+    position: absolute;
+    z-index: 10;
+    background: rgba(11,16,32,0.85);
+    border: 1px solid rgba(30,39,73,0.6);
+    border-radius: 12px;
+    padding: 8px;
+    backdrop-filter: blur(8px);
+    transition: all .3s ease;
+    pointer-events: auto;
+  }
+  
+  .graph-overlay.top-left { top: 16px; left: 16px; }
+  .graph-overlay.top-right { top: 16px; right: 16px; }
+  .graph-overlay.search-box { top: 80px; right: 16px; }
+  
+  .graph-overlay .body { 
+    display: none; 
+    margin-top: 8px; 
+    max-width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  .graph-overlay.show .body { display: block; }
+  
+  .graph-overlay .row { 
+    display: flex; 
+    gap: 8px; 
+    align-items: center; 
+    flex-wrap: wrap; 
+    margin: 4px 0;
+  }
+  
+  /* Document overlay (right side) */
+  .document-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 100%;
+    background: var(--card);
+    border-left: 1px solid var(--border);
+    z-index: 20;
+    transition: width .4s ease;
+    overflow: hidden;
+  }
+  
+  .document-overlay.open {
+    width: 45%;
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(238,96,85,0.8);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+    z-index: 21;
+  }
+  
+  #doc-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: var(--bg);
+  }
+  
+  /* Search results */
+  #search-results {
+    list-style: none;
+    padding: 0;
+    margin: 8px 0 0;
+  }
+  
+  #search-results li {
+    margin: 4px 0;
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  #search-results li:hover {
+    background: rgba(110,168,254,0.2);
+  }
+  
+  .zoom-controls {
+    margin-top: 10px;
+  }
+  
+  .zoom-controls .btn {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    line-height: 1;
+    margin-right: 5px;
+  }
+  
       .node { cursor: pointer; }
   .node circle { fill: #6ea8fe; }
   .node.topic-ROOT circle { fill: #6ea8fe; }
@@ -26,21 +170,6 @@
   .node.selected circle { stroke: #ffd97d; stroke-width: 3px; }
   /* Isolated nodes (no links) */
   .node.isolated circle { fill: #5b6a8a !important; }
-  /* Full-bleed card to make graph span full viewport width */
-  .fullbleed { position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; width: 100vw; border-radius: 0; }
-  /* Graph overlay controls (subtle) */
-  #graph-area { position: relative; }
-  .graph-wrap { position: relative; }
-  #graph { position: relative; overflow: hidden; }
-  #graph-ctl { position: absolute; top: 12px; right: 12px; left: 12px; z-index: 10; background: rgba(11,16,32,0.48); border: none; border-radius: 10px; padding: 6px; backdrop-filter: blur(4px); transition: opacity .25s ease; max-width: calc(100% - 24px); }
-  /* Prevent overlay from blocking clicks outside controls */
-  #graph-ctl { pointer-events: none; }
-  #graph-ctl .row button, #graph-ctl input, #graph-ctl label { pointer-events: auto; }
-  #graph-ctl .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-  #graph-ctl .body { display: none; margin-top: 6px; }
-  #graph-ctl.show .body { display: block; }
-  #graph-ctl.dim { opacity: .35; }
-  #ctl-toggle { font-size: 14px; padding: 4px 8px; }
     </style>
   </head>
   <body>
@@ -58,22 +187,16 @@
         </div>
       </div>
     </header>
-    <main class="container">
-  <!-- Archive selection -->
-      <div class="card" id="A-b">
-  <strong>Archive</strong>
-        <span id="archives"></span>
-      </div>
-
-      <!-- Graph (full-bleed) with subtle overlay settings -->
-      <div class="card fullbleed" id="graph-area">
-        <div class="graph-wrap">
-          <div id="graph"></div>
-          <div id="graph-ctl">
+    <main class="fullscreen-graph">
+      <!-- Immersive full-screen graph with inline controls -->
+      <div class="graph-container">
+        <div id="graph"></div>
+        
+        <!-- Settings overlay (top-left) -->
+        <div id="graph-ctl" class="graph-overlay top-left">
           <div class="row">
             <button id="ctl-toggle" class="btn" title="Toggle graph settings" aria-label="Toggle graph settings">⚙ Settings</button>
             <button id="ctl-reset" class="btn">Reset</button>
-            <span class="legend">Drag/wheel to pan/zoom</span>
           </div>
           <div class="body">
             <div class="row"><label>Link distance <input id="ctl-distance" type="range" min="40" max="240" value="120" data-default="120" /> <span id="val-distance" class="legend"></span></label></div>
@@ -83,36 +206,37 @@
             <div class="row"><label>Focus zoom <input id="ctl-focus" type="range" min="0.8" max="2" step="0.1" value="1.2" data-default="1.2" /> <span id="val-focus" class="legend"></span></label></div>
             <div class="row"><label>Overlay idle <input id="ctl-timeout" type="range" min="1" max="6" step="0.5" value="2.5" data-default="2.5" /> <span id="val-timeout" class="legend"></span><span class="legend">s</span></label></div>
           </div>
+        </div>
+
+        <!-- Archive selector (top-right) -->
+        <div id="archive-ctl" class="graph-overlay top-right">
+          <button id="archive-toggle" class="btn">Archive</button>
+          <div id="archive-body" class="body">
+            <span id="archives"></span>
           </div>
         </div>
-      </div>
 
-      <!-- Topics + Documents (two columns) -->
-      <div class="card" id="panel-top">
-        <div class="two-col" style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">
-          <section id="panel-topics" style="flex:1 1 320px;min-width:280px;max-height:32vh;overflow:auto">
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-              <strong>Topics</strong>
-              <button id="topic-reset" class="btn">Reset</button>
-            </div>
-            <span class="flex-break" aria-hidden="true"></span>
-            <span id="topics"></span>
-          </section>
-          <section id="panel-docs" style="flex:1 1 420px;min-width:320px;max-height:32vh;overflow:auto">
-            <h3>Documents</h3>
-            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0 8px">
-              <input id="doc-search" type="search" placeholder="Filter documents..." aria-label="Filter documents" style="min-width:220px;padding:6px 8px;border:1px solid #1e2749;border-radius:6px;background:#0b1020;color:#e7ecff" />
-              <span id="doc-count" class="legend"></span>
-            </div>
-            <ul id="doc-list"></ul>
-          </section>
+        <!-- Zoom controls (top-right, below archive) -->
+        <div class="graph-overlay top-right zoom-controls">
+          <button id="zoom-in" class="btn" title="Zoom In">+</button>
+          <button id="zoom-out" class="btn" title="Zoom Out">-</button>
         </div>
-      </div>
 
-      <!-- Document viewer (full width) -->
-      <div class="card" id="panel-viewer">
-        <h3>Document viewer</h3>
-        <iframe id="doc-view" style="width:100%;height:70vh;border:1px solid #1e2749;border-radius:8px;background:#0b1020"></iframe>
+        <!-- Search (top-right, below zoom) -->
+        <div id="search-ctl" class="graph-overlay top-right search-box">
+          <button id="search-toggle" class="btn">🔍 Search</button>
+          <div id="search-body" class="body">
+            <input id="doc-search" type="search" placeholder="Search documents..." aria-label="Search documents" />
+            <span id="search-count" class="legend"></span>
+            <ul id="search-results"></ul>
+          </div>
+        </div>
+
+        <!-- Document overlay (right side) -->
+        <div id="doc-overlay" class="document-overlay">
+          <button id="close-doc-overlay" class="close-btn">×</button>
+          <iframe id="doc-frame" src="about:blank"></iframe>
+        </div>
       </div>
     </main>
     <footer class="site-footer">
@@ -132,7 +256,7 @@
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
   <script src="./assets/js/footer.js"></script>
     <script>
-  // Graph state/selectors
+    // Graph state/selectors
         let FULL = null; // 전체 데이터
         let CUR = null;  // 필터된 현재 데이터
         let simulation = null;
@@ -143,9 +267,9 @@
   let selectedId = null;
   let pendingFocus = null;
   let GRAPH_W = null, GRAPH_H = null;
-  // Doc list state (filter only)
-  let docFilter = '';
+  // Graph state
   let isolatedIds = new Set();
+  let isOverlayOpen = false;
 
   async function load() {
         const res = await fetch('./public/graph.json', { cache: 'no-store' });
@@ -156,8 +280,10 @@
           const data = await res.json();
           FULL = data;
           setupArchives(FULL);
-          setupTopicsArea(FULL);
+          setupSearch(FULL);
           setupControls();
+          setupOverlay();
+          setupZoomControls();
           rerender(FULL);
   // On resize, reset cached dimensions and rerender
           window.addEventListener('resize', () => { GRAPH_W = null; GRAPH_H = null; rerender(); });
@@ -190,51 +316,137 @@
         container.innerHTML = btns;
         const buttons = container.querySelectorAll('button');
         function refreshActive(){ buttons.forEach(b => b.classList.toggle('active', b.getAttribute('data-arch')===getSelectedArchive())); }
-        buttons.forEach(btn => btn.addEventListener('click', () => { setSelectedArchive(btn.getAttribute('data-arch')); clearTopic(); refreshActive(); rerender(); }));
+        buttons.forEach(btn => btn.addEventListener('click', () => { 
+          setSelectedArchive(btn.getAttribute('data-arch')); 
+          refreshActive(); 
+          rerender(); 
+          document.getElementById('archive-ctl').classList.remove('show');
+        }));
         // 기본값은 All 유지 (URL 파라미터가 있으면 반영)
         refreshActive();
+        
+        // Archive toggle button
+        document.getElementById('archive-toggle').addEventListener('click', () => {
+          document.getElementById('archive-ctl').classList.toggle('show');
+        });
       }
 
-      function setupTopicsArea(data){
-        const u = new URL(location.href);
-        const topicParam = u.searchParams.get('topic');
-        // topics은 Posts를 제외한 노드로부터 동적으로 계산
-        function renderTopics(){
-          const curArch = getSelectedArchive();
-          const pool = (data.nodes || []).filter(n => !isPost(n)).filter(n => (curArch==='ALL' ? true : n.archive === curArch));
-          const set = new Set();
-          for (const n of pool) for (const t of (n.topics||[])) set.add(t);
-          // 아카이브 이름 제외
-          const list = Array.from(set).filter(t => t !== curArch).sort();
-          const wrap = document.getElementById('topics');
-          wrap.innerHTML = list.map(t => `<button class="btn" data-topic="${t}">${t}</button>`).join('');
-          const buttons = wrap.querySelectorAll('button');
-          function refreshActive(){
-            const sel = getSelectedTopic();
-            buttons.forEach(b => b.classList.toggle('active', b.getAttribute('data-topic') === sel));
+      function setupSearch(data) {
+        const toggle = document.getElementById('search-toggle');
+        const body = document.getElementById('search-body');
+        const input = document.getElementById('doc-search');
+        const results = document.getElementById('search-results');
+        const count = document.getElementById('search-count');
+        
+        toggle.addEventListener('click', () => {
+          document.getElementById('search-ctl').classList.toggle('show');
+          if (document.getElementById('search-ctl').classList.contains('show')) {
+            input.focus();
           }
-          buttons.forEach(btn => btn.addEventListener('click', () => {
-            const t = btn.getAttribute('data-topic');
-            setSingleTopic(t);
-            refreshActive();
-            rerender();
-          }));
-          document.getElementById('topic-reset').onclick = () => { clearTopic(); refreshActive(); rerender(); };
-          // initialize from URL
-          if (topicParam && list.includes(topicParam)) setSingleTopic(topicParam);
-          refreshActive();
-        }
-        renderTopics();
-  // Re-render topics when archives change
-        const observer = new MutationObserver(()=>renderTopics());
-        observer.observe(document.getElementById('archives'), { childList:true, subtree:true });
+        });
+        
+        input.addEventListener('input', () => {
+          const query = input.value.trim().toLowerCase();
+          if (!query) {
+            results.innerHTML = '';
+            count.textContent = '';
+            return;
+          }
+          
+          const arch = getSelectedArchive();
+          let nodes = (data.nodes || []).filter(n => !isPost(n));
+          if (arch && arch !== 'ALL') nodes = nodes.filter(n => n.archive === arch);
+          
+          const filtered = nodes.filter(n => {
+            const label = (n.label||'').toLowerCase();
+            const id = (n.id||'').toLowerCase();
+            const topics = (n.topics||[]).join(' ').toLowerCase();
+            return label.includes(query) || id.includes(query) || topics.includes(query);
+          }).slice(0, 10); // Limit results
+          
+          count.textContent = `${filtered.length} results`;
+          results.innerHTML = filtered.map(n => 
+            `<li data-id="${n.id}">${n.label || n.id}</li>`
+          ).join('');
+          
+          results.querySelectorAll('li').forEach(li => {
+            li.addEventListener('click', () => {
+              const id = li.getAttribute('data-id');
+              openDocumentOverlay(id);
+              document.getElementById('search-ctl').classList.remove('show');
+            });
+          });
+        });
       }
 
-      function filter(data, archive, topic) {
+      function setupOverlay() {
+        const overlay = document.getElementById('doc-overlay');
+        const closeBtn = document.getElementById('close-doc-overlay');
+        
+        closeBtn.addEventListener('click', closeDocumentOverlay);
+        
+        // Close on click outside overlay
+        document.addEventListener('click', (e) => {
+          if (isOverlayOpen && !overlay.contains(e.target) && !e.target.closest('.node')) {
+            closeDocumentOverlay();
+          }
+        });
+        
+        // Close on ESC key
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && isOverlayOpen) {
+            closeDocumentOverlay();
+          }
+        });
+      }
+
+      function openDocumentOverlay(id) {
+        isOverlayOpen = true;
+        const overlay = document.getElementById('doc-overlay');
+        const frame = document.getElementById('doc-frame');
+        
+        // Focus node and shift camera to left-center
+        setSelected(id);
+        focusNodeById(id, { offsetX: -0.2 }); // Shift left by 20% of viewport
+        
+        // Open document in overlay
+        const url = new URL('./viewer.html', location.href);
+        url.searchParams.set('id', id);
+        const arch = getSelectedArchive();
+        if (arch && arch !== 'ALL') url.searchParams.set('archive', arch);
+        url.searchParams.set('from', 'graph');
+        
+        frame.src = url.toString();
+        overlay.classList.add('open');
+        
+        // Listen for navigation messages from the iframe
+        window.addEventListener('message', handleViewerNavigation);
+      }
+
+      function closeDocumentOverlay() {
+        isOverlayOpen = false;
+        const overlay = document.getElementById('doc-overlay');
+        const frame = document.getElementById('doc-frame');
+        
+        overlay.classList.remove('open');
+        frame.src = 'about:blank';
+        
+        window.removeEventListener('message', handleViewerNavigation);
+      }
+
+      function handleViewerNavigation(ev) {
+        try {
+          const data = ev.data || {};
+          if (data && data.type === 'viewer:navigate' && data.id) {
+            openDocumentOverlay(String(data.id));
+          }
+        } catch {}
+      }
+
+      function filter(data, archive) {
         // posts/ 파일은 그래프에서 제외
         let nodes = (data.nodes || []).filter(n => !isPost(n));
         if (archive && archive !== 'ALL') nodes = nodes.filter(n => n.archive === archive);
-        if (topic) nodes = nodes.filter(n => (n.topics||[]).includes(topic));
         const ids = new Set(nodes.map(n => n.id));
         const edges = data.edges.filter(e => {
           const s = (e && e.source && e.source.id) ? e.source.id : e.source;
@@ -267,7 +479,7 @@
         document.getElementById('ctl-width').addEventListener('input', () => { syncVals(); updateStyles(); });
         document.getElementById('ctl-size').addEventListener('input', () => { syncVals(); updateStyles(); });
         document.getElementById('ctl-focus').addEventListener('input', () => { syncVals(); });
-        document.getElementById('ctl-timeout').addEventListener('input', () => { syncVals(); bumpOverlay(); });
+        document.getElementById('ctl-timeout').addEventListener('input', () => { syncVals(); });
         const btn = document.getElementById('ctl-reset');
         if (btn) btn.addEventListener('click', () => {
           ['ctl-distance','ctl-charge','ctl-width','ctl-size','ctl-focus','ctl-timeout'].forEach(id => {
@@ -278,31 +490,26 @@
           syncVals();
           updateStyles();
           updateForces();
-          bumpOverlay();
         });
-  if (toggle && wrap) toggle.addEventListener('click', () => { wrap.classList.toggle('show'); bumpOverlay(); });
+  if (toggle && wrap) toggle.addEventListener('click', () => { wrap.classList.toggle('show'); });
       }
 
       function rerender(full){
         // full 데이터가 없으면 다시 불러옴
         if (!full) {
           if (!FULL) return;
-          renderGraph(filter(FULL, getSelectedArchive(), getSelectedTopic()));
-          renderDocList(FULL);
+          renderGraph(filter(FULL, getSelectedArchive()));
         } else {
-          renderGraph(filter(full, getSelectedArchive(), getSelectedTopic()));
-          renderDocList(full);
+          renderGraph(filter(full, getSelectedArchive()));
         }
       }
 
   function renderGraph(data) {
   const box = document.getElementById('graph');
-  if (GRAPH_W == null || GRAPH_H == null) {
-    const rect = box.getBoundingClientRect();
-    GRAPH_W = Math.max(320, Math.floor(rect.width));
-  // Enforce square graph viewport
-  GRAPH_H = GRAPH_W;
-  }
+  const rect = box.getBoundingClientRect();
+  GRAPH_W = rect.width;
+  GRAPH_H = rect.height;
+  
   const width = GRAPH_W;
   const height = GRAPH_H;
   d3.select('#graph').selectAll('*').remove();
@@ -345,7 +552,7 @@
 
         // 차수 기반 반지름 계산
         degMap = new Map(data.nodes.map(n => [n.id, 0]));
-    for (const e of data.edges) {
+        for (const e of data.edges) {
           const s = e.source.id || e.source;
           const t = e.target.id || e.target;
           degMap.set(s, (degMap.get(s) || 0) + 1);
@@ -362,20 +569,10 @@
   nodeSel.append('text').attr('x', 12).attr('y', 4).text(d => d.label || d.id);
   nodeSel.classed('isolated', d => isolatedIds.has(d.id));
 
+  // Node click opens overlay instead of iframe
   nodeSel.on('click', (_, d) => {
-          // 아래 C 뷰어 영역에 문서를 연다
-          const url = new URL('./viewer.html', location.href);
-          url.searchParams.set('id', d.id);
-          const sel = getSelectedTopic();
-          if (sel) url.searchParams.set('topic', sel);
-          const arch = getSelectedArchive();
-          if (arch && arch !== 'ALL') url.searchParams.set('archive', arch);
-          url.searchParams.set('from', 'graph');
-          document.getElementById('doc-view').src = url.toString();
-          document.getElementById('doc-view').scrollIntoView({ behavior:'smooth', block:'start' });
-    // 선택 상태 표시
-    setSelected(d.id);
-        });
+    openDocumentOverlay(d.id);
+  });
 
   simulation.on('tick', () => {
     linkSel
@@ -405,12 +602,17 @@
           let h = 0; for (let i=0;i<str.length;i++){h=((h<<5)-h)+str.charCodeAt(i); h|=0;} return h;
         }
 
-        // 줌/팬
-        zoomBehavior = d3.zoom().scaleExtent([0.2, 3]).on('zoom', (ev) => {
-          currentTransform = ev.transform;
-          inner.attr('transform', currentTransform);
-          bumpOverlay();
-        });
+        // 팬 + 버튼 줌만 허용 (휠 줌 비활성화)
+        zoomBehavior = d3.zoom()
+          .scaleExtent([0.2, 3])
+          .filter(event => {
+            // Allow pan but disable wheel zoom
+            return event.type !== 'wheel';
+          })
+          .on('zoom', (ev) => {
+            currentTransform = ev.transform;
+            inner.attr('transform', currentTransform);
+          });
         svg.call(zoomBehavior);
         // Reapply any existing transform after (re)binding zoom
         try { if (currentTransform) svg.call(zoomBehavior.transform, currentTransform); } catch {}
@@ -442,9 +644,7 @@
         CUR = data;
         // 초기 스타일 동기화
         updateStyles();
-      }
-
-      function setSelected(id){
+      }      function setSelected(id){
         selectedId = id;
         if (nodeSel) nodeSel.classed('selected', n => n.id === selectedId);
       }
@@ -475,74 +675,17 @@
           const scale = typeof opts.scale === 'number' ? opts.scale : getFocusScale();
           const width = GRAPH_W||inner.node().ownerSVGElement.clientWidth||600;
           const height = GRAPH_H||inner.node().ownerSVGElement.clientHeight||600;
-          const tx = (width/2) - n.x * scale;
-          const ty = (height/2) - n.y * scale;
+          
+          // Apply offset for document overlay positioning
+          const offsetX = opts.offsetX || 0;
+          const offsetY = opts.offsetY || 0;
+          
+          const tx = (width/2) + (width * offsetX) - n.x * scale;
+          const ty = (height/2) + (height * offsetY) - n.y * scale;
           const t = d3.zoomIdentity.translate(tx, ty).scale(scale);
           svg.transition().duration(450).call(zoomBehavior.transform, t);
           pendingFocus = null;
         } catch {}
-      }
-
-      function renderDocList(full){
-  const arch = getSelectedArchive();
-  const topic = getSelectedTopic();
-  // Wire controls once
-        const searchEl = document.getElementById('doc-search');
-        if (searchEl && !searchEl.dataset.wired) {
-          searchEl.addEventListener('input', () => {
-            docFilter = String(searchEl.value||'').trim().toLowerCase();
-            rerender();
-          });
-          searchEl.dataset.wired = '1';
-        }
-
-        let nodes = (full.nodes || []).filter(n => !isPost(n));
-        if (arch && arch !== 'ALL') nodes = nodes.filter(n => n.archive === arch);
-        if (topic) nodes = nodes.filter(n => (n.topics||[]).includes(topic));
-        // Filter by text
-        if (docFilter) {
-          const q = docFilter;
-          nodes = nodes.filter(n => {
-            const label = (n.label||'').toLowerCase();
-            const id = (n.id||'').toLowerCase();
-            const topics = (n.topics||[]).join(' ').toLowerCase();
-            return label.includes(q) || id.includes(q) || topics.includes(q);
-          });
-        }
-
-  nodes = nodes.sort((a,b)=> (a.label||a.id).localeCompare(b.label||b.id));
-  const total = nodes.length;
-  const slice = nodes; // show all and let panel scroll
-
-        const ul = document.getElementById('doc-list');
-        ul.innerHTML = slice.map(n => {
-          const topics = (n.topics || []).filter(t => t !== n.archive);
-          const meta = topics.length ? `(${topics.join(', ')})` : '';
-          return `<li><a data-id="${n.id}" href="#">${n.label || n.id}</a>${meta ? ` <span class=\"legend\">${meta}</span>` : ''}</li>`;
-        }).join('');
-  // update count
-        const countEl = document.getElementById('doc-count');
-  if (countEl) {
-    const isoCount = nodes.filter(n => isolatedIds.has(n.id)).length;
-    countEl.textContent = total ? `${total} documents${isoCount>0?` · ${isoCount} isolated`:''}` : 'No documents';
-  }
-
-        ul.querySelectorAll('a').forEach(a => a.addEventListener('click', (e) => {
-          e.preventDefault();
-          const id = a.getAttribute('data-id');
-          const url = new URL('./viewer.html', location.href);
-          url.searchParams.set('id', id);
-          if (topic) url.searchParams.set('topic', topic);
-          if (arch && arch !== 'ALL') url.searchParams.set('archive', arch);
-          url.searchParams.set('from', 'graph');
-          // Highlight and focus first, so camera moves before page scrolls
-          setSelected(id);
-          focusNodeById(id);
-          // Then open in viewer and scroll
-          document.getElementById('doc-view').src = url.toString();
-          document.getElementById('panel-viewer').scrollIntoView({ behavior:'smooth', block:'start' });
-          bumpOverlay();
-        }));
       }
 
       function isPost(n){
@@ -597,32 +740,10 @@
   window.addEventListener('message', (ev) => {
     try {
       const d = ev.data || {};
-      if (d && d.type === 'viewer:navigate' && d.id) { setSelected(String(d.id)); focusNodeById(String(d.id)); bumpOverlay(); }
+      if (d && d.type === 'viewer:navigate' && d.id) { setSelected(String(d.id)); focusNodeById(String(d.id)); }
     } catch {}
   });
 
-  // Overlay auto-hide: dim and collapse body after inactivity
-  let overlayTimer = null;
-  function getOverlayTimeoutMs(){
-    const el = document.getElementById('ctl-timeout');
-    if (!el) return 2500;
-    const v = parseFloat(el.value);
-    return isNaN(v) ? 2500 : Math.max(500, Math.round(v * 1000));
-  }
-  function bumpOverlay(){
-    const wrap = document.getElementById('graph-ctl');
-    if (!wrap) return;
-    wrap.classList.remove('dim');
-    if (overlayTimer) clearTimeout(overlayTimer);
-    overlayTimer = setTimeout(() => { wrap.classList.add('dim'); wrap.classList.remove('show'); }, getOverlayTimeoutMs());
-  }
-  // Nudge overlay visibility on graph interactions
-  const graphBox = document.getElementById('graph');
-  if (graphBox){
-    graphBox.addEventListener('mousemove', bumpOverlay, { passive: true });
-    graphBox.addEventListener('wheel', bumpOverlay, { passive: true });
-  }
-  bumpOverlay();
     </script>
   </body>
   </html>
