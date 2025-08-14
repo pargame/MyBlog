@@ -24,6 +24,8 @@
       .link:hover { stroke-opacity: 1; }
   .faded { opacity: 0.15; }
   .node.selected circle { stroke: #ffd97d; stroke-width: 3px; }
+  /* Isolated nodes (no links) */
+  .node.isolated circle { fill: #5b6a8a !important; }
   /* Full-bleed card to make graph span full viewport width */
   .fullbleed { position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; width: 100vw; border-radius: 0; }
   /* Graph overlay controls (subtle) */
@@ -143,6 +145,7 @@
   let GRAPH_W = null, GRAPH_H = null;
   // Doc list state (filter only)
   let docFilter = '';
+  let isolatedIds = new Set();
 
   async function load() {
         const res = await fetch('./public/graph.json', { cache: 'no-store' });
@@ -342,12 +345,14 @@
 
         // 차수 기반 반지름 계산
         degMap = new Map(data.nodes.map(n => [n.id, 0]));
-        for (const e of data.edges) {
+    for (const e of data.edges) {
           const s = e.source.id || e.source;
           const t = e.target.id || e.target;
           degMap.set(s, (degMap.get(s) || 0) + 1);
           degMap.set(t, (degMap.get(t) || 0) + 1);
         }
+  // Mark isolated nodes
+  isolatedIds = new Set(data.nodes.filter(n => (degMap.get(n.id) || 0) === 0).map(n => n.id));
   const radius = d => Math.max(sizeBase, Math.min(sizeBase+16, sizeBase + Math.sqrt(degMap.get(d.id) || 0) * 4));
 
   // 충돌 방지(물리감 향상)
@@ -355,6 +360,7 @@
 
   nodeSel.append('circle').attr('r', radius).attr('stroke-width', Math.max(1, linkWidth/2));
   nodeSel.append('text').attr('x', 12).attr('y', 4).text(d => d.label || d.id);
+  nodeSel.classed('isolated', d => isolatedIds.has(d.id));
 
   nodeSel.on('click', (_, d) => {
           // 아래 C 뷰어 영역에 문서를 연다
@@ -516,7 +522,10 @@
         }).join('');
   // update count
         const countEl = document.getElementById('doc-count');
-  if (countEl) countEl.textContent = total ? `${total} documents` : 'No documents';
+  if (countEl) {
+    const isoCount = nodes.filter(n => isolatedIds.has(n.id)).length;
+    countEl.textContent = total ? `${total} documents${isoCount>0?` · ${isoCount} isolated`:''}` : 'No documents';
+  }
 
         ul.querySelectorAll('a').forEach(a => a.addEventListener('click', (e) => {
           e.preventDefault();
