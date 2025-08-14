@@ -6,7 +6,7 @@ Top-level
 - viewer.html — Markdown viewer (secure). Shows title · date · author header
 - .nojekyll — Disable Jekyll on Pages
 - README.md — Project overview and quickstart
-- handbook/** — Canonical project docs (root files are stubs pointing here)
+- handbook/** — 프로젝트 문서의 단일 출처(Single Source of Truth). 루트 중복 문서는 제거됨
 
 Public data
 - public/graph.json — Built graph data
