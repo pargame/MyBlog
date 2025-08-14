@@ -35,12 +35,15 @@
     background: rgba(11,16,32,0.85);
     border: 1px solid rgba(30,39,73,0.6);
     border-radius: 12px;
-    padding: 14px; /* a bit more breathing room so active rings aren’t clipped */
+    padding: 10px; /* compact when collapsed; expanded states override */
     backdrop-filter: blur(8px);
   transition: all .25s ease;
     pointer-events: auto;
     overflow: visible; /* prevent inner button focus/active rings from clipping */
   }
+  /* Expanded overlays: add breathing room */
+  .graph-overlay.show,
+  .graph-overlay.search-box.active { padding: 14px; }
   
   .graph-overlay.top-left { top: 16px; left: 16px; }
   .graph-overlay.top-right { top: 16px; right: 16px; }
