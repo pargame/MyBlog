@@ -43,3 +43,21 @@
     회전을 나타내는 또 다른 방식의 구조체로, 주로 복잡한 회전 계산에 사용됩니다.
 * **[[FTransform]]:**
     이동(Location, `FVector`), 회전(Rotation, [[FQuat]]), 크기(Scale, `FVector`)를 모두 포함하는 변환 정보의 집합입니다.
+
+### **6. 코드 예시**
+```cpp
+// 벡터 정규화와 내적/외적 사용 예시
+FVector A(1.f, 2.f, 0.f);
+FVector B(0.f, 1.f, 0.f);
+
+FVector ANorm = A.GetSafeNormal();
+float Dot = FVector::DotProduct(ANorm, B);
+FVector Cross = FVector::CrossProduct(ANorm, B);
+
+// 캐릭터 전방으로 이동 입력 전달
+APawn* Pawn = /* ... */;
+if (Pawn)
+{
+    Pawn->AddMovementInput(Pawn->GetActorForwardVector(), 1.0f);
+}
+```

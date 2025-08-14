@@ -28,3 +28,41 @@
 	특정 방향으로 움직이고 싶다는 '의도'를 [[UMovementComponent]]에 전달합니다. 실제 이동은 무브먼트 컴포넌트가 처리하므로, `APawn`은 그저 "어느 방향으로 가고 싶다"고 알리기만 하면 됩니다.
 * `SpawnDefaultController()`:
 	`APawn`이 월드에 스폰될 때, 아무런 컨트롤러에 의해 빙의되지 않은 상태라면 이 함수를 통해 기본 컨트롤러를 스스로 생성하고 빙의를 시도합니다.
+
+### **3. 코드 예시**
+```cpp
+// 간단한 Pawn: 입력을 받아 회전/이동 의도를 전달하는 예시
+#include "GameFramework/Pawn.h"
+
+class AMyPawn : public APawn
+{
+	GENERATED_BODY()
+
+public:
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override
+	{
+		check(PlayerInputComponent);
+		PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+		PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+		PlayerInputComponent->BindAxis("MoveForward", this, &AMyPawn::MoveForward);
+		PlayerInputComponent->BindAxis("MoveRight", this, &AMyPawn::MoveRight);
+	}
+
+private:
+	void MoveForward(float Value)
+	{
+		if (Controller && Value != 0.f)
+		{
+			AddMovementInput(GetActorForwardVector(), Value);
+		}
+	}
+
+	void MoveRight(float Value)
+	{
+		if (Controller && Value != 0.f)
+		{
+			AddMovementInput(GetActorRightVector(), Value);
+		}
+	}
+};
+```

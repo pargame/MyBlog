@@ -41,3 +41,50 @@
 * **유연한 제어:
 **
       이러한 분리 덕분에, 하나의 `APlayerController`가 상황에 따라 다른 종류의 [[APawn]] (예: 평소에는 캐릭터, 특정 구간에서는 차량)을 제어하는 것이 가능해집니다.
+
+### **4. 코드 예시**
+```cpp
+// 플레이어 컨트롤러: Pawn 빙의와 간단한 UI 토글 예시
+#include "GameFramework/PlayerController.h"
+#include "Blueprint/UserWidget.h"
+
+class AMyPlayerController : public APlayerController
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> MenuClass;
+
+	UFUNCTION(Exec)
+	void ToggleMenu()
+	{
+		if (!MenuClass) return;
+
+		if (!Menu)
+		{
+			Menu = CreateWidget<UUserWidget>(this, MenuClass);
+			if (Menu)
+			{
+				Menu->AddToViewport(10);
+				bShowMouseCursor = true;
+				FInputModeUIOnly InputMode;
+				InputMode.SetWidgetToFocus(Menu->TakeWidget());
+				SetInputMode(InputMode);
+			}
+		}
+		else
+		{
+			Menu->RemoveFromParent();
+			Menu = nullptr;
+			bShowMouseCursor = false;
+			SetInputMode(FInputModeGameOnly());
+		}
+	}
+
+protected:
+	UPROPERTY()
+	UUserWidget* Menu = nullptr;
+};
+```
+

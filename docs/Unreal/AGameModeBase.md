@@ -47,3 +47,27 @@
 	게임이 끝났을 때 호출됩니다. 승리/패배 로직을 처리하고, `WaitingPostMatch` 상태로 전환하는 등의 작업을 수행합니다.
 * `CanDealDamage(APlayerState* DamageInstigator, APlayerState* DamagedPlayer)`:
 	특정 플레이어가 다른 플레이어에게 피해를 줄 수 있는지(예: 팀킬 방지)를 결정하는 훅(Hook) 함수입니다.
+
+### **5. 코드 예시**
+```cpp
+// 간단한 게임모드: 플레이어 로그인과 리스타트 로직
+#include "GameFramework/GameModeBase.h"
+
+class AMyGameMode : public AGameModeBase
+{
+	GENERATED_BODY()
+
+public:
+	virtual void PostLogin(APlayerController* NewPlayer) override
+	{
+		Super::PostLogin(NewPlayer);
+		RestartPlayer(NewPlayer);
+	}
+
+	virtual AActor* FindPlayerStart_Implementation(AController* Player, const FString& IncomingName) override
+	{
+		// 기본 구현을 사용하거나, 태그 기준의 커스텀 선택 가능
+		return Super::FindPlayerStart_Implementation(Player, IncomingName);
+	}
+};
+```

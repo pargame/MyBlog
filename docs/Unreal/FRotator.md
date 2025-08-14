@@ -39,3 +39,15 @@
     3차원 벡터로, `FRotator`에 의해 회전될 수 있습니다.
 * **[[FTransform]]:**
     이동, 회전, 크기를 모두 포함하는 구조체로, 에디터에서는 회전을 `FRotator`로 표시하지만 내부적으로는 [[FQuat]]으로 관리합니다.
+
+### **6. 코드 예시**
+```cpp
+// FRotator로 전방 벡터 회전 및 쿼터니언 변환 예시
+FRotator R(0.f, 90.f, 0.f); // Yaw 90도
+FVector Forward = FVector::ForwardVector;
+FVector Right = R.RotateVector(Forward); // 전방을 우측으로 회전
+
+// 복잡한 연산 전 쿼터니언으로 변환
+FQuat Q = R.Quaternion();
+FVector Rotated = Q.RotateVector(Forward);
+```

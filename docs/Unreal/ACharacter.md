@@ -46,3 +46,44 @@
 * **[[UCharacterMovementComponent]]:
 **
 	`ACharacter`의 '다리'와도 같습니다. 중력의 영향을 받고, 지면을 따라 걷거나, 경사면을 오르고, 점프하는 등 모든 이동 로직을 처리하는 가장 복잡하고 중요한 컴포넌트입니다.
+
+### **4. 코드 예시**
+```cpp
+// 기본 캐릭터: 이동/점프/웅크리기 입력을 처리하는 예시
+#include "GameFramework/Character.h"
+
+class AMyCharacter : public ACharacter
+{
+	GENERATED_BODY()
+
+public:
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override
+	{
+		check(PlayerInputComponent);
+		PlayerInputComponent->BindAxis("MoveForward", this, &AMyCharacter::MoveForward);
+		PlayerInputComponent->BindAxis("MoveRight", this, &AMyCharacter::MoveRight);
+		PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+		PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+		PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ACharacter::Crouch);
+		PlayerInputComponent->BindAction("Crouch", IE_Released, this, &ACharacter::UnCrouch);
+	}
+
+private:
+	void MoveForward(float Value)
+	{
+		if (Value != 0.f)
+		{
+			AddMovementInput(GetActorForwardVector(), Value);
+		}
+	}
+
+	void MoveRight(float Value)
+	{
+		if (Value != 0.f)
+		{
+			AddMovementInput(GetActorRightVector(), Value);
+		}
+	}
+};
+```
+

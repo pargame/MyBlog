@@ -55,3 +55,28 @@ void AMyActor::MyFunction()
     `FTimerManager`를 소유하고 접근 경로를 제공합니다.
 * **[[FTimerDelegate]]:**
     타이머가 만료되었을 때 호출될 함수를 바인딩하는 데 사용되는 델리게이트입니다.
+
+### **5. 코드 예시**
+```cpp
+// 루프 타이머를 설정하고 액터 종료 시 정리하는 예시
+#include "TimerManager.h"
+
+FTimerHandle LoopHandle;
+
+void AMyActor::BeginPlay()
+{
+    Super::BeginPlay();
+    GetWorld()->GetTimerManager().SetTimer(LoopHandle, this, &AMyActor::TickEverySecond, 1.0f, true, 0.0f);
+}
+
+void AMyActor::TickEverySecond()
+{
+    // 매 초 호출되는 로직
+}
+
+void AMyActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+    Super::EndPlay(EndPlayReason);
+    GetWorld()->GetTimerManager().ClearTimer(LoopHandle);
+}
+```

@@ -52,3 +52,37 @@
 * **[[ACameraActor]]:
 **
       특정 시점을 나타내는 카메라 역할을 하는 `AActor`입니다.
+
+### **4. 사용 방법**
+* 레벨에 `AActor`를 배치하고, 필요한 컴포넌트를 추가하여 기능을 부여합니다.
+* 스폰이 필요한 경우 [[UGameplayStatics]]의 `SpawnActor` 계열 함수를 사용합니다.
+
+### **5. 코드 예시**
+```cpp
+// 가장 기본적인 AActor 서브클래스와 스폰 예시
+#include "GameFramework/Actor.h"
+#include "Kismet/GameplayStatics.h"
+
+class AMyActor : public AActor
+{
+	GENERATED_BODY()
+
+public:
+	virtual void BeginPlay() override
+	{
+		Super::BeginPlay();
+		UE_LOG(LogTemp, Log, TEXT("AMyActor::BeginPlay"));
+	}
+};
+
+// 다른 액터에서 스폰
+void ASpawner::SpawnSimpleActor()
+{
+	UWorld* World = GetWorld();
+	if (!World) return;
+	FActorSpawnParameters Params;
+	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	World->SpawnActor<AMyActor>(AMyActor::StaticClass(), GetActorLocation() + FVector(100,0,0), FRotator::ZeroRotator, Params);
+}
+```
+

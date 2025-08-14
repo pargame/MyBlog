@@ -41,38 +41,26 @@ Recommended flow
 	- Local/OS/IDE: `.DS_Store`, `.Spotlight-V100`, `.Trashes`, `.idea/`, `.vscode/*` (allow only required exceptions)
 
 ## Unreal Engine Archive Rules
-- Scope: Applies to all Markdown under `docs/Unreal/**`.
-
-- Content structure (section template)
-	1. Overview: one-line Korean summary in a blockquote describing the concept.
-	2. Roles & Responsibilities: what it is for; keep bullets concise.
-	3. Core API: key properties/components/functions with a short explanation.
-	4. Usage patterns: common scenarios, do/don'ts, and small tips.
-	5. Related: link to closely related classes/types.
-	6. 코드 예시: one focused C++ snippet that compiles in-context; no wiki links inside code.
-
-- Linking conventions
-	- Use wiki links `[[Name]]` for Unreal terms (classes U*/A*/F*, systems, keywords).
-	- Do NOT use links inside fenced code blocks.
-	- Self-references must be backticks, not links (e.g., `AActor` in `AActor.md`).
-	- If a linked page doesnt exist, create an empty stub `docs/Unreal/Name.md` (title later).
-
-- Language & style
-	- Narrative/explanations: Korean. Code, identifiers, APIs, and keywords: English.
-	- Keep bullets short; prefer examples over theory. Avoid duplication across pages.
-
-- Code example rules
-	- Always end the page with a fenced C++ example when applicable (```cpp ... ```).
-	- No trailing text after the final code block.
-	- Show realistic includes and minimal surrounding context; avoid pseudo-code.
-
-- Validation checklist (per file)
-	- [ ] Overview exists and is Korean, concise, and accurate.
-	- [ ] Sections present (2-5) with meaningful bullets; no empty headings.
-	- [ ] All Unreal terms linked via `[[ ]]`; self-reference uses backticks.
-	- [ ] Final section is "코드 예시" with C++ code; no links inside code.
-	- [ ] No orphan links (create missing stubs if needed).
-	- [ ] No code block preceding content (example appears at the very end).
+- **Language**: Narrative in Korean; code/APIs/identifiers in English. Do not translate class/enum/function names.
+- **Content Generation**: Maintain a consistent format by referencing other Unreal docs. Prefer concrete, task-focused explanations over theory only.
+- **Section template and order** (keep headings as below; omit a section only if truly N/A):
+	1) 개요/정의 (한 줄 요약 포함)
+	2) 주요 역할 및 책임
+	3) 핵심 속성·함수·구성요소 (문서 주제에 맞게 이름 조정: 속성/함수/컴포넌트/서브클래스 등)
+	4) 사용 방법·패턴 (또는 “사용 예시”)
+	5) 관련 클래스
+	6) 코드 예시  ← 반드시 마지막 섹션이며, C++ fenced block로 마무리
+- **Linking**:
+	- Unreal terms (U/A/F/I… prefixes, subsystems, common nouns like Event) link via `[[Term]]`.
+	- Do not link inside code blocks.
+	- Self-reference uses backticks (e.g., `AActor` within `AActor.md`).
+- **New File Creation**: If a linked document is missing, create an empty stub file with just front matter for now.
+- **Code Examples**: Add one focused C++ example at the end (compile-realistic, safe defaults). No extra text after the fence.
+- **Review checks for every doc**:
+	- Headings follow the template and numbering is continuous.
+	- No dangling TODOs; related links resolve (create stubs if needed).
+	- No wiki links in code; no images or assets that aren’t in repo.
+	- Code fence is the last content in the file.
 
 Convenience
 - VS Code task “Commit & Push (deploy)” or `npm run deploy` performs stage-all + commit + push.
