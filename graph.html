@@ -43,7 +43,19 @@
   }
   /* Expanded overlays: add breathing room */
   .graph-overlay.show,
-  .graph-overlay.search-box.active { padding: 14px; }
+  .graph-overlay.search-box.active { padding: 16px; }
+
+  /* Archive overlay: center align buttons */
+  #archive-ctl { text-align: center; }
+  #archive-ctl > .btn { display: inline-block; }
+  #archive-ctl .body { padding-top: 6px; }
+  #archive-ctl #archives {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    overflow: visible;
+  }
   
   .graph-overlay.top-left { top: 16px; left: 16px; }
   .graph-overlay.top-right { top: 16px; right: 16px; }
