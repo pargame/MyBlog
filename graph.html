@@ -43,8 +43,7 @@
   
   .graph-overlay.top-left { top: 16px; left: 16px; }
   .graph-overlay.top-right { top: 16px; right: 16px; }
-  .graph-overlay.top-right.zoom-controls { top: 64px; right: 16px; }
-  .graph-overlay.search-box { top: 112px; right: 16px; }
+  .graph-overlay.search-box { top: 64px; right: 16px; }
   
   .graph-overlay .body { 
     display: none; 
@@ -121,17 +120,7 @@
     background: rgba(110,168,254,0.2);
   }
   
-  .zoom-controls {
-    margin-top: 10px;
-  }
-  
-  .zoom-controls .btn {
-    width: 40px;
-    height: 40px;
-    font-size: 20px;
-    line-height: 1;
-    margin-right: 5px;
-  }
+  /* zoom-controls removed per request */
   
       .node { cursor: pointer; }
   .node circle { fill: #6ea8fe; }
@@ -194,11 +183,7 @@
           </div>
         </div>
 
-        <!-- Zoom controls (top-right, below archive) -->
-        <div class="graph-overlay top-right zoom-controls">
-          <button id="zoom-in" class="btn" title="Zoom In">+</button>
-          <button id="zoom-out" class="btn" title="Zoom Out">-</button>
-        </div>
+  <!-- Zoom controls removed -->
 
         <!-- Search (top-right, below zoom) -->
         <div id="search-ctl" class="graph-overlay top-right search-box">
@@ -234,28 +219,6 @@
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
   <script src="./assets/js/footer.js"></script>
     <script>
-    function setupZoomControls() {
-      const zoomInBtn = document.getElementById('zoom-in');
-      const zoomOutBtn = document.getElementById('zoom-out');
-      if (zoomInBtn) {
-        zoomInBtn.addEventListener('click', () => {
-          if (!svg || !zoomBehavior) return;
-          const currentTransform = d3.zoomTransform(svg.node());
-          const newScale = Math.min(3, currentTransform.k * 1.5);
-          const newTransform = currentTransform.scale(newScale / currentTransform.k);
-          svg.transition().duration(300).call(zoomBehavior.transform, newTransform);
-        });
-      }
-      if (zoomOutBtn) {
-        zoomOutBtn.addEventListener('click', () => {
-          if (!svg || !zoomBehavior) return;
-          const currentTransform = d3.zoomTransform(svg.node());
-          const newScale = Math.max(0.2, currentTransform.k / 1.5);
-          const newTransform = currentTransform.scale(newScale / currentTransform.k);
-          svg.transition().duration(300).call(zoomBehavior.transform, newTransform);
-        });
-      }
-    }
     // Graph state/selectors
         let FULL = null; // 전체 데이터
         let CUR = null;  // 필터된 현재 데이터
@@ -283,7 +246,6 @@
           setupSearch(FULL);
           setupControls();
           setupOverlay();
-          setupZoomControls();
           rerender(FULL);
   // On resize, reset cached dimensions and rerender
           window.addEventListener('resize', () => { GRAPH_W = null; GRAPH_H = null; rerender(); });
@@ -406,24 +368,29 @@
         isOverlayOpen = true;
         const overlay = document.getElementById('doc-overlay');
         const frame = document.getElementById('doc-frame');
-        
-        // Focus node and shift camera to left-center
         setSelected(id);
-        focusNodeById(id, { offsetX: -0.2 }); // Shift left by 20% of viewport
-        
-        // Open document in overlay
+
+        // Prepare document URL
         const url = new URL('./viewer.html', location.href);
         url.searchParams.set('id', id);
         const arch = getSelectedArchive();
         if (arch && arch !== 'ALL') url.searchParams.set('archive', arch);
         url.searchParams.set('from', 'graph');
-        
+
+        // Open overlay first so layout/width is final, then focus
         frame.src = url.toString();
         overlay.classList.add('open');
-        
-  // Listen for navigation messages from the iframe (avoid duplicates)
-  window.removeEventListener('message', handleViewerNavigation);
-  window.addEventListener('message', handleViewerNavigation);
+
+        const focusAfterOpen = () => focusNodeById(id, { offsetX: -0.225 });
+        const onEnd = (e) => {
+          if (e.propertyName === 'width') {
+            overlay.removeEventListener('transitionend', onEnd);
+            focusAfterOpen();
+          }
+        };
+        try { overlay.addEventListener('transitionend', onEnd, { once: true }); } catch { overlay.addEventListener('transitionend', onEnd); }
+        // Fallback in case transition event is missed
+        setTimeout(focusAfterOpen, 480);
       }
 
       function closeDocumentOverlay() {
@@ -431,19 +398,8 @@
         const overlay = document.getElementById('doc-overlay');
         const frame = document.getElementById('doc-frame');
         
-        overlay.classList.remove('open');
-        frame.src = 'about:blank';
-        
-        window.removeEventListener('message', handleViewerNavigation);
-      }
-
-      function handleViewerNavigation(ev) {
-        try {
-          const data = ev.data || {};
-          if (data && data.type === 'viewer:navigate' && data.id) {
-            openDocumentOverlay(String(data.id));
-          }
-        } catch {}
+  overlay.classList.remove('open');
+  frame.src = 'about:blank';
       }
 
       function filter(data, archive) {
@@ -605,8 +561,7 @@
           let h = 0; for (let i=0;i<str.length;i++){h=((h<<5)-h)+str.charCodeAt(i); h|=0;} return h;
         }
 
-        // 팬 + 버튼 줌만 허용 (휠 줌 비활성화)
-          // 줌/팬: 휠/더블클릭 확대 허용
+          // 줌/팬: 마우스/트랙패드 기본 제스처만 허용 (± 버튼 제거)
           zoomBehavior = d3.zoom()
             .scaleExtent([0.2, 3])
             .on('zoom', (ev) => {
@@ -728,7 +683,12 @@
   window.addEventListener('message', (ev) => {
     try {
       const d = ev.data || {};
-      if (d && d.type === 'viewer:navigate' && d.id) { setSelected(String(d.id)); focusNodeById(String(d.id)); }
+      if (d && d.type === 'viewer:navigate' && d.id) {
+        const id = String(d.id);
+        setSelected(id);
+        // If overlay is open, keep node centered in left pane
+        focusNodeById(id, { offsetX: isOverlayOpen ? -0.225 : 0 });
+      }
     } catch {}
   });
 

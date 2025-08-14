@@ -80,7 +80,7 @@
         return u.searchParams.get('from');
       }
 
-      async function load() {
+  async function load() {
         // 임베드 여부 표시(그래프 페이지 iframe에서 열릴 때)
         try { if (window.self !== window.top) document.body.setAttribute('data-embedded', '1'); } catch {}
         const idRaw = getParam('id');
@@ -145,8 +145,12 @@
         await renderMarkdown(text, graph, arch, topic);
   // Avoid passing accidental global 'title' element; let finalize extract from content
   finalize(null, graph, id, topic, arch);
-  // Inform parent (graph page) of current id to sync highlight
-  try { if (window.parent && window.parent !== window) window.parent.postMessage({ type: 'viewer:navigate', id }, '*'); } catch {}
+  // Inform parent (graph page) of current id to sync highlight (one-shot after load)
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'viewer:navigate', id }, '*');
+    }
+  } catch {}
       }
 
       async function renderMarkdown(text, graph, arch, topic) {
