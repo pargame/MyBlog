@@ -1,0 +1,31 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Commit & Push (deploy)",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"add",
+				"-A",
+				"&&",
+				"git",
+				"commit",
+				"-m",
+				"\"chore: commit & push (auto-deploy)\"",
+				"||",
+				"true",
+				"&&",
+				"git",
+				"push",
+				"origin",
+				"main"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$eslint-stylish"
+			],
+			"group": "build"
+		}
+	]
+}
