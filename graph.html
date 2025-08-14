@@ -37,22 +37,38 @@
     border-radius: 12px;
     padding: 8px;
     backdrop-filter: blur(8px);
-    transition: all .3s ease;
+  transition: all .25s ease;
     pointer-events: auto;
   }
   
   .graph-overlay.top-left { top: 16px; left: 16px; }
   .graph-overlay.top-right { top: 16px; right: 16px; }
-  .graph-overlay.search-box { top: 64px; right: 16px; }
+  /* Search box centered at top */
+  .graph-overlay.search-box { 
+    top: 16px; 
+    left: 50%; 
+    transform: translateX(-50%);
+    max-width: 520px;
+    width: calc(100vw - 32px);
+  z-index: 12;
+  }
   
   .graph-overlay .body { 
-    display: none; 
+    display: block; 
     margin-top: 8px; 
-    max-width: 300px;
-    max-height: 400px;
-    overflow-y: auto;
+    max-width: 520px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: max-height .28s ease, opacity .22s ease, transform .28s ease;
   }
-  .graph-overlay.show .body { display: block; }
+  .graph-overlay.show .body { 
+    max-height: 420px; 
+    overflow-y: auto; 
+    opacity: 1;
+    transform: translateY(0);
+  }
   
   .graph-overlay .row { 
     display: flex; 
