@@ -44,8 +44,14 @@ main에 push → GitHub Actions Pages 배포.
 - 워크플로: `.github/workflows/pages.yml`
 
 ## 프로젝트 문서(Handbook)
-상세 문서는 `handbook/`에 있습니다.
-- BUILD.md, SYSTEM.md, FILEMAP.md, REQUIREMENTS.md, ARCHITECTURE.md, CONTRIBUTING.md, MAINTENANCE.md
+상세 문서는 `handbook/`에 있습니다:
+ - `handbook/ARCHITECTURE.md`
+ - `handbook/BUILD.md`
+ - `handbook/CONTRIBUTING.md`
+ - `handbook/FILEMAP.md`
+ - `handbook/MAINTENANCE.md`
+ - `handbook/REQUIREMENTS.md`
+ - `handbook/SYSTEM.md`
 
 ## 파일 개요
 빠른 개요는 `FILEMAP.md`를 참고하세요.
