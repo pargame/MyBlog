@@ -70,7 +70,18 @@
     transform: translateY(-4px);
     transition: max-height .28s ease, opacity .22s ease, transform .28s ease, width .25s ease, max-width .25s ease, margin-top .25s ease;
   }
-    .graph-overlay.search-box.active .body { 
+  /* Generic overlay open rule (Archive, Settings) */
+  .graph-overlay.show .body {
+    margin-top: 8px;
+    width: auto;
+    max-width: 520px;
+    max-height: 420px;
+    overflow-y: auto;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  /* Search overlay uses a separate active state (paired with expanded width) */
+  .graph-overlay.search-box.active .body { 
     margin-top: 8px;
     width: auto;
     max-width: 520px;
@@ -160,8 +171,8 @@
   
   /* zoom-controls removed per request */
   
-      .node { cursor: pointer; }
-  .node circle { fill: #6ea8fe; }
+      .node { cursor: pointer; transition: opacity .22s ease, transform .22s ease; }
+      .node circle { fill: #6ea8fe; transition: opacity .22s ease, fill-opacity .22s ease, stroke-opacity .22s ease; }
   .node.topic-ROOT circle { fill: #6ea8fe; }
   .node.topic-1 circle { fill: #60d394; }
   .node.topic-2 circle { fill: #ee6055; }
@@ -169,8 +180,7 @@
   .node.topic-4 circle { fill: #aaf683; }
   .node.topic-5 circle { fill: #57c7ff; }
       .node text { fill: #e7ecff; font-size: 12px; }
-      .link { stroke: #3a4b86; stroke-opacity: .6; }
-      .link:hover { stroke-opacity: 1; }
+  .link { stroke: #3a4b86; stroke-opacity: .6; transition: opacity .18s ease, stroke-opacity .18s ease; }
   .faded { opacity: 0.15; }
   .node.selected circle { stroke: #ffd97d; stroke-width: 3px; }
   /* Isolated nodes (no links) */
@@ -335,7 +345,13 @@
         // Archive toggle button
         const archToggle = document.getElementById('archive-toggle');
         if (archToggle) archToggle.addEventListener('click', () => {
-          document.getElementById('archive-ctl').classList.toggle('show');
+          const p = document.getElementById('archive-ctl');
+          if (p) p.classList.toggle('show');
+        });
+        // Allow clicking the overlay header area to toggle as well
+        const archCtl = document.getElementById('archive-ctl');
+        if (archCtl) archCtl.addEventListener('click', (e) => {
+          if (e.target && e.target.id === 'archive-ctl') archCtl.classList.toggle('show');
         });
       }
 
@@ -509,6 +525,25 @@
           syncVals();
           updateStyles();
           updateForces();
+          // Reset zoom/pan to initial
+          try {
+            currentTransform = d3.zoomIdentity;
+            if (svg && zoomBehavior) svg.transition().duration(350).call(zoomBehavior.transform, d3.zoomIdentity);
+          } catch {}
+          // Close overlays (doc, archive, settings, search)
+          try { closeDocumentOverlay(); } catch {}
+          try { document.getElementById('archive-ctl').classList.remove('show'); } catch {}
+          try { document.getElementById('graph-ctl').classList.remove('show'); } catch {}
+          try {
+            const sctl = document.getElementById('search-ctl');
+            const sin = document.getElementById('doc-search');
+            if (sin) sin.value = '';
+            if (sctl) { sctl.classList.remove('active'); sctl.classList.remove('expanded'); }
+            const results = document.getElementById('search-results');
+            const count = document.getElementById('search-count');
+            if (results) results.innerHTML = '';
+            if (count) count.textContent = '';
+          } catch {}
         });
   if (toggle && wrap) toggle.addEventListener('click', () => { wrap.classList.toggle('show'); });
       }
@@ -644,9 +679,17 @@
           adj.get(s).add(t);
           adj.get(t).add(s);
         }
-        nodeSel.on('mouseover', (_, d) => highlight(d.id));
-        nodeSel.on('mouseout', clearHighlight);
-        function highlight(id){
+        let hoverTimer = null;
+        nodeSel.on('mouseover', (_, d) => {
+          if (hoverTimer) { clearTimeout(hoverTimer); hoverTimer = null; }
+          applyHighlight(d.id);
+        });
+        nodeSel.on('mouseout', () => {
+          // defer clearing slightly for smoother feel
+          if (hoverTimer) clearTimeout(hoverTimer);
+          hoverTimer = setTimeout(() => clearHighlight(), 90);
+        });
+        function applyHighlight(id){
           nodeSel.classed('faded', n => (n.id !== id && !adj.get(id).has(n.id)));
           linkSel.classed('faded', e => {
             const s = e.source.id || e.source;
