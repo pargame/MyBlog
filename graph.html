@@ -43,17 +43,13 @@
   
   .graph-overlay.top-left { top: 16px; left: 16px; }
   .graph-overlay.top-right { top: 16px; right: 16px; }
-  /* Search box centered at top, collapses to button */
+  /* Search box centered at top: always-visible input (no button) */
   .graph-overlay.search-box { 
     top: 16px; 
     left: 50%; 
     transform: translateX(-50%);
-    width: auto;
-    z-index: 12;
-  }
-  .graph-overlay.search-box.show {
     width: min(520px, calc(100vw - 32px));
-    transform: translateX(calc(-50% - 12px)); /* slight left shift on expand */
+    z-index: 12;
   }
   
   /* Overlay content smoothly expands; collapsed state contributes no width */
@@ -68,7 +64,7 @@
     transform: translateY(-4px);
     transition: max-height .28s ease, opacity .22s ease, transform .28s ease, width .25s ease, max-width .25s ease, margin-top .25s ease;
   }
-  .graph-overlay.show .body { 
+  .graph-overlay.search-box.active .body { 
     margin-top: 8px;
     width: auto;
     max-width: 520px;
@@ -219,7 +215,7 @@
 
   <!-- Zoom controls removed -->
 
-        <!-- Search (center-top): whole box acts as search bar -->
+  <!-- Search (center-top): always-visible input -->
         <div id="search-ctl" class="graph-overlay search-box">
           <input id="doc-search" class="search-input" type="search" placeholder="Search documents..." aria-label="Search documents" />
           <div id="search-body" class="body">
@@ -341,29 +337,22 @@
         const input = document.getElementById('doc-search');
         const results = document.getElementById('search-results');
         const count = document.getElementById('search-count');
-        // Open on focus/click; collapse on blur if empty
-        ctl.addEventListener('click', (e) => {
-          ctl.classList.add('show');
-          input.focus();
-        });
-        input.addEventListener('focus', () => { ctl.classList.add('show'); });
-        input.addEventListener('blur', () => {
-          setTimeout(() => {
-            if (!input.value.trim()) {
-              ctl.classList.remove('show');
-              results.innerHTML = '';
-              count.textContent = '';
-            }
-          }, 120);
-        });
+        // Results panel toggles based on focus/query, no button state
+        function refreshPanel(hasQuery){
+          ctl.classList.toggle('active', !!hasQuery || document.activeElement === input);
+        }
+        input.addEventListener('focus', () => refreshPanel(true));
+        input.addEventListener('blur', () => setTimeout(() => refreshPanel(!!input.value.trim()), 60));
         
         input.addEventListener('input', () => {
           const query = input.value.trim().toLowerCase();
           if (!query) {
             results.innerHTML = '';
             count.textContent = '';
+            refreshPanel(false);
             return;
           }
+          refreshPanel(true);
           
           const arch = getSelectedArchive();
           let nodes = (data.nodes || []).filter(n => !isPost(n));
@@ -385,9 +374,20 @@
             li.addEventListener('click', () => {
               const id = li.getAttribute('data-id');
               openDocumentOverlay(id);
-        document.getElementById('search-ctl').classList.remove('show');
+        refreshPanel(false);
             });
           });
+        });
+
+        // Enter to open first result
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            const first = results.querySelector('li');
+            if (first) {
+              openDocumentOverlay(first.getAttribute('data-id'));
+              refreshPanel(false);
+            }
+          }
         });
       }
 
