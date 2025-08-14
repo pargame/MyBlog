@@ -7,8 +7,10 @@
 * `DefaultPawnClass`: `RestartPlayer`가 호출될 때 스폰할 기본 [[APawn]] 클래스를 지정합니다.
 * `PlayerControllerClass`: `Login` 시 생성할 [[APlayerController]] 클래스를 지정합니다.
 * `PlayerStateClass`: `Login` 시 생성할 [[APlayerState]] 클래스를 지정합니다.
-* `GameStateClass`: 이 게임 모드와 함께 사용할 [[AGameStateBase]] 클래스를 지정합니다.
-* `HUDClass`: 플레이어 컨트롤러가 사용할 기본 HUD 클래스를 지정합니다.
+* `GameStateClass`:
+이 게임 모드와 함께 사용할 [[AGameStateBase]] 클래스를 지정합니다.
+* `HUDClass`:
+플레이어 컨트롤러가 사용할 기본 HUD 클래스를 지정합니다.
 
 ### **2. 플레이어 접속 및 초기화**
 > 플레이어가 월드에 들어와 게임에 참여하기까지의 전반적인 과정을 관리합니다. 접속 승인부터 컨트롤러와 상태 정보 초기화, 그리고 최종 로그인 완료까지의 흐름을 제어합니다.
@@ -31,7 +33,8 @@
 	`InController`에 적합한 폰 클래스를 반환합니다. 기본적으로는 `DefaultPawnClass`를 사용하지만, 특정 컨트롤러에 따라 다른 폰을 스폰하도록 오버라이드할 수 있습니다.
 * `SpawnDefaultPawnFor(AController* NewPlayer, AActor* StartSpot)`:
 	결정된 위치(StartSpot)에 결정된 클래스(`GetDefaultPawnClassForController`의 반환값)의 폰을 스폰합니다.
-* `Possess(APawn* InPawn)`: `NewPlayer` 컨트롤러의 이 함수를 호출하여, 방금 스폰된 폰에 대한 제어권을 부여합니다.
+* `Possess(APawn* InPawn)`:
+`NewPlayer` 컨트롤러의 이 함수를 호출하여, 방금 스폰된 폰에 대한 제어권을 부여합니다.
 * `K2_OnSetMatchState(FName NewState)`:
 	게임의 매치 상태(MatchState)가 변경될 때 호출되는 블루프린트 [[Event]]입니다. `WaitingToStart`, `InProgress`, `WaitingPostMatch` 등의 상태에 따라 특정 로직(예: `InProgress` 상태가 되면 모든 플레이어의 `RestartPlayer` 호출)을 실행하는 데 사용됩니다.
 

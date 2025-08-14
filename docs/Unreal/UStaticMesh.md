@@ -4,20 +4,26 @@
 
 ### **1. 주요 역할 및 책임**
 > `UStaticMesh`는 3D 모델의 원본 데이터를 저장하고, 이를 렌더링 및 물리 엔진에서 사용할 수 있는 형태로 제공하는 역할을 합니다.
-* **렌더링 데이터 제공 (Providing Rendering Data):**
+* **렌더링 데이터 제공 (Providing Rendering Data):
+**
     모델을 화면에 그리는 데 필요한 모든 원시 데이터, 즉 정점(Vertex)의 위치, 폴리곤을 구성하는 인덱스, UV 좌표, 노멀(Normal) 값 등을 포함하고 있습니다.
-* **충돌 정보 정의 (Defining Collision Information):**
+* **충돌 정보 정의 (Defining Collision Information):
+**
     모델의 단순화된 충돌 형태(Collision Shape)를 내장할 수 있습니다. 이를 통해 복잡한 렌더링 메시 대신, 성능에 최적화된 간단한 도형으로 물리 계산을 수행할 수 있습니다.
-* **머티리얼 슬롯 관리 (Managing Material Slots):**
+* **머티리얼 슬롯 관리 (Managing Material Slots):
+**
     메시의 각 부분에 어떤 머티리얼을 적용할지를 결정하는 '머티리얼 슬롯' 목록을 가지고 있습니다. [[UStaticMeshComponent]]에서 이 슬롯에 실제 머티리얼 애셋을 할당하여 최종적인 외형을 결정합니다.
-* **LOD 관리 (Managing Level of Detail):**
+* **LOD 관리 (Managing Level of Detail):
+**
     카메라와의 거리에 따라 점차 단순화된 버전의 메시로 교체하여 렌더링 성능을 최적화하기 위한 여러 단계의 LOD(Level of Detail) 모델 데이터를 포함할 수 있습니다.
 
 ### **2. `UStaticMesh` vs. `UStaticMeshComponent`**
 > 이 둘은 '데이터'와 '인스턴스'의 관계로 명확히 구분됩니다.
-* **`UStaticMesh` (데이터 애셋):**
+* **`UStaticMesh` (데이터 애셋):
+**
     콘텐츠 브라우저에 존재하는 '.uasset' 파일입니다. 3D 모델의 원본 데이터를 담고 있는 '설계도'나 '틀'과 같습니다.
-* **[[UStaticMeshComponent]] (월드 인스턴스):**
+* **[[UStaticMeshComponent]] (월드 인스턴스):
+**
     월드에 배치되는 [[AActor]]에 부착되는 '컴포넌트'입니다. `UStaticMesh`라는 설계도를 참조하여, 실제로 월드의 특정 위치에 그 형태를 렌더링하고 물리적으로 상호작용하는 '실체'입니다.
 
 하나의 `UStaticMesh` 애셋은 수백, 수천 개의 `UStaticMeshComponent`에 의해 재사용될 수 있습니다.

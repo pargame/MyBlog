@@ -5,7 +5,8 @@
 
 ### **1. 매치 상태 관리 (Match State Management)**
 > 게임의 현재 상태(대기 중, 진행 중, 종료 등)를 관리하고 전환하는 상태 머신을 제공합니다. 이 상태는 [[AGameState]]를 통해 모든 클라이언트에게 복제됩니다.
-* `MatchState`: 
+* `MatchState`:
+
 	현재 게임의 상태를 나타내는 `FName` 변수입니다. (`WaitingToStart`, `InProgress`, `WaitingPostMatch` 등의 값을 가집니다.)
 * `SetMatchState(FName NewState)`:
 	게임의 MatchState를 지정된 상태로 변경합니다. 상태 변경 시 `OnMatchStateSet` [[Event]]가 호출됩니다.

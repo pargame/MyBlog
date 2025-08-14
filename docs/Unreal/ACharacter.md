@@ -5,13 +5,17 @@
 
 ### **1. 주요 역할 및 책임**
 > 단순한 [[APawn]]을 넘어, 정교한 이동 능력을 갖춘 특화된 존재입니다. 지면을 걷고, 장애물을 뛰어넘으며, 네트워크 환경에서도 부드럽게 움직이는 모든 기반을 제공합니다.
-* **인간형 이동 (Humanoid Movement):**
+* **인간형 이동 (Humanoid Movement):
+**
 	[[UCharacterMovementComponent]]를 통해 걷기, 달리기, 점프, 수영, 비행 등 복잡한 이동 기능을 기본으로 제공합니다.
-* **네트워크 최적화 (Network Optimization):**
+* **네트워크 최적화 (Network Optimization):
+**
 	클라이언트 측 예측(Client-Side Prediction)과 서버 측 보정을 통해 네트워크 지연 속에서도 부드러운 이동을 구현합니다.
-* **캡슐 기반 충돌 (Capsule-based Collision):**
+* **캡슐 기반 충돌 (Capsule-based Collision):
+**
 	[[UCapsuleComponent]]를 사용하여 수직으로 서 있는 `ACharacter`의 충돌을 효율적으로 처리합니다.
-* **애니메이션 연동 (Animation Integration):**
+* **애니메이션 연동 (Animation Integration):
+**
 	[[USkeletalMeshComponent]]를 통해 [[UAnimBlueprint]]와 쉽게 연동하여, 이동 상태에 맞는 애니메이션(예: 걷기, 점프)을 재생할 수 있습니다.
 
 ### **2. 핵심 함수 및 속성**
@@ -33,9 +37,12 @@
 
 ### **3. 주요 구성 요소**
 > `ACharacter`는 세 가지 핵심 컴포넌트가 유기적으로 결합된 집합체입니다. 이들이 각자의 역할을 수행하며 `ACharacter`의 존재를 완성합니다.
-* **[[UCapsuleComponent]] (루트 컴포넌트):**
+* **[[UCapsuleComponent]] (루트 컴포넌트):
+**
 	`ACharacter`의 충돌 경계를 정의합니다. 캡슐 모양은 수직으로 서 있는 인간형 `ACharacter`의 충돌 및 이동 계산에 매우 효율적입니다.
-* **[[USkeletalMeshComponent]]:**
+* **[[USkeletalMeshComponent]]:
+**
 	`ACharacter`의 시각적 외형과 애니메이션을 담당합니다. 뼈대([[USkeleton]])를 가지고 있어 복잡한 움직임을 표현할 수 있습니다.
-* **[[UCharacterMovementComponent]]:**
+* **[[UCharacterMovementComponent]]:
+**
 	`ACharacter`의 '다리'와도 같습니다. 중력의 영향을 받고, 지면을 따라 걷거나, 경사면을 오르고, 점프하는 등 모든 이동 로직을 처리하는 가장 복잡하고 중요한 컴포넌트입니다.

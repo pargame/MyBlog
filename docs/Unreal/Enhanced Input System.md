@@ -5,16 +5,19 @@
 ### **1. 핵심 철학: 관심사의 분리**
 > `Enhanced Input System`의 가장 큰 특징은 입력 처리 과정을 세 단계로 명확하게 분리한 것입니다. 이를 통해 각 부분을 독립적으로 관리하고 재사용할 수 있습니다.
 
-*   **1. 데이터 계층 (Data Layer): "무엇을" 할 것인가?**
+*   **1. 데이터 계층 (Data Layer):
+"무엇을" 할 것인가?**
     *   **[[UInputAction]] (IA):** '점프', '이동'과 같이 추상화된 **행동** 그 자체를 정의합니다.
     *   **[[UInputMappingContext]] (IMC):** 특정 키(예: `Space Bar`)를 특정 행동([[UInputAction]])에 연결하는 **규칙의 집합**입니다.
     *   **[[UInputModifier]]:** 입력의 원시 값을 가공하는 **필터**입니다. (예: 데드존, 축 반전)
     *   **[[UInputTrigger]]:** 행동이 발동될 **조건**을 정의합니다. (예: 짧게 누르기, 길게 누르기)
 
-*   **2. 처리 계층 (Processing Layer): "언제, 어떻게" 처리할 것인가?**
+*   **2. 처리 계층 (Processing Layer):
+"언제, 어떻게" 처리할 것인가?**
     *   **[[UEnhancedInputLocalPlayerSubsystem]]:** 플레이어의 현재 상황에 맞는 [[UInputMappingContext]]를 동적으로 추가하거나 제거하여, 활성화된 입력 규칙을 관리하는 **중앙 허브**입니다.
 
-*   **3. 실행 계층 (Execution Layer): "누가" 실행할 것인가?**
+*   **3. 실행 계층 (Execution Layer):
+"누가" 실행할 것인가?**
     *   **[[UEnhancedInputComponent]]:** [[UInputAction]]이 발동되었을 때, 실제로 어떤 C++ 함수나 블루프린트 [[Event]]를 실행할지 **바인딩(연결)**하는 역할을 합니다.
 
 ### **2. 기존 시스템과의 비교**

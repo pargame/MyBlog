@@ -4,11 +4,14 @@
 
 ### **1. 주요 역할 및 책임**
 > `UActorComponent`는 [[AActor]]의 기능을 독립적인 부품 단위로 캡슐화하여, 코드의 재사용성과 유지보수성을 극대화하는 역할을 합니다.
-* **기능의 재사용성 (Reusability of Functionality):**
+* **기능의 재사용성 (Reusability of Functionality):
+**
       한 번 만들어진 `UActorComponent`는 어떤 [[AActor]]에든 부착할 수 있습니다. 예를 들어, `UHealthComponent`를 하나 만들어두면 플레이어, 적, 파괴 가능한 상자 등 체력이 필요한 모든 [[AActor]]에 동일한 기능을 쉽게 추가할 수 있습니다.
-* **기능의 캡슐화 (Encapsulation of Functionality):**
+* **기능의 캡슐화 (Encapsulation of Functionality):
+**
       [[AActor]]는 `UActorComponent`가 내부적으로 어떻게 동작하는지 알 필요가 없습니다. 그저 `UActorComponent`가 제공하는 기능(예: `TakeDamage()`, `Heal()`)을 호출하기만 하면 됩니다. 이를 통해 [[AActor]]의 코드는 간결해지고, 각 기능은 독립적으로 관리될 수 있습니다.
-* **비공간적 특성 (Non-Spatial Nature):**
+* **비공간적 특성 (Non-Spatial Nature):
+**
       `UActorComponent` 자체는 월드 내의 위치, 회전, 크기(`Transform`)를 가지지 않습니다. 공간적인 개념이 필요 없는 순수한 데이터나 로직을 담기 위해 설계되었습니다. 공간적인 위치가 필요한 `UActorComponent`는 자식 클래스인 [[USceneComponent]]를 사용해야 합니다.
 
 ### **2. 핵심 함수 (생명 주기)**

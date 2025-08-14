@@ -5,13 +5,17 @@
 
 ### **1. 주요 역할 및 책임**
 > `AActor`는 월드 내에서 위치, 회전, 크기를 가지며, 스스로 존재하고 행동할 수 있는 모든 것의 청사진입니다.
-* **월드 내 존재의 단위 (Unit of Existence in World):**
+* **월드 내 존재의 단위 (Unit of Existence in World):
+**
       레벨에 배치(`Spawn`)될 수 있는 가장 기본적인 클래스입니다. 위치([[FTransform]]), 회전, 스케일 값을 가집니다.
-* **컴포넌트의 컨테이너 (Container for Components):**
+* **컴포넌트의 컨테이너 (Container for Components):
+**
       `AActor` 자체는 많은 기능을 가지고 있지 않습니다. 대신, 기능 단위인 [[UActorComponent]]들을 담는 그릇 역할을 합니다. 예를 들어, 시각적 외형은 [[UStaticMeshComponent]]가, 이동 능력은 [[UMovementComponent]]가 담당하며, `AActor`는 이들을 조합하여 완성됩니다.
-* **네트워크 복제 (Network Replication):**
+* **네트워크 복제 (Network Replication):
+**
       서버에서 클라이언트로 상태를 복제(`Replicate`)할 수 있는 능력을 갖추고 있습니다. 멀티플레이어 게임의 모든 동기화는 `AActor` 단위로 이루어집니다.
-* **생명 주기 관리 (Lifecycle Management):**
+* **생명 주기 관리 (Lifecycle Management):
+**
       월드에 스폰될 때(`BeginPlay`), 매 프레임마다(`Tick`), 그리고 월드에서 사라질 때(`EndPlay`)의 생명 주기 [[Event]]를 가지고 있어, 개발자가 원하는 시점에 특정 로직을 실행할 수 있습니다.
 
 ### **2. 핵심 함수 및 속성**
@@ -33,13 +37,18 @@
 
 ### **3. 주요 서브클래스**
 > `AActor`는 매우 범용적이므로, 특정 목적에 맞게 기능이 추가된 다양한 자식 클래스들이 존재합니다.
-* **[[APawn]]:**
+* **[[APawn]]:
+**
       [[AController]]에 의해 제어될 수 있는 `AActor`입니다. 플레이어나 AI의 '아바타' 역할을 합니다.
-* **[[ACharacter]]:**
+* **[[ACharacter]]:
+**
       걷고, 뛰고, 점프하는 등 인간형 이동에 특화된 폰입니다.
-* **[[AStaticMeshActor]]:**
+* **[[AStaticMeshActor]]:
+**
       레벨에 배치되는 돌, 나무, 건물 등 움직이지 않는 정적인 메시를 표현하는 데 사용되는 간단한 `AActor`입니다.
-* **[[ALight]]:**
+* **[[ALight]]:
+**
       월드를 밝히는 조명의 역할을 하는 `AActor`입니다.
-* **[[ACameraActor]]:**
+* **[[ACameraActor]]:
+**
       특정 시점을 나타내는 카메라 역할을 하는 `AActor`입니다.

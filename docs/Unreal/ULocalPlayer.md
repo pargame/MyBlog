@@ -5,13 +5,17 @@
 
 ### **1. 주요 역할 및 책임**
 > `ULocalPlayer`는 게임 엔진과 실제 플레이어 사이를 연결하는 다리 역할을 하며, 플레이어 개개인에 특화된 설정을 관리합니다.
-* **플레이어의 유일한 대리인 (Player's Unique Representative):**
+* **플레이어의 유일한 대리인 (Player's Unique Representative):
+**
       [[UGameInstance]] 내에서 로컬 플레이어 한 명을 고유하게 식별합니다. 이 객체를 통해 [[APlayerController]], 뷰포트, 개인 설정 등에 접근할 수 있습니다.
-* **뷰포트 생성 및 관리 (Viewport Creation and Management):**
+* **뷰포트 생성 및 관리 (Viewport Creation and Management):
+**
       자신이 세상을 바라볼 '창문'인 [[UGameViewportClient]]를 생성하고 관리할 책임을 가집니다.
-* **플레이어 컨트롤러 소유 (Ownership of Player Controller):**
+* **플레이어 컨트롤러 소유 (Ownership of Player Controller):
+**
       자신을 대변하는 [[APlayerController]]를 소유하고 관리합니다. `ULocalPlayer`가 생성될 때, 이 플레이어를 위한 [[APlayerController]]도 함께 생성됩니다.
-* **개인 설정 저장 (Storage for Player-Specific Settings):**
+* **개인 설정 저장 (Storage for Player-Specific Settings):
+**
       온라인 서브시스템 ID, 닉네임, 접근성 설정(예: 색맹 모드) 등 플레이어 개개인에게 종속되는 데이터를 관리합니다.
 
 ### **2. 핵심 함수 및 속성**
@@ -29,5 +33,6 @@
 
 ### **3. 로컬 플레이어와 게임 인스턴스**
 > `ULocalPlayer`는 게임 전체의 생명 주기를 관리하는 [[UGameInstance]]에 의해 소유되고 관리됩니다.
-* **[[UGameInstance]]:**
+* **[[UGameInstance]]:
+**
       게임이 실행되는 동안 단 하나만 존재하는 최상위 객체입니다. [[UGameInstance]]는 현재 게임에 참여하고 있는 모든 `ULocalPlayer`의 목록을 관리하며, 플레이어가 게임에 참여(`AddLocalPlayer`)하거나 떠날 때(`RemoveLocalPlayer`) 이를 처리합니다.

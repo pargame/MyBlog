@@ -5,11 +5,14 @@
 
 ### **1. 주요 역할 및 책임**
 > `UPrimitiveComponent`는 보이지 않는 위치([[FTransform]])와 실제 게임플레이 로직 사이의 다리 역할을 하며, 월드 내에서 실체를 가진 모든 오브젝트의 기반이 됩니다.
-* **시각적 표현 (Visual Representation):**
+* **시각적 표현 (Visual Representation):
+**
       화면에 렌더링될 수 있는 능력을 가집니다. Material을 적용할 수 있으며, `Visible` 및 `HiddenInGame` 속성을 통해 보일지 말지를 제어할 수 있습니다.
-* **물리적 충돌 (Physical Collision):**
+* **물리적 충돌 (Physical Collision):
+**
       물리 엔진과 상호작용할 수 있는 형태를 가집니다. 다른 오브젝트와의 충돌을 감지(Hit [[Event]])하거나, 특정 영역에 들어왔음을 감지(Overlap [[Event]])하는 모든 기능의 기반이 됩니다.
-* **레이캐스트 타겟 (Raycast Target):**
+* **레이캐스트 타겟 (Raycast Target):
+**
       라인 트레이스(레이캐스트)에 감지될 수 있습니다. 플레이어가 바라보는 오브젝트를 찾거나, 총알이 맞았는지 판정하는 등의 기능은 모두 이 `UPrimitiveComponent`의 충돌 설정에 의존합니다.
 
 ### **2. 핵심 속성 (주로 충돌 관련)**
@@ -38,7 +41,9 @@
 
 ### **4. 주요 서브클래스**
 > `UPrimitiveComponent` 자체를 직접 사용하기보다는, 특정 형태나 목적을 가진 자식 클래스들이 주로 사용됩니다.
-* **기본 도형 컴포넌트 (Shape Components):**
+* **기본 도형 컴포넌트 (Shape Components):
+**
       [[UBoxComponent]], [[USphereComponent]], [[UCapsuleComponent]] 등 간단한 기하학적 형태를 가진 `UPrimitiveComponent`입니다.
-* **메시 컴포넌트 (Mesh Components):**
+* **메시 컴포넌트 (Mesh Components):
+**
       [[UStaticMeshComponent]]와 [[USkeletalMeshComponent]]처럼 복잡한 3D 모델을 표시하는 `UPrimitiveComponent`입니다.

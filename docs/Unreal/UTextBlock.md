@@ -5,24 +5,32 @@
 
 ### **1. 주요 역할 및 책임**
 > `UTextBlock`은 주어진 문자열을 지정된 폰트, 색상, 스타일로 화면에 그려주는 역할을 합니다.
-* **텍스트 렌더링 (Text Rendering):**
+* **텍스트 렌더링 (Text Rendering):
+**
     `Text` 속성에 할당된 문자열을 화면에 표시합니다.
-* **외형 서식 지정 (Appearance Formatting):**
+* **외형 서식 지정 (Appearance Formatting):
+**
     폰트(Font), 색상(Color), 정렬(Justification), 여백(Margin) 등 텍스트의 외형과 관련된 다양한 서식을 지정할 수 있습니다.
-* **데이터 바인딩 (Data Binding):**
+* **데이터 바인딩 (Data Binding):
+**
     가장 강력한 기능 중 하나로, `Text` 속성을 게임플레이 변수(예: 플레이어의 현재 체력, 점수)나 함수에 직접 바인딩할 수 있습니다. 이를 통해 코드에서 변수 값이 바뀔 때마다 UI 텍스트가 자동으로 업데이트되도록 만들 수 있습니다.
 
 ### **2. 핵심 속성**
 > `UTextBlock`의 내용과 외형을 결정하는 주요 속성들입니다.
-* **`Text`:**
+* **`Text`:
+**
     화면에 표시할 실제 텍스트 내용입니다. 직접 입력하거나, `Bind` 기능을 사용하여 함수에 연결할 수 있습니다.
-* **`Color and Opacity`:**
+* **`Color and Opacity`:
+**
     텍스트의 색상과 투명도를 설정합니다.
-* **`Font` (`FSlateFontInfo`):**
+* **`Font` (`FSlateFontInfo`):
+**
     사용할 폰트 애셋, 크기, 외곽선 등을 포함하는 폰트 정보를 설정합니다.
-* **`Justification`:**
+* **`Justification`:
+**
     여러 줄의 텍스트일 경우 정렬 방식을 결정합니다. (왼쪽, 가운데, 오른쪽)
-* **`AutoWrapText`:**
+* **`AutoWrapText`:
+**
     `true`로 설정하면, 텍스트가 위젯의 폭을 넘어갈 때 자동으로 줄바꿈을 합니다.
 
 ### **3. 사용 방법**

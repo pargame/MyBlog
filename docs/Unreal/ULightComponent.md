@@ -4,26 +4,34 @@
 
 ### **1. 주요 역할 및 책임**
 > `ULightComponent`는 그 자체로 월드에 존재할 수 없으며, 항상 [[AActor]]에 부착되어 그 액터가 빛을 발산하도록 만듭니다. [[ALight]]는 이 컴포넌트를 담기 위한 가장 기본적인 그릇 역할을 합니다.
-* **빛의 속성 정의 (Defining Light Properties):**
+* **빛의 속성 정의 (Defining Light Properties):
+**
     * **`Intensity`:** 빛의 밝기(세기)를 조절합니다.
     * **`LightColor`:** 빛의 색상을 설정합니다.
     * **`AttenuationRadius`:** 빛이 도달하는 최대 거리를 설정합니다.
-* **그림자 제어 (Controlling Shadows):**
+* **그림자 제어 (Controlling Shadows):
+**
     `Cast Shadows` 속성을 통해 이 빛이 그림자를 생성할지 여부를 결정하고, 그림자의 해상도, 필터링 품질 등 세부적인 그림자 옵션을 제어합니다.
-* **성능 최적화 (Performance Optimization):**
+* **성능 최적화 (Performance Optimization):
+**
     빛의 가시성, 컬링 거리(Culling Distance) 등을 조절하여 렌더링 성능에 미치는 영향을 관리합니다.
 
 ### **2. 주요 서브클래스**
 > `ULightComponent`는 빛의 형태와 특성에 따라 여러 자식 클래스로 나뉩니다. 어떤 자식 클래스를 사용하느냐에 따라 빛의 종류가 결정됩니다.
-* **[[UDirectionalLightComponent]]**: 
+* **[[UDirectionalLightComponent]]**:
+
     태양처럼 무한히 먼 곳에서 한 방향으로 평행하게 내리쬐는 빛을 시뮬레이션합니다. 주로 레벨의 전체적인 야외 조명으로 사용됩니다.
-* **[[UPointLightComponent]]**: 
+* **[[UPointLightComponent]]**:
+
     전구처럼 한 점에서 모든 방향으로 균일하게 퍼져나가는 빛을 시뮬레이션합니다. 램프, 촛불, 폭발 효과 등에 사용됩니다.
-* **[[USpotLightComponent]]**: 
+* **[[USpotLightComponent]]**:
+
     손전등이나 무대 조명처럼 원뿔 형태로 특정 영역만 비추는 빛을 시뮬레이션합니다. 특정 대상이나 영역을 강조할 때 효과적입니다.
-* **[[URectLightComponent]]**: 
+* **[[URectLightComponent]]**:
+
     사각형 평면에서 빛을 방출합니다. 창문이나 형광등처럼 넓고 부드러운 광원을 표현하는 데 사용됩니다.
-* **[[USkyLightComponent]]**: 
+* **[[USkyLightComponent]]**:
+
     하늘 전체나 지정된 큐브맵으로부터 오는 빛(간접광, 반사광)을 시뮬레이션하여, 그림자가 진 어두운 영역의 디테일을 사실적으로 채워주는 역할을 합니다.
 
 ### **3. 사용 방법**

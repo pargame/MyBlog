@@ -4,9 +4,11 @@
 
 ### **1. 주요 역할 및 책임**
 > `UHorizontalBox`는 자식 위젯들을 왼쪽에서 오른쪽으로 순서대로 배치하고, 각 자식이 차지할 공간을 어떻게 분배할지를 결정합니다.
-* **수평 정렬 (Horizontal Arrangement):**
+* **수평 정렬 (Horizontal Arrangement):
+**
     자식으로 추가되는 위젯들을 가로 방향으로 순차적으로 배열합니다.
-* **공간 분배 (Space Distribution):**
+* **공간 분배 (Space Distribution):
+**
     각 자식 위젯의 `Slot` 설정을 통해, 해당 위젯이 공간을 어떻게 차지할지 결정할 수 있습니다.
         * **`Auto`:** 자식 위젯이 자신의 고유한 크기(`Desired Size`)만큼만 공간을 차지합니다.
         * **`Fill`:** `Auto`로 설정된 다른 자식들이 공간을 모두 차지하고 남은 공간을, `Fill`로 설정된 자식들이 지정된 비율(`Value`)에 따라 나누어 가집니다.
@@ -14,7 +16,8 @@
     * **`Padding`:** 슬롯의 경계로부터 위젯까지의 여백을 설정합니다.
 
 ### **2. 핵심 개념**
-* **`Horizontal Box Slot` ([[UHorizontalBoxSlot]]):**
+* **`Horizontal Box Slot` ([[UHorizontalBoxSlot]]):
+**
     `UHorizontalBox`에 추가되는 모든 자식 위젯은 `UHorizontalBoxSlot`이라는 슬롯 객체를 갖게 됩니다. 이 슬롯에는 다음과 같은 중요한 정보가 포함됩니다.
     * **`Size`:** 자식 위젯이 차지할 공간의 크기 규칙을 결정합니다.
         * **`Auto`:** 자식 위젯이 자신의 고유한 크기(`Desired Size`)만큼만 공간을 차지합니다.
@@ -28,7 +31,9 @@
 3.  **슬롯 설정:** 자식 위젯을 선택하고, 디테일 패널의 `Slot (Horizontal Box Slot)` 섹션에서 `Size` 규칙과 정렬, 패딩 등을 설정하여 레이아웃을 세밀하게 조절합니다.
 
 ### **4. `UHorizontalBox` vs. `UVerticalBox`**
-* **`UHorizontalBox`:** 자식들을 수평(가로)으로 배열합니다.
-* **[[UVerticalBox]]:** 자식들을 수직(세로)으로 배열합니다.
+* **`UHorizontalBox`:
+** 자식들을 수평(가로)으로 배열합니다.
+* **[[UVerticalBox]]:
+** 자식들을 수직(세로)으로 배열합니다.
 
 이 둘은 방향만 다를 뿐, `Slot`을 통해 자식의 크기와 정렬을 제어하는 방식은 거의 동일합니다.

@@ -4,11 +4,14 @@
 
 ### **1. 주요 역할 및 책임**
 > `UEnhancedInputComponent`는 [[APawn]]이나 [[APlayerController]]에 추가되어, [[Enhanced Input System]]의 [[Event]]와 실제 게임플레이 로직을 연결하는 다리 역할을 합니다.
-* **액션과 함수의 바인딩 (Binding Actions to Functions):**
+* **액션과 함수의 바인딩 (Binding Actions to Functions):
+**
       `BindAction()` 함수를 통해, 특정 [[UInputAction]] 애셋이 특정 [[ETriggerEvent]](예: `Triggered`, `Started`, `Completed`) 상태가 되었을 때, 어떤 객체의 어떤 함수를 호출할지를 명확하게 지정합니다.
-* **입력 처리의 종착점 (Destination of Input Processing):**
+* **입력 처리의 종착점 (Destination of Input Processing):
+**
       [[UEnhancedInputLocalPlayerSubsystem]]이 플레이어의 입력을 받아 [[UInputMappingContext]]와 [[UInputTrigger]]를 거쳐 최종적으로 [[UInputAction]]을 발동시키면, 그 결과가 이 컴포넌트에 도달하여 바인딩된 함수를 실행시킵니다.
-* **입력 값 전달 (Passing Input Values):**
+* **입력 값 전달 (Passing Input Values):
+**
       바인딩된 함수에 [[UInputAction]]이 생성한 값(예: `bool`, `float`, `FVector2D`)을 파라미터로 전달합니다. 이를 통해 개발자는 이동 방향, 마우스 움직임 등의 값을 함수 내에서 직접 사용할 수 있습니다.
 
 ### **2. 핵심 함수**

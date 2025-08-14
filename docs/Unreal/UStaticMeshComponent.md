@@ -4,11 +4,14 @@
 
 ### **1. 주요 역할 및 책임**
 > `UStaticMeshComponent`는 [[UPrimitiveComponent]]를 상속받아, 정적인 3D 모델을 화면에 표시하고 충돌을 처리하는 모든 핵심 기능을 담당합니다.
-* **메시 렌더링 (Mesh Rendering):**
+* **메시 렌더링 (Mesh Rendering):
+**
     지정된 [[UStaticMesh]] 애셋을 월드의 특정 위치에 렌더링하는 주된 역할을 합니다. 머티리얼을 적용하여 메시의 표면 재질을 결정할 수 있습니다.
-* **충돌 및 물리 (Collision and Physics):**
+* **충돌 및 물리 (Collision and Physics):
+**
     [[UStaticMesh]] 애셋에 포함된 충돌 설정을 사용하여, 다른 오브젝트와의 충돌(Block)이나 겹침(Overlap) [[Event]]를 감지합니다. 또한, 물리 시뮬레이션을 활성화하여 중력의 영향을 받거나 외부 힘에 반응하게 만들 수 있습니다.
-* **레벨 디자인의 기본 단위 (Fundamental Unit of Level Design):**
+* **레벨 디자인의 기본 단위 (Fundamental Unit of Level Design):
+**
     벽, 바닥, 가구, 소품 등 레벨을 구성하는 대부분의 시각적 요소는 [[AStaticMeshActor]]에 포함된 이 `UStaticMeshComponent`를 통해 구현됩니다.
 
 ### **2. 핵심 함수 및 속성**
@@ -24,9 +27,11 @@
 
 ### **3. `UStaticMeshComponent` vs. `USkeletalMeshComponent`**
 > 이 둘은 '정적인 모델'과 '움직이는 모델'이라는 명확한 차이점을 가집니다.
-* **`UStaticMeshComponent` (정적):**
+* **`UStaticMeshComponent` (정적):
+**
     뼈대([[USkeleton]])가 없어 애니메이션을 재생할 수 없습니다. 주로 환경이나 소품에 사용됩니다.
-* **[[USkeletalMeshComponent]] (동적):**
+* **[[USkeletalMeshComponent]] (동적):
+**
     뼈대를 가지고 있어 복잡한 애니메이션을 재생할 수 있습니다. 주로 캐릭터나 살아있는 생명체에 사용됩니다.
 
 ### **4. 사용 방법**

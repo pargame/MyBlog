@@ -4,15 +4,19 @@
 
 ### **1. 주요 역할 및 책임**
 > `UCanvasPanel`은 다른 패널들과 달리 자식들을 자동으로 정렬하지 않으며, 개발자가 각 위젯의 위치와 크기를 직접 지정하도록 합니다.
-* **자유로운 배치 (Arbitrary Placement):**
+* **자유로운 배치 (Arbitrary Placement):
+**
     자식 위젯들을 캔버스 내의 어떤 좌표에든 자유롭게 배치할 수 있습니다.
-* **앵커 시스템 (Anchor System):**
+* **앵커 시스템 (Anchor System):
+**
     화면 크기가 변경될 때 자식 위젯이 부모인 캔버스의 어느 지점을 기준으로 자신의 위치를 유지할지를 결정하는 강력한 앵커 시스템을 제공합니다. 이를 통해 다양한 해상도에 대응하는 UI를 만들 수 있습니다.
-* **레이어(겹침) 관리 (Layering / Z-Order):**
+* **레이어(겹침) 관리 (Layering / Z-Order):
+**
     자식 위젯들의 `ZOrder` 값을 조절하여 어떤 위젯이 다른 위젯 위에 그려질지를 결정할 수 있습니다. 값이 높을수록 위에 그려집니다.
 
 ### **2. 핵심 개념**
-* **`Canvas Panel Slot` ([[UCanvasPanelSlot]]):**
+* **`Canvas Panel Slot` ([[UCanvasPanelSlot]]):
+**
     `UCanvasPanel`에 추가되는 모든 자식 위젯은 `UCanvasPanelSlot`이라는 특별한 슬롯 객체를 갖게 됩니다. 이 슬롯에는 다음과 같은 중요한 정보가 포함됩니다.
     * **`Anchors`:** 화면 크기가 변할 때 위젯의 사각형(Min/Max)이 부모 캔버스의 어느 비율 지점에 고정될지를 정의합니다.
     * **`Offsets` (Position X/Y, Size X/Y):** 앵커로부터의 상대적인 위치와 크기를 픽셀 단위로 설정합니다.

@@ -5,11 +5,14 @@
 
 ### **1. 주요 역할 및 책임**
 > `UInputMappingContext`는 키와 [[UInputAction]] 사이의 연결고리를 정의하고, 그 연결이 어떤 조건에서 활성화될지를 구체적으로 명시하는 역할을 합니다.
-* **입력 매핑의 집합 (A Set of Input Mappings):**
+* **입력 매핑의 집합 (A Set of Input Mappings):
+**
       하나 이상의 [[UInputAction]]을 실제 키보드, 마우스, 게임패드의 특정 키에 매핑하는 목록을 관리합니다. 예를 들어, "`W` 키는 `IA_MoveForward`에 매핑된다" 와 "`스페이스 바`는 `IA_Jump`에 매핑된다" 와 같은 규칙들을 담고 있습니다.
-* **컨텍스트 제공 (Providing Context):**
+* **컨텍스트 제공 (Providing Context):
+**
       이름 그대로, 입력이 사용될 '상황' 또는 '맥락'을 제공합니다. `IMC_CharacterControls`에는 캐릭터 조작 관련 매핑을, `IMC_VehicleControls`에는 차량 조작 관련 매핑을, `IMC_UI_Menu`에는 UI 메뉴 조작 관련 매핑을 각각 나누어 정의할 수 있습니다.
-* **[[UInputTrigger]]와 [[UInputModifier]] 설정 (Configuring Triggers and Modifiers):**
+* **[[UInputTrigger]]와 [[UInputModifier]] 설정 (Configuring Triggers and Modifiers):
+**
       각각의 키 매핑에 대해, 액션이 언제 발동될지([[UInputTrigger]] 배열)와 입력 값을 어떻게 가공할지([[UInputModifier]] 배열)를 구체적으로 설정할 수 있습니다.
 
 ### **2. 주요 구성 요소**

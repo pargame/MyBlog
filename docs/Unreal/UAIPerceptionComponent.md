@@ -4,19 +4,25 @@
 
 ### **1. 주요 역할 및 책임**
 > `UAIPerceptionComponent`는 AI의 인지 기능을 담당하며, [[UBehaviorTree]]와 함께 AI의 의사결정 과정에서 핵심적인 역할을 합니다.
-* **자극 감지 (Stimulus Detection):**
+* **자극 감지 (Stimulus Detection):
+**
     설정된 감각들을 통해 주변에서 발생하는 다양한 자극을 감지합니다. 예를 들어, 시각(Sight)은 다른 액터를 보는 것을, 청각(Hearing)은 소리가 나는 것을 감지합니다.
-* **인지 정보 관리 (Perception Data Management):**
+* **인지 정보 관리 (Perception Data Management):
+**
     감지한 자극에 대한 정보(자극의 종류, 발생 위치, 관련된 액터, 마지막으로 감지된 시간 등)를 관리하고 업데이트합니다.
-* **[[Event]] 통지 (Event Notification):**
+* **[[Event]] 통지 (Event Notification):
+**
     새로운 자극을 감지하거나 기존 자극의 상태가 변경되었을 때, `OnTargetPerceptionUpdated` 이벤트를 발생시켜 [[AAIController]]가 즉시 반응할 수 있도록 합니다.
 
 ### **2. 핵심 개념 및 속성**
-* **`Senses Config`:**
+* **`Senses Config`:
+**
     이 컴포넌트가 사용할 감각의 종류와 각 감각의 세부 속성(예: 시야각, 시야 거리, 청각 범위 등)을 설정하는 배열입니다. [[UAISenseConfig_Sight]], [[UAISenseConfig_Hearing]] 등의 에셋을 여기에 추가하여 AI의 감각을 디자인합니다.
-* **`OnTargetPerceptionUpdated`:**
+* **`OnTargetPerceptionUpdated`:
+**
     가장 중요한 [[Event]]입니다. 감지된 액터와 자극에 대한 정보를 받아 AI의 행동 로직을 시작하는 지점입니다. 이 [[Event]]에 함수를 바인딩하여, 적을 발견했을 때의 처리(예: 블랙보드에 적 정보 저장)를 구현합니다.
-* **`Forgets stimulus`:**
+* **`Forgets stimulus`:
+**
     감각 설정에서, 특정 자극을 얼마나 오랫동안 기억할지를 결정합니다. 시야에서 사라진 적을 즉시 잊을지, 아니면 마지막으로 본 위치를 잠시 기억하고 있을지를 제어할 수 있습니다.
 
 ### **3. 사용 흐름**
@@ -26,9 +32,12 @@
 4.  **자극 생성:** 다른 액터에 `AIPerceptionStimuliSource` 컴포넌트를 추가하여, 해당 액터가 특정 감각에 의해 감지될 수 있도록 등록합니다. 또는 `UAIBlueprintHelperLibrary::ReportNoiseEvent` 같은 함수를 사용하여 소리 자극을 직접 발생시킬 수도 있습니다.
 
 ### **4. 관련 클래스**
-* **[[AAIController]]:**
+* **[[AAIController]]:
+**
     `UAIPerceptionComponent`를 소유하고, 감지된 정보를 바탕으로 [[UBehaviorTree]]를 실행하는 등 실질적인 AI 로직을 총괄합니다.
-* **[[UAISenseConfig]]**: 
+* **[[UAISenseConfig]]**:
+
     개별 감각의 속성을 정의하는 설정 클래스의 부모 클래스입니다. ([[UAISenseConfig_Sight]], [[UAISenseConfig_Hearing]] 등)
-* **[[AIPerceptionStimuliSourceComponent]]**: 
+* **[[AIPerceptionStimuliSourceComponent]]**:
+
     이 컴포넌트를 가진 액터는 `UAIPerceptionComponent`에 의해 감지될 수 있는 '자극원'이 됩니다.

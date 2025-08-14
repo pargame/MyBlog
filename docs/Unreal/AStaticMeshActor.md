@@ -4,11 +4,14 @@
 
 ### **1. 주요 역할 및 책임**
 > `AStaticMeshActor`의 핵심 목적은 매우 명확합니다. 바로 [[UStaticMesh]] 애셋을 월드에 렌더링하는 것입니다.
-* **정적 지오메트리 표시 (Displaying Static Geometry):**
+* **정적 지오메트리 표시 (Displaying Static Geometry):
+**
       벽, 바닥, 가구, 환경 소품 등 애니메이션이 필요 없는 모든 3D 모델을 레벨에 배치하는 데 사용됩니다.
-* **단순화된 래퍼 (Simplified Wrapper):**
+* **단순화된 래퍼 (Simplified Wrapper):
+**
       실질적인 기능은 대부분 [[UStaticMeshComponent]]가 담당합니다. `AStaticMeshActor`는 이 컴포넌트를 담기 위한 가장 간단한 형태의 [[AActor]] 래퍼(Wrapper)라고 할 수 있습니다.
-* **레벨 디자인의 기본 단위 (Fundamental Unit of Level Design):**
+* **레벨 디자인의 기본 단위 (Fundamental Unit of Level Design):
+**
       레벨 디자이너가 월드를 구성할 때 가장 많이 사용하는 액터로, 복잡한 로직 없이 시각적 요소를 채워나가는 데 최적화되어 있습니다.
 
 ### **2. 핵심 구성 요소**
@@ -17,7 +20,8 @@
     * **메시 데이터:** 렌더링할 [[UStaticMesh]] 애셋에 대한 참조를 가집니다.
     * **물리 및 충돌:** 물리 시뮬레이션과 충돌 설정을 담당합니다.
     * **렌더링:** 머티리얼, 가시성 등 렌더링과 관련된 모든 속성을 제어합니다.
-* **[[AActor]]로부터의 상속:**
+* **[[AActor]]로부터의 상속:
+**
       `AStaticMeshActor`는 [[AActor]]이므로, 월드 내에서 위치(`Location`), 회전(`Rotation`), 크기(`Scale`)를 나타내는 **[[FTransform]]**을 가집니다.
 
 ### **3. 생성 및 사용법**
@@ -29,7 +33,9 @@
 
 ### **4. `AStaticMeshActor` vs. 커스텀 블루프린트**
 > 언제 `AStaticMeshActor`를 쓰고, 언제 직접 블루프린트를 만들어야 할까요?
-* **`AStaticMeshActor`를 사용하는 경우:**
+* **`AStaticMeshActor`를 사용하는 경우:
+**
       단순히 레벨을 꾸미기 위한 정적인 소품처럼, **별도의 게임플레이 로직이 필요 없을 때** 사용합니다. 예를 들어, 길가의 바위, 건물 벽, 책장의 책 등이 해당됩니다.
-* **커스텀 블루프린트를 사용하는 경우:**
+* **커스텀 블루프린트를 사용하는 경우:
+**
       메시와 상호작용하는 로직이 필요할 때 사용합니다. 예를 들어, 열리는 문, 눌리는 버튼, 플레이어가 집을 수 있는 아이템 등은 [[AActor]]를 상속받는 새로운 블루프린트를 만들고, 그 안에 [[UStaticMeshComponent]]를 추가하여 구현해야 합니다.
