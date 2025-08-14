@@ -14,11 +14,10 @@
   /* Reader page: header should not stick on scroll */
   .site-header { position: static !important; top: auto !important; z-index: auto !important; backdrop-filter: none !important; }
   .site-header .container { padding: 16px 16px; }
-      /* 그래프 페이지에 임베드된 경우(iframe) 상단 헤더를 압축 표시 */
-      @media (max-width: 99999px) {
-        :root:has(body[data-embedded="1"]) .site-header .container { padding: 12px 16px; }
-        :root:has(body[data-embedded="1"]) .site-header h1 { font-size: 22px; }
-      }
+      /* 그래프 오버레이(iframe)에서는 헤더/푸터를 완전히 숨겨 몰입감 향상 */
+      :root:has(body[data-embedded="1"]) .site-header { display: none !important; }
+      :root:has(body[data-embedded="1"]) .site-footer { display: none !important; }
+      :root:has(body[data-embedded="1"]) main.container { margin-top: 0; padding-top: 8px; }
     </style>
   </head>
   <body>
@@ -128,12 +127,14 @@
           // Encode each segment to support spaces and special characters in filenames
           primaryUrl = `./${clean.split('/').map(encodeURIComponent).join('/')}`;
         }
-        const safe = buildSafe(id);
-        const candidates = [];
+  const safe = buildSafe(id);
+  const candidates = [];
         if (primaryUrl) candidates.push(primaryUrl);
         // Heuristics if graph lookup failed
         candidates.push(`./posts/${safe}.md`);
-        candidates.push(`./docs/${safe}.md`);
+  // Archive 하위 폴더 우선 탐색 (예: docs/Unreal/APawn.md)
+  if (arch) candidates.push(`./docs/${encodeURIComponent(arch)}/${safe}.md`);
+  candidates.push(`./docs/${safe}.md`);
 
         const { res, urlTried } = await tryFetch(candidates);
         if (!res) {
