@@ -10,14 +10,14 @@
   .legend { color: var(--muted); font-size: 14px; }
   /* Page: Graph — header should NOT stick on long scroll */
   .site-header { position: static !important; top: auto !important; z-index: auto !important; backdrop-filter: none !important; }
-  .site-header .container { padding: 8px 16px; }
+  .site-header .container { padding: 10px 16px; }
   
   /* Fullscreen immersive graph */
   .fullscreen-graph { padding: 0; margin: 0; }
   .graph-container { 
     position: relative; 
     width: 100vw; 
-    height: calc(100vh - 80px); /* Account for compact header */
+  height: calc(100vh - 64px); /* Account for more compact header */
     background: var(--bg);
     overflow: hidden;
   }
@@ -211,8 +211,7 @@
         <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap">
           <div>
             <a href="./index.html" class="btn">Pargame's Blog</a>
-            <h1 style="margin:6px 0 0">Knowledge Graph</h1>
-            <p class="tagline" style="margin:4px 0 0">The graph updates based on archive and topic filters.</p>
+            <h1 style="margin:4px 0 0">Knowledge Graph</h1>
           </div>
           <nav>
             <a href="./graph.html" class="btn active">Graph</a>

@@ -15,7 +15,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Pretendard, R
 
 .container { max-width: 920px; margin: 0 auto; padding: 0 16px; }
 .site-header { border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #0b1020 0%, #0f1530 100%); position: sticky; top: 0; z-index: 10; backdrop-filter: blur(6px); }
-.site-header .container { padding: 32px 16px; }
+.site-header .container { padding: 14px 16px; }
 .site-header h1 { margin: 0; font-size: 28px; letter-spacing: 0.2px; }
 .tagline { margin: 6px 0 0; color: var(--muted); }
 
@@ -59,8 +59,8 @@ input[type="range"]{ accent-color: var(--accent); }
 .btn:focus-visible { text-decoration: underline; text-underline-offset: 2px; }
 .btn.active { text-decoration: underline; font-weight: 600; }
 
-/* Header nav: slightly larger for prominence */
-.site-header .btn { font-size: 16px; font-weight: 600; }
+/* Header nav: larger for prominence (Graph, Home, etc.) */
+.site-header .btn { font-size: 18px; font-weight: 650; letter-spacing: 0.1px; }
 .site-header nav .btn + .btn { margin-left: 12px; }
 
 /* Overlay controls: tidy scale */
@@ -93,7 +93,11 @@ input[type="range"]{ accent-color: var(--accent); }
 }
 
 /* Code block (base token colors) */
-.md pre code { display:block; }
+/* Global markdown readability */
+.md { --md-code-bg: #0b1325; --md-code-border: rgba(110,168,254,0.22); }
+.md pre { background: var(--md-code-bg); border: 1px solid var(--md-code-border); border-radius: 8px; padding: 14px; overflow: auto; }
+.md pre code { display:block; font-size: 13.5px; line-height: 1.55; }
+.md :not(pre) > code { background: rgba(110,168,254,0.14); border: 1px solid rgba(110,168,254,0.22); color: #e7ecff; padding: 0 4px; border-radius: 4px; font-size: 0.95em; }
 .md code .token.keyword { color: #9fd2ff; }
 .md code .token.string { color: #c3fba4; }
 .md code .token.number { color: #ffd97d; }
