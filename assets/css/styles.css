@@ -43,21 +43,28 @@ input[type="range"]{ accent-color: var(--accent); }
 .btn {
   -webkit-appearance: none;
   appearance: none;
-  display: inline;
+  display: inline-block; /* allow consistent vertical sizing */
   margin: 0 10px 0 0;
-  padding: 0 2px;
+  padding: 2px 4px; /* minimal padding, still link-like */
   border: none;
   border-radius: 0;
   background: transparent;
   color: var(--accent);
   cursor: pointer;
   text-decoration: none;
-  line-height: 1.2;
+  line-height: 1.25;
 }
 .btn:hover { text-decoration: underline; }
 .btn:focus { outline: none; }
 .btn:focus-visible { text-decoration: underline; text-underline-offset: 2px; }
 .btn.active { text-decoration: underline; font-weight: 600; }
+
+/* Header nav: slightly larger for prominence */
+.site-header .btn { font-size: 16px; font-weight: 600; }
+.site-header nav .btn + .btn { margin-left: 12px; }
+
+/* Overlay controls: tidy scale */
+.graph-overlay .btn { font-size: 15px; line-height: 1.25; }
 
 /* Graph container */
 .graph-wrap {
