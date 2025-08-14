@@ -35,7 +35,7 @@
     background: rgba(11,16,32,0.85);
     border: 1px solid rgba(30,39,73,0.6);
     border-radius: 12px;
-    padding: 8px;
+    padding: 12px; /* add breathing room so active rings aren’t clipped */
     backdrop-filter: blur(8px);
   transition: all .25s ease;
     pointer-events: auto;
@@ -233,9 +233,9 @@
 
   <!-- Zoom controls removed -->
 
-  <!-- Search (center-top): pill → expands to full search -->
+        <!-- Search (center-top): pill → expands to full search (no vertical bump on focus) -->
         <div id="search-ctl" class="graph-overlay search-box">
-          <input id="doc-search" class="search-input" type="search" placeholder="Search documents..." aria-label="Search documents" />
+          <input id="doc-search" class="search-input" type="search" placeholder="Search" aria-label="Search documents" />
           <div id="search-body" class="body">
             <span id="search-count" class="legend"></span>
             <ul id="search-results"></ul>
@@ -361,23 +361,23 @@
         const input = document.getElementById('doc-search');
         const results = document.getElementById('search-results');
         const count = document.getElementById('search-count');
-        // Expand on focus/click; collapse on blur if empty
-        function refreshPanel(hasQuery){
-          const focused = (document.activeElement === input);
-          const active = !!hasQuery || focused;
-          ctl.classList.toggle('active', active);
-          ctl.classList.toggle('expanded', active);
-        }
+        // Expand width on focus only; open results panel only when there is a query
+        function setExpanded(on){ ctl.classList.toggle('expanded', !!on); }
+        function setActive(on){ ctl.classList.toggle('active', !!on); }
+        function refreshPanel(hasQuery){ setActive(!!hasQuery); }
         ctl.addEventListener('click', () => input.focus());
-        input.addEventListener('focus', () => refreshPanel(true));
-        input.addEventListener('blur', () => setTimeout(() => refreshPanel(!!input.value.trim()), 80));
+        input.addEventListener('focus', () => setExpanded(true));
+        input.addEventListener('blur', () => setTimeout(() => {
+          const hasQ = !!input.value.trim();
+          if (!hasQ) { setActive(false); setExpanded(false); }
+        }, 80));
         
         input.addEventListener('input', () => {
           const query = input.value.trim().toLowerCase();
           if (!query) {
             results.innerHTML = '';
             count.textContent = '';
-            refreshPanel(false);
+            refreshPanel(false); // keep expanded while focused, but no results panel
             return;
           }
           refreshPanel(true);
