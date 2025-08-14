@@ -143,6 +143,16 @@
   #search-results li:hover {
     background: rgba(110,168,254,0.2);
   }
+  /* Search input styles */
+  .search-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--fg);
+    font-size: 16px;
+    padding: 8px 10px;
+    outline: none;
+  }
   
   /* zoom-controls removed per request */
   
@@ -209,11 +219,10 @@
 
   <!-- Zoom controls removed -->
 
-        <!-- Search (top-right, below zoom) -->
-        <div id="search-ctl" class="graph-overlay top-right search-box">
-          <button id="search-toggle" class="btn">🔍 Search</button>
+        <!-- Search (center-top): whole box acts as search bar -->
+        <div id="search-ctl" class="graph-overlay search-box">
+          <input id="doc-search" class="search-input" type="search" placeholder="Search documents..." aria-label="Search documents" />
           <div id="search-body" class="body">
-            <input id="doc-search" type="search" placeholder="Search documents..." aria-label="Search documents" />
             <span id="search-count" class="legend"></span>
             <ul id="search-results"></ul>
           </div>
@@ -275,8 +284,8 @@
           window.addEventListener('resize', () => { GRAPH_W = null; GRAPH_H = null; rerender(); });
       }
 
-  // Default archive is ALL; URL param can override in setupArchives
-  let state = { archive: 'ALL', topic: null };
+  // Default archive is Unreal; URL param can override in setupArchives
+  let state = { archive: 'Unreal', topic: null };
       function getSelectedArchive(){ return state.archive; }
       function getSelectedTopic(){ return state.topic || null; }
       function setSelectedArchive(a){ state.archive = a || 'ALL'; setURL(); }
@@ -327,18 +336,25 @@
       }
 
       function setupSearch(data) {
-        const toggle = document.getElementById('search-toggle');
+        const ctl = document.getElementById('search-ctl');
         const body = document.getElementById('search-body');
         const input = document.getElementById('doc-search');
         const results = document.getElementById('search-results');
         const count = document.getElementById('search-count');
-        
-        toggle.addEventListener('click', () => {
-          const ctl = document.getElementById('search-ctl');
-          ctl.classList.toggle('show');
-          if (ctl.classList.contains('show')) {
-            input.focus();
-          }
+        // Open on focus/click; collapse on blur if empty
+        ctl.addEventListener('click', (e) => {
+          ctl.classList.add('show');
+          input.focus();
+        });
+        input.addEventListener('focus', () => { ctl.classList.add('show'); });
+        input.addEventListener('blur', () => {
+          setTimeout(() => {
+            if (!input.value.trim()) {
+              ctl.classList.remove('show');
+              results.innerHTML = '';
+              count.textContent = '';
+            }
+          }, 120);
         });
         
         input.addEventListener('input', () => {
@@ -365,11 +381,11 @@
             `<li data-id="${n.id}">${n.label || n.id}</li>`
           ).join('');
           
-          results.querySelectorAll('li').forEach(li => {
+      results.querySelectorAll('li').forEach(li => {
             li.addEventListener('click', () => {
               const id = li.getAttribute('data-id');
               openDocumentOverlay(id);
-              document.getElementById('search-ctl').classList.remove('show');
+        document.getElementById('search-ctl').classList.remove('show');
             });
           });
         });
@@ -530,7 +546,10 @@
 
         const topicKey = (topics) => {
           const t = (topics && topics.length) ? topics[0] : '(root)';
-          return (t && t !== '(root)') ? `topic-${(Math.abs(hashCode(t)) % 5) + 1}` : 'topic-ROOT';
+          if (!t || t === '(root)') return 'topic-ROOT';
+          // Force Unreal to a consistent red hue for clarity
+          if (t === 'Unreal') return 'topic-2';
+          return `topic-${(Math.abs(hashCode(t)) % 5) + 1}`;
         };
   nodeSel = inner.append('g').selectAll('g')
           .data(data.nodes)
