@@ -36,3 +36,29 @@
 * **[[ACameraActor]] (단순한 그릇):
 **
     `UCameraComponent`를 담기 위한 가장 단순한 형태의 [[AActor]]입니다. 레벨에 고정된 카메라를 배치할 때 편리하게 사용됩니다.
+
+### **5. 코드 예시**
+```cpp
+// 캐릭터에 카메라 + 스프링암을 구성하고, 마우스 입력으로 회전하는 3인칭 카메라 예시
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
+
+AMyCharacter::AMyCharacter()
+{
+    SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+    SpringArm->SetupAttachment(RootComponent);
+    SpringArm->TargetArmLength = 300.0f;
+    SpringArm->bUsePawnControlRotation = true; // 컨트롤러 회전 반영
+
+    FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+    FollowCamera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
+    FollowCamera->bUsePawnControlRotation = false; // 카메라는 스프링암 회전을 그대로 사용
+}
+
+void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+    check(PlayerInputComponent);
+    PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+    PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+}
+```

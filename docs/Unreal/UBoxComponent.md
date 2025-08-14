@@ -59,3 +59,49 @@
     캡슐 형태의 충돌 컴포넌트입니다.
 * **[[Event]]:**
     오버랩 이벤트 등을 처리하는 데 사용됩니다.
+
+### **7. 코드 예시**
+```cpp
+// 액터에 UBoxComponent를 동적으로 추가하고 오버랩 이벤트를 바인딩하는 예시
+#include "Components/BoxComponent.h"
+
+AMyTriggerActor::AMyTriggerActor()
+{
+    // 기본적으로 틱을 사용하지 않도록 설정합니다.
+    PrimaryActorTick.bCanEverTick = false;
+
+    // 박스 컴포넌트를 생성하고 루트 컴포넌트로 설정합니다.
+    TriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
+    RootComponent = TriggerBox;
+
+    // 박스의 크기를 설정합니다 (중심에서 각 면까지의 거리).
+    TriggerBox->SetBoxExtent(FVector(100.0f, 100.0f, 100.0f));
+
+    // 충돌 프로파일을 'Trigger'로 설정합니다.
+    // 'Trigger' 프로파일은 일반적으로 OverlapAllDynamic으로 설정되어 있습니다.
+    TriggerBox->SetCollisionProfileName(TEXT("Trigger"));
+
+    // 오버랩 이벤트에 함수를 바인딩합니다.
+    TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &AMyTriggerActor::OnOverlapBegin);
+    TriggerBox->OnComponentEndOverlap.AddDynamic(this, &AMyTriggerActor::OnOverlapEnd);
+}
+
+void AMyTriggerActor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+    if (OtherActor && (OtherActor != this))
+    {
+        // 다른 액터가 이 트리거에 들어왔을 때 실행할 로직
+        UE_LOG(LogTemp, Warning, TEXT("%s entered the trigger box."), *OtherActor->GetName());
+    }
+}
+
+void AMyTriggerActor::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+    if (OtherActor && (OtherActor != this))
+    {
+        // 다른 액터가 이 트리거에서 나갔을 때 실행할 로직
+        UE_LOG(LogTemp, Warning, TEXT("%s left the trigger box."), *OtherActor->GetName());
+    }
+}
+```
+```

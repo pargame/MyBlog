@@ -37,3 +37,32 @@
 * **`ACameraActor` (카메라 자체):
 ** 월드에 배치되는 '물리적인' 카메라입니다. 위치와 방향을 가진 단순한 액터입니다.
 * **[[APlayerCameraManager]] (카메라 감독):** 플레이어의 '눈'입니다. 어떤 카메라(`ACameraActor`가 될 수도, [[APawn]]에 달린 카메라 컴포넌트가 될 수도 있음)를 통해 세상을 볼지 결정하고, 화면 흔들림이나 페이드 같은 '효과'를 추가하는 역할을 합니다.
+
+### **6. 코드 예시**
+```cpp
+// 월드에 배치된 특정 ACameraActor를 찾아 플레이어의 뷰로 설정하는 예시
+#include "Kismet/GameplayStatics.h"
+#include "Camera/CameraActor.h"
+#include "GameFramework/PlayerController.h"
+
+void AMyPlayerController::SetFixedCameraView()
+{
+    // 월드에 있는 모든 ACameraActor를 찾습니다.
+    TArray<AActor*> FoundActors;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACameraActor::StaticClass(), FoundActors);
+
+    if (FoundActors.Num() > 0)
+    {
+        // 첫 번째로 찾은 카메라 액터를 타겟으로 설정합니다.
+        // 실제 게임에서는 태그나 다른 식별자를 사용하여 특정 카메라를 찾는 것이 좋습니다.
+        AActor* TargetCamera = FoundActors[0];
+
+        // 플레이어의 뷰 타겟을 해당 카메라 액터로 부드럽게 전환합니다.
+        if (TargetCamera)
+        {
+            SetViewTargetWithBlend(TargetCamera, 0.5f);
+        }
+    }
+}
+```
+```

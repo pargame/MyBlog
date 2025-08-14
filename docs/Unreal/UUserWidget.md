@@ -48,3 +48,30 @@
     생성된 위젯 인스턴스의 `AddToViewport(int32 ZOrder)` 함수를 호출하여 화면에 표시합니다. `ZOrder` 값이 높을수록 다른 위젯보다 위에 그려집니다.
 3.  **제거 (Removal):**
     `RemoveFromParent()` 함수를 호출하여 위젯을 화면에서 제거합니다.
+
+### **5. 코드 예시**
+```cpp
+// C++에서 위젯을 생성해 화면에 띄우고 제거하는 간단한 예시
+#include "Blueprint/UserWidget.h"
+
+void AMyHUD::ShowStatusWidget()
+{
+    if (!StatusWidgetClass) return;
+
+    UUserWidget* Status = CreateWidget<UUserWidget>(GetWorld(), StatusWidgetClass);
+    if (Status)
+    {
+        Status->AddToViewport(/*ZOrder=*/5);
+        // 필요 시 소유 플레이어 컨트롤러를 통해 입력 모드 변경 등 추가 처리
+    }
+}
+
+void AMyHUD::HideStatusWidget()
+{
+    if (Status && Status->IsInViewport())
+    {
+        Status->RemoveFromParent();
+        Status = nullptr;
+    }
+}
+```

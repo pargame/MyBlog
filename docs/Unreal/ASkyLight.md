@@ -38,3 +38,30 @@
     태양광 역할을 하며, `ASkyLight`는 이 빛이 대기에 미치는 영향을 함께 캡처하여 전체적인 조화를 이룹니다.
 * **`AtmosphericFog`, `SkyAtmosphere`:**
     `ASkyLight`가 빛을 샘플링하는 대상이 되는 대기 컴포넌트들입니다.
+
+### **5. 코드 예시**
+```cpp
+// 스카이라이트를 스폰하고 현재 장면을 캡처하여 환경광으로 사용하는 예시
+#include "Engine/SkyLight.h"
+#include "Components/SkyLightComponent.h"
+
+void AMyActor::CreateSkyLight()
+{
+    if (UWorld* World = GetWorld())
+    {
+        ASkyLight* Sky = World->SpawnActor<ASkyLight>();
+        if (Sky)
+        {
+            USkyLightComponent* SLC = Sky->GetLightComponent();
+            if (SLC)
+            {
+                SLC->SetMobility(EComponentMobility::Movable);
+                SLC->SetIntensity(1.0f);
+                SLC->SetLightColor(FLinearColor::White);
+                SLC->SetSourceType(SLS_CapturedScene);
+                SLC->RecaptureSky();
+            }
+        }
+    }
+}
+```

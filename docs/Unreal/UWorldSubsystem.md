@@ -42,3 +42,31 @@
     월드를 구성하는 기본 단위로, 서브시스템이 관리할 수 있는 대상입니다.
 * **[[Event]]:**
     서브시스템 내에서 동적인 이벤트를 처리하는 데 사용될 수 있습니다.
+
+### **5. 코드 예시**
+```cpp
+// 간단한 월드 서브시스템 구현 예시
+#include "Subsystems/WorldSubsystem.h"
+
+class UMyWorldSubsystem : public UWorldSubsystem
+{
+    GENERATED_BODY()
+
+public:
+    virtual void Initialize(FSubsystemCollectionBase& Collection) override
+    {
+        UE_LOG(LogTemp, Log, TEXT("UMyWorldSubsystem::Initialize for world %s"), *GetWorld()->GetName());
+    }
+
+    virtual void Deinitialize() override
+    {
+        UE_LOG(LogTemp, Log, TEXT("UMyWorldSubsystem::Deinitialize"));
+    }
+
+    // 월드 틱에 맞춰 동작하려면 월드의 틱 이벤트에 델리게이트로 바인딩하는 방식 등을 사용
+    void TickWorld(float DeltaSeconds)
+    {
+        // 월드 단위의 주기적 로직
+    }
+};
+```

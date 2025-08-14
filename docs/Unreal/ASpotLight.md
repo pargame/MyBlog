@@ -40,3 +40,39 @@
     한 점에서 모든 방향으로 빛을 방출하는 조명입니다.
 * **[[ADirectionalLight]]:**
     태양과 같이 무한히 먼 곳에서 오는 평행광을 시뮬레이션하는 조명입니다.
+
+### **5. 코드 예시**
+```cpp
+// 런타임에 스포트라이트를 생성하고 속성을 설정하는 예시
+#include "Engine/SpotLight.h"
+#include "Components/SpotLightComponent.h"
+
+void AMyActor::CreateSpotLight()
+{
+    // 스포트라이트 액터를 월드에 스폰합니다.
+    ASpotLight* MySpotLight = GetWorld()->SpawnActor<ASpotLight>(GetActorLocation(), GetActorRotation());
+
+    if (MySpotLight)
+    {
+        USpotLightComponent* SpotLightComponent = MySpotLight->GetSpotLightComponent();
+        if (SpotLightComponent)
+        {
+            // 빛의 강도를 설정합니다 (단위: 루멘).
+            SpotLightComponent->SetIntensity(5000.0f);
+
+            // 빛의 색상을 노란색으로 설정합니다.
+            SpotLightComponent->SetLightColor(FLinearColor::Yellow);
+
+            // 내부 원뿔 각도를 10도로 설정합니다.
+            SpotLightComponent->SetInnerConeAngle(10.0f);
+
+            // 외부 원뿔 각도를 25도로 설정합니다.
+            SpotLightComponent->SetOuterConeAngle(25.0f);
+
+            // 빛의 감쇠 반경을 1000 유닛으로 설정합니다.
+            SpotLightComponent->SetAttenuationRadius(1000.0f);
+        }
+    }
+}
+```
+```

@@ -43,3 +43,28 @@
     `ADirectionalLight`가 직접 비추지 못하는 그림자 영역을 채워주는 환경광 역할을 합니다.
 * **`SkyAtmosphere`:**
     `ADirectionalLight`의 방향에 따라 사실적인 하늘과 대기 산란 효과를 시뮬레이션합니다.
+
+### **5. 코드 예시**
+```cpp
+// 태양광(방향성 라이트)을 스폰하고 방향/강도를 설정하는 예시
+#include "Engine/DirectionalLight.h"
+#include "Components/DirectionalLightComponent.h"
+
+void AMyActor::CreateSunLight()
+{
+    if (UWorld* World = GetWorld())
+    {
+        ADirectionalLight* Sun = World->SpawnActor<ADirectionalLight>(FVector::ZeroVector, FRotator(-45.f, 45.f, 0.f));
+        if (Sun)
+        {
+            UDirectionalLightComponent* DLC = Sun->GetDirectionalLightComponent();
+            if (DLC)
+            {
+                DLC->SetIntensity(100000.0f); // 야외 장면에 적합한 강한 조도(Lux 단위)
+                DLC->SetLightColor(FLinearColor::White);
+                DLC->SetCastShadows(true);
+            }
+        }
+    }
+}
+```

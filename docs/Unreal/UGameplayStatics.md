@@ -39,3 +39,38 @@
 
 ### **3. 사용 방법**
 `UGameplayStatics`의 모든 함수는 정적(static)이므로, 클래스 인스턴스를 만들 필요 없이 헤더 파일만 포함하면 어디서든 `UGameplayStatics::FunctionName()` 형태로 직접 호출할 수 있습니다.
+
+### **4. 코드 예시**
+```cpp
+// 대표적인 UGameplayStatics 함수 사용 예시 모음
+#include "Kismet/GameplayStatics.h"
+
+void AMyActor::DoCommonGameplayOps()
+{
+    UWorld* World = GetWorld();
+    if (!World) return;
+
+    // 1) 액터 스폰
+    FVector SpawnLoc = GetActorLocation() + FVector(200, 0, 0);
+    FRotator SpawnRot = FRotator::ZeroRotator;
+    AActor* Spawned = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, AMyEnemy::StaticClass(), FTransform(SpawnRot, SpawnLoc));
+    if (Spawned)
+    {
+        UGameplayStatics::FinishSpawningActor(Spawned, FTransform(SpawnRot, SpawnLoc));
+    }
+
+    // 2) 사운드 재생
+    UGameplayStatics::PlaySoundAtLocation(this, HitSound, SpawnLoc);
+
+    // 3) 특정 클래스의 모든 액터 찾기
+    TArray<AActor*> Found;
+    UGameplayStatics::GetAllActorsOfClass(World, AMyEnemy::StaticClass(), Found);
+
+    // 4) 데미지 적용 (점 데미지)
+    if (Found.Num() > 0)
+    {
+        AActor* Target = Found[0];
+        UGameplayStatics::ApplyPointDamage(Target, 25.f, GetActorForwardVector(), FHitResult(), GetInstigatorController(), this, UDamageType::StaticClass());
+    }
+}
+```

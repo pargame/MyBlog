@@ -40,3 +40,33 @@
     원뿔 형태로 빛을 방출하는 조명입니다.
 * **[[ADirectionalLight]]:**
     태양과 같이 무한히 먼 곳에서 오는 평행광을 시뮬레이션하는 조명입니다.
+
+### **5. 코드 예시**
+```cpp
+// 월드에 포인트 라이트를 스폰하고 속성을 설정하는 예시
+#include "Engine/PointLight.h"
+#include "Components/PointLightComponent.h"
+
+void AMyActor::SpawnPointLight()
+{
+    const FVector Location = GetActorLocation() + FVector(0, 0, 150);
+    const FRotator Rotation = FRotator::ZeroRotator;
+
+    if (UWorld* World = GetWorld())
+    {
+        APointLight* PL = World->SpawnActor<APointLight>(Location, Rotation);
+        if (PL)
+        {
+            UPointLightComponent* PLC = PL->GetPointLightComponent();
+            if (PLC)
+            {
+                PLC->SetIntensity(3000.0f);
+                PLC->SetLightColor(FLinearColor(1.0f, 0.85f, 0.6f)); // 따뜻한 색감
+                PLC->SetAttenuationRadius(1200.0f);
+                PLC->SetSourceRadius(8.0f);
+                PLC->bUseInverseSquaredFalloff = true; // 물리 기반 감쇠
+            }
+        }
+    }
+}
+```

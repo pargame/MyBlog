@@ -35,3 +35,52 @@
     이 텍스처를 사용하여 오브젝트의 표면을 렌더링하는 셰이더 에셋입니다.
 * **[[FSlateBrush]]:**
     UI에서 이 텍스처를 어떻게 그릴지 정의하는 구조체입니다.
+
+### **5. 코드 예시**
+```cpp
+// 런타임에 동적으로 UTexture2D를 생성하고 픽셀 데이터로 채우는 예시
+#include "Engine/Texture2D.h"
+
+UTexture2D* UMyBlueprintFunctionLibrary::CreateDynamicTexture(int32 Width, int32 Height)
+{
+    if (Width <= 0 || Height <= 0)
+    {
+        return nullptr;
+    }
+
+    // 새로운 UTexture2D 객체를 생성합니다.
+    UTexture2D* DynamicTexture = UTexture2D::CreateTransient(Width, Height, PF_B8G8R8A8);
+
+    if (DynamicTexture)
+    {
+        // 텍스처의 픽셀 데이터를 담을 배열을 생성합니다.
+        TArray<FColor> PixelData;
+        PixelData.Init(FColor::White, Width * Height);
+
+        // 여기서 픽셀 데이터를 원하는 대로 수정할 수 있습니다.
+        // 예를 들어, 텍스처의 절반을 빨간색으로 칠하는 코드
+        for (int32 y = 0; y < Height / 2; ++y)
+        {
+            for (int32 x = 0; x < Width; ++x)
+            {
+                PixelData[y * Width + x] = FColor::Red;
+            }
+        }
+
+        // 텍스처의 Mip 0에 접근하기 위해 메모리를 잠급니다.
+        void* TextureData = DynamicTexture->GetPlatformData()->Mips[0].BulkData.Lock(LOCK_READ_WRITE);
+        
+        // 계산된 픽셀 데이터를 텍스처 메모리로 복사합니다.
+        FMemory::Memcpy(TextureData, PixelData.GetData(), PixelData.Num() * sizeof(FColor));
+        
+        // 메모리 잠금을 해제하고 텍스처를 업데이트합니다.
+        DynamicTexture->GetPlatformData()->Mips[0].BulkData.Unlock();
+        DynamicTexture->UpdateResource();
+
+        return DynamicTexture;
+    }
+
+    return nullptr;
+}
+```
+```

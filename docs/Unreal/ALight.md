@@ -36,3 +36,20 @@
 * **[[ASkyLight]]**:
 
     하늘 전체에서 오는 빛(반사광)을 시뮬레이션하여, 그림자가 진 어두운 영역의 디테일을 살려주는 매우 중요한 빛입니다.
+
+### **4. 코드 예시**
+```cpp
+// ALight에서 공통적으로 가능한 동작: 켜고/끄고, 강도 조절
+#include "Engine/Light.h"
+#include "Components/LightComponent.h"
+
+void AMyActor::ToggleLight(ALight* Light, bool bEnable)
+{
+    if (!Light) return;
+    if (ULightComponent* LC = Light->GetLightComponent())
+    {
+        LC->SetVisibility(bEnable);
+        LC->SetIntensity(bEnable ? 4000.0f : 0.0f);
+    }
+}
+```

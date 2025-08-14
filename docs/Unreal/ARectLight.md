@@ -40,3 +40,32 @@
     한 점에서 모든 방향으로 빛을 방출하는 조명입니다.
 * **[[ASpotLight]]:**
     원뿔 형태로 빛을 방출하는 조명입니다.
+
+### **5. 코드 예시**
+```cpp
+// 직사각 라이트를 스폰하고 폭/높이 및 강도/반경을 설정하는 예시
+#include "Engine/RectLight.h"
+#include "Components/RectLightComponent.h"
+
+void AMyActor::SpawnRectLight()
+{
+    if (UWorld* World = GetWorld())
+    {
+        ARectLight* Rect = World->SpawnActor<ARectLight>(GetActorLocation() + FVector(0, 300, 200), FRotator(-20, 0, 0));
+        if (Rect)
+        {
+            URectLightComponent* RLC = Rect->GetRectLightComponent();
+            if (RLC)
+            {
+                RLC->SetIntensity(5000.0f);
+                RLC->SetLightColor(FLinearColor::White);
+                RLC->SourceWidth = 150.0f;
+                RLC->SourceHeight = 50.0f;
+                RLC->SetAttenuationRadius(2000.0f);
+                RLC->BarnDoorAngle = 30.0f;
+                RLC->BarnDoorLength = 20.0f;
+            }
+        }
+    }
+}
+```

@@ -40,6 +40,40 @@ Recommended flow
 	- Logs/cache: `npm-debug.log*`, `yarn-error.log*`, `pnpm-debug.log*`, `.cache/`, `tmp/`, `.temp/`
 	- Local/OS/IDE: `.DS_Store`, `.Spotlight-V100`, `.Trashes`, `.idea/`, `.vscode/*` (allow only required exceptions)
 
+## Unreal Engine Archive Rules
+- Scope: Applies to all Markdown under `docs/Unreal/**`.
+
+- Content structure (section template)
+	1. Overview: one-line Korean summary in a blockquote describing the concept.
+	2. Roles & Responsibilities: what it is for; keep bullets concise.
+	3. Core API: key properties/components/functions with a short explanation.
+	4. Usage patterns: common scenarios, do/don'ts, and small tips.
+	5. Related: link to closely related classes/types.
+	6. 코드 예시: one focused C++ snippet that compiles in-context; no wiki links inside code.
+
+- Linking conventions
+	- Use wiki links `[[Name]]` for Unreal terms (classes U*/A*/F*, systems, keywords).
+	- Do NOT use links inside fenced code blocks.
+	- Self-references must be backticks, not links (e.g., `AActor` in `AActor.md`).
+	- If a linked page doesnt exist, create an empty stub `docs/Unreal/Name.md` (title later).
+
+- Language & style
+	- Narrative/explanations: Korean. Code, identifiers, APIs, and keywords: English.
+	- Keep bullets short; prefer examples over theory. Avoid duplication across pages.
+
+- Code example rules
+	- Always end the page with a fenced C++ example when applicable (```cpp ... ```).
+	- No trailing text after the final code block.
+	- Show realistic includes and minimal surrounding context; avoid pseudo-code.
+
+- Validation checklist (per file)
+	- [ ] Overview exists and is Korean, concise, and accurate.
+	- [ ] Sections present (2-5) with meaningful bullets; no empty headings.
+	- [ ] All Unreal terms linked via `[[ ]]`; self-reference uses backticks.
+	- [ ] Final section is "코드 예시" with C++ code; no links inside code.
+	- [ ] No orphan links (create missing stubs if needed).
+	- [ ] No code block preceding content (example appears at the very end).
+
 Convenience
 - VS Code task “Commit & Push (deploy)” or `npm run deploy` performs stage-all + commit + push.
 
