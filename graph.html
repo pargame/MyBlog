@@ -5,42 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Graph View</title>
   <link rel="stylesheet" href="./assets/css/styles.css" />
-  <link rel="icon" href="./public/favicon.svg" typ      function setupZoomControls() {
-        const zoomInBtn = document.getElementById('zoom-in');
-        const zoomOutBtn = document.getElementById('zoom-out');
-        
-        if (zoomInBtn) {
-          zoomInBtn.addEventListener('click', () => {
-            const currentTransform = d3.zoomTransform(svg.node());
-            const newScale = Math.min(3, currentTransform.k * 1.5);
-            const newTransform = currentTransform.scale(newScale / currentTransform.k);
-            svg.transition().duration(300).call(zoomBehavior.transform, newTransform);
-          });
-        }
-        
-        if (zoomOutBtn) {
-          zoomOutBtn.addEventListener('click', () => {
-            const currentTransform = d3.zoomTransform(svg.node());
-            const newScale = Math.max(0.2, currentTransform.k / 1.5);
-            const newTransform = currentTransform.scale(newScale / currentTransform.k);
-            svg.transition().duration(300).call(zoomBehavior.transform, newTransform);
-          });
-        }
-      }
-
-      function setupArchives(data) {="image/svg+xml" />
+  <link rel="icon" href="./public/favicon.svg" type="image/svg+xml" />
     <style>
   .legend { color: var(--muted); font-size: 14px; }
   /* Page: Graph — header should NOT stick on long scroll */
   .site-header { position: static !important; top: auto !important; z-index: auto !important; backdrop-filter: none !important; }
-  .site-header .container { padding: 16px 16px; }
+  .site-header .container { padding: 8px 16px; }
   
   /* Fullscreen immersive graph */
   .fullscreen-graph { padding: 0; margin: 0; }
   .graph-container { 
     position: relative; 
     width: 100vw; 
-    height: calc(100vh - 120px); /* Account for header */
+    height: calc(100vh - 80px); /* Account for compact header */
     background: var(--bg);
     overflow: hidden;
   }
@@ -66,7 +43,8 @@
   
   .graph-overlay.top-left { top: 16px; left: 16px; }
   .graph-overlay.top-right { top: 16px; right: 16px; }
-  .graph-overlay.search-box { top: 80px; right: 16px; }
+  .graph-overlay.top-right.zoom-controls { top: 64px; right: 16px; }
+  .graph-overlay.search-box { top: 112px; right: 16px; }
   
   .graph-overlay .body { 
     display: none; 
@@ -256,6 +234,28 @@
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
   <script src="./assets/js/footer.js"></script>
     <script>
+    function setupZoomControls() {
+      const zoomInBtn = document.getElementById('zoom-in');
+      const zoomOutBtn = document.getElementById('zoom-out');
+      if (zoomInBtn) {
+        zoomInBtn.addEventListener('click', () => {
+          if (!svg || !zoomBehavior) return;
+          const currentTransform = d3.zoomTransform(svg.node());
+          const newScale = Math.min(3, currentTransform.k * 1.5);
+          const newTransform = currentTransform.scale(newScale / currentTransform.k);
+          svg.transition().duration(300).call(zoomBehavior.transform, newTransform);
+        });
+      }
+      if (zoomOutBtn) {
+        zoomOutBtn.addEventListener('click', () => {
+          if (!svg || !zoomBehavior) return;
+          const currentTransform = d3.zoomTransform(svg.node());
+          const newScale = Math.max(0.2, currentTransform.k / 1.5);
+          const newTransform = currentTransform.scale(newScale / currentTransform.k);
+          svg.transition().duration(300).call(zoomBehavior.transform, newTransform);
+        });
+      }
+    }
     // Graph state/selectors
         let FULL = null; // 전체 데이터
         let CUR = null;  // 필터된 현재 데이터
@@ -289,7 +289,8 @@
           window.addEventListener('resize', () => { GRAPH_W = null; GRAPH_H = null; rerender(); });
       }
 
-      let state = { archive: 'ALL', topic: null };
+  // Default archive is ALL; URL param can override in setupArchives
+  let state = { archive: 'ALL', topic: null };
       function getSelectedArchive(){ return state.archive; }
       function getSelectedTopic(){ return state.topic || null; }
       function setSelectedArchive(a){ state.archive = a || 'ALL'; setURL(); }
@@ -326,7 +327,8 @@
         refreshActive();
         
         // Archive toggle button
-        document.getElementById('archive-toggle').addEventListener('click', () => {
+        const archToggle = document.getElementById('archive-toggle');
+        if (archToggle) archToggle.addEventListener('click', () => {
           document.getElementById('archive-ctl').classList.toggle('show');
         });
       }

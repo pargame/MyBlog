@@ -14,6 +14,52 @@
       "author": "GPT-5"
     },
     {
+      "id": "2025/hello-world",
+      "label": "hello-world",
+      "base": "hello-world",
+      "file": "posts/2025/hello-world.md",
+      "archive": "2025",
+      "topics": [
+        "2025"
+      ],
+      "mtime": 1755151926280.2383,
+      "date": null,
+      "author": null
+    },
+    {
+      "id": "README",
+      "label": "README",
+      "base": "README",
+      "file": "posts/README.md",
+      "archive": "(default)",
+      "topics": [],
+      "mtime": 1755151926255.708,
+      "date": null,
+      "author": null
+    },
+    {
+      "id": "AActor",
+      "label": "AActor",
+      "base": "AActor",
+      "file": "docs/AActor.md",
+      "archive": "(default)",
+      "topics": [],
+      "mtime": 1755151925835.2915,
+      "date": null,
+      "author": null
+    },
+    {
+      "id": "APawn",
+      "label": "APawn",
+      "base": "APawn",
+      "file": "docs/APawn.md",
+      "archive": "(default)",
+      "topics": [],
+      "mtime": 1755151925930.0132,
+      "date": null,
+      "author": null
+    },
+    {
       "id": "Unreal/AAIController",
       "label": "AAIController",
       "base": "AAIController",
@@ -1694,7 +1740,7 @@
   "edges": [
     {
       "source": "Unreal/AAIController",
-      "target": "Unreal/APawn"
+      "target": "APawn"
     },
     {
       "source": "Unreal/AAIController",
@@ -1718,7 +1764,7 @@
     },
     {
       "source": "Unreal/AAIController",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/AAIController",
@@ -1746,7 +1792,7 @@
     },
     {
       "source": "Unreal/AActor",
-      "target": "Unreal/APawn"
+      "target": "APawn"
     },
     {
       "source": "Unreal/AActor",
@@ -1778,7 +1824,7 @@
     },
     {
       "source": "Unreal/ACameraActor",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/ACameraActor",
@@ -1786,11 +1832,11 @@
     },
     {
       "source": "Unreal/ACameraActor",
-      "target": "Unreal/APawn"
+      "target": "APawn"
     },
     {
       "source": "Unreal/ACharacter",
-      "target": "Unreal/APawn"
+      "target": "APawn"
     },
     {
       "source": "Unreal/ACharacter",
@@ -1822,7 +1868,7 @@
     },
     {
       "source": "Unreal/AController",
-      "target": "Unreal/APawn"
+      "target": "APawn"
     },
     {
       "source": "Unreal/AController",
@@ -1866,7 +1912,7 @@
     },
     {
       "source": "Unreal/AGameMode",
-      "target": "Unreal/APawn"
+      "target": "APawn"
     },
     {
       "source": "Unreal/AGameMode",
@@ -1874,7 +1920,7 @@
     },
     {
       "source": "Unreal/AGameMode",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/AGameMode",
@@ -1882,7 +1928,7 @@
     },
     {
       "source": "Unreal/AGameModeBase",
-      "target": "Unreal/APawn"
+      "target": "APawn"
     },
     {
       "source": "Unreal/AGameModeBase",
@@ -1898,7 +1944,7 @@
     },
     {
       "source": "Unreal/AGameModeBase",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/AGameModeBase",
@@ -1934,7 +1980,7 @@
     },
     {
       "source": "Unreal/ALight",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/ALight",
@@ -1966,7 +2012,7 @@
     },
     {
       "source": "Unreal/APawn",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/APawn",
@@ -1982,11 +2028,11 @@
     },
     {
       "source": "Unreal/APlayerCameraManager",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/APlayerCameraManager",
-      "target": "Unreal/APawn"
+      "target": "APawn"
     },
     {
       "source": "Unreal/APlayerCameraManager",
@@ -1994,7 +2040,7 @@
     },
     {
       "source": "Unreal/APlayerController",
-      "target": "Unreal/APawn"
+      "target": "APawn"
     },
     {
       "source": "Unreal/APlayerController",
@@ -2018,7 +2064,7 @@
     },
     {
       "source": "Unreal/APlayerController",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/APlayerStart",
@@ -2026,7 +2072,7 @@
     },
     {
       "source": "Unreal/APlayerStart",
-      "target": "Unreal/APawn"
+      "target": "APawn"
     },
     {
       "source": "Unreal/APlayerStart",
@@ -2034,7 +2080,7 @@
     },
     {
       "source": "Unreal/APlayerState",
-      "target": "Unreal/APawn"
+      "target": "APawn"
     },
     {
       "source": "Unreal/APlayerState",
@@ -2058,7 +2104,7 @@
     },
     {
       "source": "Unreal/AStaticMeshActor",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/AStaticMeshActor",
@@ -2162,7 +2208,7 @@
     },
     {
       "source": "Unreal/Event",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/Event",
@@ -2198,7 +2244,7 @@
     },
     {
       "source": "Unreal/PhysicsVolume",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/PhysicsVolume",
@@ -2218,11 +2264,11 @@
     },
     {
       "source": "Unreal/PlayerCameraManager",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/PlayerCameraManager",
-      "target": "Unreal/APawn"
+      "target": "APawn"
     },
     {
       "source": "Unreal/PlayerCameraManager",
@@ -2318,7 +2364,7 @@
     },
     {
       "source": "Unreal/UActorComponent",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/UActorComponent",
@@ -2366,7 +2412,7 @@
     },
     {
       "source": "Unreal/UAnimBlueprint",
-      "target": "Unreal/APawn"
+      "target": "APawn"
     },
     {
       "source": "Unreal/UAnimBlueprint",
@@ -2390,7 +2436,7 @@
     },
     {
       "source": "Unreal/UAnimInstance",
-      "target": "Unreal/APawn"
+      "target": "APawn"
     },
     {
       "source": "Unreal/UAnimInstance",
@@ -2442,7 +2488,7 @@
     },
     {
       "source": "Unreal/UAudioComponent",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/UAudioComponent",
@@ -2530,7 +2576,7 @@
     },
     {
       "source": "Unreal/UCameraComponent",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/UCameraComponent",
@@ -2546,7 +2592,7 @@
     },
     {
       "source": "Unreal/UCameraComponent",
-      "target": "Unreal/APawn"
+      "target": "APawn"
     },
     {
       "source": "Unreal/UCameraComponent",
@@ -2630,7 +2676,7 @@
     },
     {
       "source": "Unreal/UEnhancedInputComponent",
-      "target": "Unreal/APawn"
+      "target": "APawn"
     },
     {
       "source": "Unreal/UEnhancedInputComponent",
@@ -2686,7 +2732,7 @@
     },
     {
       "source": "Unreal/UFloatingPawnMovement",
-      "target": "Unreal/APawn"
+      "target": "APawn"
     },
     {
       "source": "Unreal/UFloatingPawnMovement",
@@ -2766,7 +2812,7 @@
     },
     {
       "source": "Unreal/UGameplayStatics",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/UGameplayStatics",
@@ -2778,7 +2824,7 @@
     },
     {
       "source": "Unreal/UGameplayStatics",
-      "target": "Unreal/APawn"
+      "target": "APawn"
     },
     {
       "source": "Unreal/UGridPanel",
@@ -2842,7 +2888,7 @@
     },
     {
       "source": "Unreal/UInputAction",
-      "target": "Unreal/APawn"
+      "target": "APawn"
     },
     {
       "source": "Unreal/UInputAction",
@@ -2850,7 +2896,7 @@
     },
     {
       "source": "Unreal/UInputComponent",
-      "target": "Unreal/APawn"
+      "target": "APawn"
     },
     {
       "source": "Unreal/UInputComponent",
@@ -2938,7 +2984,7 @@
     },
     {
       "source": "Unreal/ULightComponent",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/ULocalPlayer",
@@ -2986,11 +3032,11 @@
     },
     {
       "source": "Unreal/UMovementComponent",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/UMovementComponent",
-      "target": "Unreal/APawn"
+      "target": "APawn"
     },
     {
       "source": "Unreal/UMovementComponent",
@@ -3030,7 +3076,7 @@
     },
     {
       "source": "Unreal/UNavigationSystemV1",
-      "target": "Unreal/APawn"
+      "target": "APawn"
     },
     {
       "source": "Unreal/UNavigationSystemV1",
@@ -3042,7 +3088,7 @@
     },
     {
       "source": "Unreal/UObject",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/UObject",
@@ -3134,7 +3180,7 @@
     },
     {
       "source": "Unreal/UProjectileMovementComponent",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/UProjectileMovementComponent",
@@ -3178,7 +3224,7 @@
     },
     {
       "source": "Unreal/USceneComponent",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/USceneComponent",
@@ -3282,7 +3328,7 @@
     },
     {
       "source": "Unreal/UStaticMesh",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/UStaticMeshComponent",
@@ -3290,7 +3336,7 @@
     },
     {
       "source": "Unreal/UStaticMeshComponent",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/UStaticMeshComponent",
@@ -3346,7 +3392,7 @@
     },
     {
       "source": "Unreal/UWorld",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/UWorld",
@@ -3374,7 +3420,7 @@
     },
     {
       "source": "Unreal/UWorldSubsystem",
-      "target": "Unreal/AActor"
+      "target": "AActor"
     },
     {
       "source": "Unreal/UWorldSubsystem",
@@ -3430,6 +3476,7 @@
     }
   ],
   "archives": [
+    "(default)",
     "2025",
     "Unreal"
   ],
@@ -3441,6 +3488,7 @@
     "2025": [
       "2025"
     ],
+    "(default)": [],
     "Unreal": [
       "Unreal"
     ]
