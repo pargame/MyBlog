@@ -43,27 +43,35 @@
   
   .graph-overlay.top-left { top: 16px; left: 16px; }
   .graph-overlay.top-right { top: 16px; right: 16px; }
-  /* Search box centered at top */
+  /* Search box centered at top, collapses to button */
   .graph-overlay.search-box { 
     top: 16px; 
     left: 50%; 
     transform: translateX(-50%);
-    max-width: 520px;
-    width: calc(100vw - 32px);
-  z-index: 12;
+    width: auto;
+    z-index: 12;
+  }
+  .graph-overlay.search-box.show {
+    width: min(520px, calc(100vw - 32px));
+    transform: translateX(calc(-50% - 12px)); /* slight left shift on expand */
   }
   
+  /* Overlay content smoothly expands; collapsed state contributes no width */
   .graph-overlay .body { 
     display: block; 
-    margin-top: 8px; 
-    max-width: 520px;
+    margin-top: 0; 
+    width: 0;
+    max-width: 0;
     max-height: 0;
     overflow: hidden;
     opacity: 0;
     transform: translateY(-4px);
-    transition: max-height .28s ease, opacity .22s ease, transform .28s ease;
+    transition: max-height .28s ease, opacity .22s ease, transform .28s ease, width .25s ease, max-width .25s ease, margin-top .25s ease;
   }
   .graph-overlay.show .body { 
+    margin-top: 8px;
+    width: auto;
+    max-width: 520px;
     max-height: 420px; 
     overflow-y: auto; 
     opacity: 1;
@@ -289,9 +297,13 @@
         const container = document.getElementById('archives');
         // Archive 목록은 posts/ 파일을 제외한 데이터로부터 유도
         const docNodes = (data.nodes || []).filter(n => !isPost(n));
-        const uniq = Array.from(new Set(docNodes.map(n => n.archive))).sort();
-        const label = (a) => (a === '(default)') ? 'Default' : a;
-        const btns = ['ALL', ...uniq].map(a => `<button class="btn" data-arch="${a}">${a === 'ALL' ? 'All' : label(a)}</button>`).join('');
+        let uniq = Array.from(new Set(docNodes.map(n => n.archive))).sort();
+        // 요구사항: All/Default 제거, Unreal만 노출 + 기본 선택
+        uniq = uniq.filter(a => a && a !== '(default)');
+        const preferred = 'Unreal';
+        const shown = uniq.includes(preferred) ? [preferred] : uniq;
+        const label = (a) => a;
+        const btns = shown.map(a => `<button class="btn" data-arch="${a}">${label(a)}</button>`).join('');
         container.innerHTML = btns;
         const buttons = container.querySelectorAll('button');
         function refreshActive(){ buttons.forEach(b => b.classList.toggle('active', b.getAttribute('data-arch')===getSelectedArchive())); }
@@ -301,7 +313,10 @@
           rerender(); 
           document.getElementById('archive-ctl').classList.remove('show');
         }));
-        // 기본값은 All 유지 (URL 파라미터가 있으면 반영)
+        // 기본값: Unreal 우선. URL 파라미터 없을 때만 적용
+        if (!archiveParam) {
+          if (shown.length) setSelectedArchive(shown[0]);
+        }
         refreshActive();
         
         // Archive toggle button
@@ -319,8 +334,9 @@
         const count = document.getElementById('search-count');
         
         toggle.addEventListener('click', () => {
-          document.getElementById('search-ctl').classList.toggle('show');
-          if (document.getElementById('search-ctl').classList.contains('show')) {
+          const ctl = document.getElementById('search-ctl');
+          ctl.classList.toggle('show');
+          if (ctl.classList.contains('show')) {
             input.focus();
           }
         });
