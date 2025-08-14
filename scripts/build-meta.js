@@ -25,7 +25,7 @@ function main(){
   if (!fs.existsSync(SITE_FILE)) {
     fs.writeFileSync(SITE_FILE, JSON.stringify({ emailUser: "me", emailDomain: "example.com" }, null, 2));
   }
-  console.log('meta written:', META_FILE);
+  // meta written
 }
 
 if (require.main === module) main();

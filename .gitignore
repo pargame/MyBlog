@@ -1,10 +1,15 @@
 # macOS
 .DS_Store
+.AppleDouble
+.LSOverride
 
 .Spotlight-V100
 .Trashes
 *.swp
 *.swo
+*.tmp
+*.bak
+*~
 
 # Node tooling (optional)
 node_modules/
@@ -17,6 +22,8 @@ pnpm-debug.log*
 dist/
 .out/
 .next/
+build/
+coverage/
 
 # Generated at build/deploy time
 public/meta.json
@@ -26,9 +33,15 @@ public/meta.json
 .cache/
 tmp/
 .temp/
+*.log
+logs/
+*.pid
+*.seed
+*.pid.lock
 
 # Editor/IDE
 .idea/
 .vscode/*
 !.vscode/tasks.json
 !.vscode/settings.json
+!.vscode/extensions.json

@@ -205,7 +205,7 @@ function main() {
     topics: [...topics].sort(),
     topicsByArchive: topicsByArchiveSorted,
   }, null, 2));
-  console.log(`graph written: ${OUT_FILE}`);
+  // graph written
 }
 
 if (require.main === module) {
