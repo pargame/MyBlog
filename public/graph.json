@@ -48,7 +48,7 @@
       "topics": [
         "Unreal"
       ],
-      "mtime": 1755177414969.819,
+      "mtime": 1755182891539.4739,
       "date": null,
       "author": null
     },
@@ -74,7 +74,7 @@
       "topics": [
         "Unreal"
       ],
-      "mtime": 1755177414946.7073,
+      "mtime": 1755182901434.5823,
       "date": null,
       "author": null
     },
@@ -126,7 +126,7 @@
       "topics": [
         "Unreal"
       ],
-      "mtime": 1755177415003.951,
+      "mtime": 1755183086857.9153,
       "date": null,
       "author": null
     },
@@ -153,6 +153,19 @@
         "Unreal"
       ],
       "mtime": 1755177415063.9084,
+      "date": null,
+      "author": null
+    },
+    {
+      "id": "Unreal/AHUD",
+      "label": "AHUD",
+      "base": "AHUD",
+      "file": "docs/Unreal/AHUD.md",
+      "archive": "Unreal",
+      "topics": [
+        "Unreal"
+      ],
+      "mtime": 1755182879204.4492,
       "date": null,
       "author": null
     },
@@ -191,7 +204,7 @@
       "topics": [
         "Unreal"
       ],
-      "mtime": 1755177414942.1692,
+      "mtime": 1755182910010.2856,
       "date": null,
       "author": null
     },
@@ -217,7 +230,7 @@
       "topics": [
         "Unreal"
       ],
-      "mtime": 1755177414972.7776,
+      "mtime": 1755182927426.0483,
       "date": null,
       "author": null
     },
@@ -542,7 +555,7 @@
       "topics": [
         "Unreal"
       ],
-      "mtime": 1755181389068.3538,
+      "mtime": 1755183006068.431,
       "date": null,
       "author": null
     },
@@ -646,7 +659,7 @@
       "topics": [
         "Unreal"
       ],
-      "mtime": 1755181389068.3164,
+      "mtime": 1755183077020.9507,
       "date": null,
       "author": null
     },
@@ -659,7 +672,7 @@
       "topics": [
         "Unreal"
       ],
-      "mtime": 1755181715032.6052,
+      "mtime": 1755182959148.1987,
       "date": null,
       "author": null
     },
@@ -685,7 +698,7 @@
       "topics": [
         "Unreal"
       ],
-      "mtime": 1755181389068.3215,
+      "mtime": 1755182979935.8044,
       "date": null,
       "author": null
     },
@@ -2146,6 +2159,10 @@
       "target": "Unreal/ACameraActor"
     },
     {
+      "source": "Unreal/AActor",
+      "target": "Unreal/UGameplayStatics"
+    },
+    {
       "source": "Unreal/ACameraActor",
       "target": "Unreal/APlayerController"
     },
@@ -2320,6 +2337,14 @@
     {
       "source": "Unreal/AGameStateBase",
       "target": "Unreal/AGameMode"
+    },
+    {
+      "source": "Unreal/AHUD",
+      "target": "Unreal/UUserWidget"
+    },
+    {
+      "source": "Unreal/AHUD",
+      "target": "Unreal/APlayerController"
     },
     {
       "source": "Unreal/AIPerceptionStimuliSourceComponent",
@@ -2912,10 +2937,6 @@
     {
       "source": "Unreal/FTransform",
       "target": "Unreal/FRotator"
-    },
-    {
-      "source": "Unreal/FTransform",
-      "target": "Unreal/UObject"
     },
     {
       "source": "Unreal/FUniqueNetId",

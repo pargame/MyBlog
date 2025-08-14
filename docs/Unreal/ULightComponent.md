@@ -4,17 +4,11 @@
 
 ### **1. 주요 역할 및 책임**
 > `ULightComponent`는 그 자체로 월드에 존재할 수 없으며, 항상 [[AActor]]에 부착되어 그 액터가 빛을 발산하도록 만듭니다. [[ALight]]는 이 컴포넌트를 담기 위한 가장 기본적인 그릇 역할을 합니다.
-* **빛의 속성 정의 (Defining Light Properties):
-**
-    * **`Intensity`:** 빛의 밝기(세기)를 조절합니다.
+* **빛의 속성 정의 (Defining Light Properties):** * **`Intensity`:** 빛의 밝기(세기)를 조절합니다.
     * **`LightColor`:** 빛의 색상을 설정합니다.
     * **`AttenuationRadius`:** 빛이 도달하는 최대 거리를 설정합니다.
-* **그림자 제어 (Controlling Shadows):
-**
-    `Cast Shadows` 속성을 통해 이 빛이 그림자를 생성할지 여부를 결정하고, 그림자의 해상도, 필터링 품질 등 세부적인 그림자 옵션을 제어합니다.
-* **성능 최적화 (Performance Optimization):
-**
-    빛의 가시성, 컬링 거리(Culling Distance) 등을 조절하여 렌더링 성능에 미치는 영향을 관리합니다.
+* **그림자 제어 (Controlling Shadows):** `Cast Shadows` 속성을 통해 이 빛이 그림자를 생성할지 여부를 결정하고, 그림자의 해상도, 필터링 품질 등 세부적인 그림자 옵션을 제어합니다.
+* **성능 최적화 (Performance Optimization):** 빛의 가시성, 컬링 거리(Culling Distance) 등을 조절하여 렌더링 성능에 미치는 영향을 관리합니다.
 
 ### **2. 주요 서브클래스**
 > `ULightComponent`는 빛의 형태와 특성에 따라 여러 자식 클래스로 나뉩니다. 어떤 자식 클래스를 사용하느냐에 따라 빛의 종류가 결정됩니다.

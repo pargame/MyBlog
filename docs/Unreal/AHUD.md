@@ -7,11 +7,11 @@
 * **HUD 요소 렌더링:** `DrawHUD()`를 오버라이드하여 2D 요소를 그립니다.
 * **UI 연동:** [[UUserWidget]]을 생성/표시하여 복잡한 UI를 화면에 띄웁니다.
 
-### **2. 관련 클래스**
-* **[[APlayerController]]:** HUD를 소유하고 관리합니다.
-* **[[UUserWidget]]:** 화면에 표시되는 위젯 기반 UI.
+## 관련 클래스
+* [[APlayerController]]: HUD를 소유하고 관리.
+* [[UUserWidget]]: 화면에 표시되는 위젯 기반 UI.
 
-### **3. 코드 예시**
+## 코드 예시
 ```cpp
 // 가장 단순한 HUD 예시: 화면 중앙에 텍스트를 그립니다.
 #include "GameFramework/HUD.h"

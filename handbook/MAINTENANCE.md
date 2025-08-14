@@ -1,3 +1,23 @@
+## 2025-08-15 — Docs formatting fix, faster commits, workflow cleanup
+
+Changes made:
+
+- Pre-commit performance: `.git/hooks/pre-commit` now runs a local build only when docs/scripts are staged. You can skip it with `SKIP_PRECOMMIT=1` or `--no-verify`. CI is unaffected.
+- GitHub Pages: duplicate workflow `.github/workflows/page.yml` removed to avoid double deploys. Keep `pages.yml` only.
+- Markdown formatting fixer added: `scripts/fix-markdown-bold.js` normalizes bullets where bold markers were split across lines (e.g., `* **Label:\n** Body` -> `* **Label:** Body`).
+
+How to use the fixer:
+
+- Run once locally: `npm run fix:md:bold`
+- Verify no remaining broken bullets:
+	- Search pattern: a bullet line ending with `:` followed by a line starting with `**`.
+	- Example grep: `rg -n "^\s*\*\s+\*\*[^\n]*:\s*$\n\*\*\s" docs/Unreal`
+
+Notes:
+
+- The fixer is conservative (bulleted lists only) to avoid unintended changes. Expand if needed.
+- Bold/heading style: keep list labels on one line like `* **Label:** description` to render correctly.
+
 # Maintenance Policy
 
 Operating rules to keep the repo consistent and automated.

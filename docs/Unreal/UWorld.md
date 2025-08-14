@@ -5,18 +5,10 @@
 
 ### **1. 주요 역할 및 책임**
 > `UWorld`는 단순한 맵 데이터의 집합이 아니라, 게임이 실제로 실행되고 상호작용이 일어나는 동적인 공간 그 자체입니다.
-* **[[AActor]]의 컨테이너 (Container for Actors):
-**
-      월드에 스폰된 모든 [[AActor]]의 목록을 유지하고 관리합니다. [[AActor]]를 스폰하거나 파괴하는 작업은 모두 `UWorld` 객체를 통해 이루어집니다.
-* **게임플레이 시스템의 허브 (Hub for Gameplay Systems):
-**
-      [[AGameModeBase]], [[AGameStateBase]], [[APlayerController]] 등 게임의 규칙과 흐름을 관장하는 핵심적인 게임플레이 액터들을 소유하고 관리합니다.
-* **시뮬레이션 관리 (Simulation Management):
-**
-      물리 엔진을 통해 월드 내의 오브젝트 간 상호작용을 시뮬레이션하고, 틱(`Tick`) 시스템을 통해 매 프레임마다 [[AActor]]와 컴포넌트들을 업데이트합니다.
-* **스트리밍 및 레벨 관리 (Streaming and Level Management):
-**
-      하나의 월드는 여러 개의 레벨 파일로 구성될 수 있습니다. `UWorld`는 이 레벨들을 동적으로 로드하고 언로드하는 레벨 스트리밍을 관리하여, 거대한 맵을 효율적으로 처리할 수 있도록 합니다.
+* **[[AActor]]의 컨테이너 (Container for Actors):** 월드에 스폰된 모든 [[AActor]]의 목록을 유지하고 관리합니다. [[AActor]]를 스폰하거나 파괴하는 작업은 모두 `UWorld` 객체를 통해 이루어집니다.
+* **게임플레이 시스템의 허브 (Hub for Gameplay Systems):** [[AGameModeBase]], [[AGameStateBase]], [[APlayerController]] 등 게임의 규칙과 흐름을 관장하는 핵심적인 게임플레이 액터들을 소유하고 관리합니다.
+* **시뮬레이션 관리 (Simulation Management):** 물리 엔진을 통해 월드 내의 오브젝트 간 상호작용을 시뮬레이션하고, 틱(`Tick`) 시스템을 통해 매 프레임마다 [[AActor]]와 컴포넌트들을 업데이트합니다.
+* **스트리밍 및 레벨 관리 (Streaming and Level Management):** 하나의 월드는 여러 개의 레벨 파일로 구성될 수 있습니다. `UWorld`는 이 레벨들을 동적으로 로드하고 언로드하는 레벨 스트리밍을 관리하여, 거대한 맵을 효율적으로 처리할 수 있도록 합니다.
 
 ### **2. 핵심 함수**
 > `UWorld` 내에서 [[AActor]]를 생성하거나 정보를 얻기 위해 사용하는 가장 기본적인 함수들입니다.
@@ -44,9 +36,27 @@
 
 ### **4. `UWorld`와 `UGameInstance`**
 > `UWorld`는 '무대'이고, [[UGameInstance]]는 그 무대를 소유한 '극장'에 비유할 수 있습니다.
-* **`UWorld` (무대):
-**
-      레벨이 전환될 때마다 파괴되고 새로 생성됩니다. 메인 메뉴 월드, 1스테이지 월드, 2스테이지 월드 등 여러 개가 존재할 수 있습니다.
-* **[[UGameInstance]] (극장):
-**
-      게임이 실행되는 동안 단 하나만 존재하며 파괴되지 않습니다. 어떤 월드(무대)를 올릴지 결정하고, 월드가 바뀌어도 유지되어야 할 정보(예: 플레이어의 누적 점수)를 보관합니다.
+* **`UWorld` (무대):** 레벨이 전환될 때마다 파괴되고 새로 생성됩니다. 메인 메뉴 월드, 1스테이지 월드, 2스테이지 월드 등 여러 개가 존재할 수 있습니다.
+* **[[UGameInstance]] (극장):** 게임이 실행되는 동안 단 하나만 존재하며 파괴되지 않습니다. 어떤 월드(무대)를 올릴지 결정하고, 월드가 바뀌어도 유지되어야 할 정보(예: 플레이어의 누적 점수)를 보관합니다.
+
+## 관련 클래스
+* [[AActor]] / [[APlayerController]] / [[AGameModeBase]] / [[AGameStateBase]]
+* [[FTimerManager]]
+* [[UWorldSubsystem]]
+* [[UGameInstance]]
+
+## 코드 예시
+```cpp
+// 라인트레이스 사용 예시
+FHitResult Hit;
+FCollisionQueryParams Params(SCENE_QUERY_STAT(MyTrace), false);
+const FVector Start = /* ... */;
+const FVector End = /* ... */;
+if (GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params))
+{
+    if (AActor* HitActor = Hit.GetActor())
+    {
+        // 맞은 액터 처리
+    }
+}
+```

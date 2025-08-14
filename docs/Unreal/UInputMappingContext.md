@@ -5,15 +5,9 @@
 
 ### **1. 주요 역할 및 책임**
 > `UInputMappingContext`는 키와 [[UInputAction]] 사이의 연결고리를 정의하고, 그 연결이 어떤 조건에서 활성화될지를 구체적으로 명시하는 역할을 합니다.
-* **입력 매핑의 집합 (A Set of Input Mappings):
-**
-      하나 이상의 [[UInputAction]]을 실제 키보드, 마우스, 게임패드의 특정 키에 매핑하는 목록을 관리합니다. 예를 들어, "`W` 키는 `IA_MoveForward`에 매핑된다" 와 "`스페이스 바`는 `IA_Jump`에 매핑된다" 와 같은 규칙들을 담고 있습니다.
-* **컨텍스트 제공 (Providing Context):
-**
-      이름 그대로, 입력이 사용될 '상황' 또는 '맥락'을 제공합니다. `IMC_CharacterControls`에는 캐릭터 조작 관련 매핑을, `IMC_VehicleControls`에는 차량 조작 관련 매핑을, `IMC_UI_Menu`에는 UI 메뉴 조작 관련 매핑을 각각 나누어 정의할 수 있습니다.
-* **[[UInputTrigger]]와 [[UInputModifier]] 설정 (Configuring Triggers and Modifiers):
-**
-      각각의 키 매핑에 대해, 액션이 언제 발동될지([[UInputTrigger]] 배열)와 입력 값을 어떻게 가공할지([[UInputModifier]] 배열)를 구체적으로 설정할 수 있습니다.
+* **입력 매핑의 집합 (A Set of Input Mappings):** 하나 이상의 [[UInputAction]]을 실제 키보드, 마우스, 게임패드의 특정 키에 매핑하는 목록을 관리합니다. 예를 들어, "`W` 키는 `IA_MoveForward`에 매핑된다" 와 "`스페이스 바`는 `IA_Jump`에 매핑된다" 와 같은 규칙들을 담고 있습니다.
+* **컨텍스트 제공 (Providing Context):** 이름 그대로, 입력이 사용될 '상황' 또는 '맥락'을 제공합니다. `IMC_CharacterControls`에는 캐릭터 조작 관련 매핑을, `IMC_VehicleControls`에는 차량 조작 관련 매핑을, `IMC_UI_Menu`에는 UI 메뉴 조작 관련 매핑을 각각 나누어 정의할 수 있습니다.
+* **[[UInputTrigger]]와 [[UInputModifier]] 설정 (Configuring Triggers and Modifiers):** 각각의 키 매핑에 대해, 액션이 언제 발동될지([[UInputTrigger]] 배열)와 입력 값을 어떻게 가공할지([[UInputModifier]] 배열)를 구체적으로 설정할 수 있습니다.
 
 ### **2. 주요 구성 요소**
 > `UInputMappingContext` 에디터에서 설정하는 핵심적인 항목들입니다.
@@ -34,3 +28,33 @@
       `UInputMappingContext`가 플레이어에게 성공적으로 추가되면, 그 안에 정의된 모든 키 매핑이 활성화되어 플레이어가 해당 키를 눌렀을 때 지정된 [[UInputAction]]이 발동되기 시작합니다.
 4. **제거:**
       상황이 바뀌면(예: 메뉴를 닫으면), `RemoveMappingContext()` 함수를 호출하여 해당 `UInputMappingContext`를 제거하고 관련 입력들을 비활성화합니다.
+
+## 관련 클래스
+* [[UEnhancedInputLocalPlayerSubsystem]]
+* [[UInputAction]]
+* [[UInputTrigger]]
+* [[UInputModifier]]
+
+## 코드 예시
+```cpp
+// IMC를 통해 키-액션 매핑 추가 후 플레이어에 적용
+void SetupMappings(APlayerController* PC)
+{
+    if (!PC) return;
+
+    if (ULocalPlayer* LP = PC->GetLocalPlayer())
+    {
+        if (auto* Subsys = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LP))
+        {
+            // 에디터에서 만든 IMC 자산을 추가
+            Subsys->AddMappingContext(IMC_Character, 0);
+
+            // (선택) 코드에서 동적으로 키 매핑 추가
+            if (IMC_Character && IA_Jump)
+            {
+                IMC_Character->MapKey(IA_Jump, EKeys::SpaceBar);
+            }
+        }
+    }
+}
+```

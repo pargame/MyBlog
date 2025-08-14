@@ -5,15 +5,9 @@
 
 ### **1. 주요 역할 및 책임**
 > `USceneComponent`는 그 자체로 보이지는 않지만, [[AActor]]의 모든 시각적, 물리적 요소들이 어디에, 어떻게 위치할지를 결정하는 가장 근본적인 역할을 합니다.
-* **공간적 존재의 시작 (The Beginning of Spatial Existence):
-**
-      [[UActorComponent]]와 달리, [[FTransform]]을 가지고 있어 월드 내에 특정한 위치, 회전, 크기를 가질 수 있습니다. [[AActor]]의 `RootComponent`는 반드시 `USceneComponent` 또는 그 자식 클래스여야 합니다.
-* **계층 구조의 기반 (Foundation of Hierarchy):
-**
-      다른 `USceneComponent`에 자식으로 붙을(Attach) 수 있습니다. 자식 `USceneComponent`의 `Transform`은 부모 `USceneComponent`에 상대적인 값으로 결정되므로, 복잡한 복합 오브젝트(예: 몸통에 팔다리가 붙어있는 캐릭터)를 쉽게 만들 수 있습니다.
-* **소켓 제공 (Providing Sockets):
-**
-      `USceneComponent`의 특정 위치에 '소켓(Socket)'이라는 이름 붙은 지점을 만들어, 다른 [[UActorComponent]]나 [[AActor]]를 정확한 위치에 쉽게 붙일 수 있도록 돕습니다. (예: 캐릭터의 손 소켓에 무기를 부착)
+* **공간적 존재의 시작 (The Beginning of Spatial Existence):** [[UActorComponent]]와 달리, [[FTransform]]을 가지고 있어 월드 내에 특정한 위치, 회전, 크기를 가질 수 있습니다. [[AActor]]의 `RootComponent`는 반드시 `USceneComponent` 또는 그 자식 클래스여야 합니다.
+* **계층 구조의 기반 (Foundation of Hierarchy):** 다른 `USceneComponent`에 자식으로 붙을(Attach) 수 있습니다. 자식 `USceneComponent`의 `Transform`은 부모 `USceneComponent`에 상대적인 값으로 결정되므로, 복잡한 복합 오브젝트(예: 몸통에 팔다리가 붙어있는 캐릭터)를 쉽게 만들 수 있습니다.
+* **소켓 제공 (Providing Sockets):** `USceneComponent`의 특정 위치에 '소켓(Socket)'이라는 이름 붙은 지점을 만들어, 다른 [[UActorComponent]]나 [[AActor]]를 정확한 위치에 쉽게 붙일 수 있도록 돕습니다. (예: 캐릭터의 손 소켓에 무기를 부착)
 
 ### **2. 핵심 함수 및 속성**
 > `USceneComponent`의 위치를 제어하고 계층 구조를 조작하는 데 사용되는 필수적인 함수들입니다.
@@ -30,9 +24,5 @@
 
 ### **3. `USceneComponent`와 `UPrimitiveComponent`**
 > `USceneComponent`는 '위치'만 있지만, [[UPrimitiveComponent]]는 그 위치에 '실체'를 부여합니다.
-* **`USceneComponent` (앵커):
-**
-      눈에 보이지 않는 순수한 좌표, 회전, 크기 정보입니다. 다른 `USceneComponent`이 붙을 수 있는 기준점, 즉 '앵커'의 역할을 합니다.
-* **[[UPrimitiveComponent]] (실체):
-**
-      `USceneComponent`를 상속받아, 그 위치에 렌더링 가능한 메시나 충돌 가능한 물리적 형태를 추가한 것입니다. 화면에 보이거나 만져지는 모든 것은 [[UPrimitiveComponent]]입니다.
+* **`USceneComponent` (앵커):** 눈에 보이지 않는 순수한 좌표, 회전, 크기 정보입니다. 다른 `USceneComponent`이 붙을 수 있는 기준점, 즉 '앵커'의 역할을 합니다.
+* **[[UPrimitiveComponent]] (실체):** `USceneComponent`를 상속받아, 그 위치에 렌더링 가능한 메시나 충돌 가능한 물리적 형태를 추가한 것입니다. 화면에 보이거나 만져지는 모든 것은 [[UPrimitiveComponent]]입니다.

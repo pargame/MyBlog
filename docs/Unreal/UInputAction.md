@@ -5,16 +5,9 @@
 
 ### **1. 주요 역할 및 책임**
 > `UInputAction`은 입력을 물리적인 키로부터 분리하여, 코드의 가독성과 재사용성을 높이는 핵심적인 역할을 합니다.
-
-* **입력의 추상화 (Abstraction of Input):
-**
-      개발자는 코드에서 `W` 키가 눌렸는지를 확인하는 대신, `IA_MoveForward`라는 '행동'이 발생했는지를 확인하게 됩니다. 이를 통해 키 바인딩이 변경되더라도 코드를 수정할 필요가 없어집니다.
-* **값 타입 정의 (Value Type Definition):
-**
-      이 행동이 전달할 값의 종류를 결정합니다. 예를 들어, '이동' 액션은 `Axis2D` 값을, '점프' 액션은 `Digital` 값을, '줌인/줌아웃' 액션은 `Axis1D` 값을 가질 수 있습니다.
-* **[[UInputTrigger]]와 [[UInputModifier]]의 컨테이너 (Container for Triggers and Modifiers):
-**
-      `UInputAction` 자체에도 기본적인 [[UInputTrigger]]와 [[UInputModifier]]를 추가할 수 있습니다. 여기에 추가된 규칙은 이 액션이 어떤 [[UInputMappingContext]]에서 사용되든 항상 적용됩니다. (보통은 컨텍스트 레벨에서 설정하는 것이 더 유연합니다.)
+* **입력의 추상화 (Abstraction of Input):** 개발자는 코드에서 `W` 키가 눌렸는지를 확인하는 대신, `IA_MoveForward`라는 '행동'이 발생했는지를 확인하게 됩니다. 이를 통해 키 바인딩이 변경되더라도 코드를 수정할 필요가 없어집니다.
+* **값 타입 정의 (Value Type Definition):** 이 행동이 전달할 값의 종류를 결정합니다. 예를 들어, '이동' 액션은 `Axis2D` 값을, '점프' 액션은 `Digital` 값을, '줌인/줌아웃' 액션은 `Axis1D` 값을 가질 수 있습니다.
+* **[[UInputTrigger]]와 [[UInputModifier]]의 컨테이너 (Container for Triggers and Modifiers):** `UInputAction` 자체에도 기본적인 [[UInputTrigger]]와 [[UInputModifier]]를 추가할 수 있습니다. 여기에 추가된 규칙은 이 액션이 어떤 [[UInputMappingContext]]에서 사용되든 항상 적용됩니다. (보통은 컨텍스트 레벨에서 설정하는 것이 더 유연합니다.)
 	  
 ### **2. 핵심 속성**
 > `UInputAction` 애셋 에디터에서 설정하는 가장 중요한 속성입니다.
@@ -35,3 +28,32 @@
       [[UInputMappingContext]]를 열어, 방금 만든 `UInputAction`을 특정 키를 연결하고, [[UInputTrigger]]와 [[UInputModifier]]를 설정합니다.
 3. **코드에 바인딩:**
       [[APlayerController]]나 [[APawn]]의 `SetupPlayerInputComponent` 함수 내에서, [[UEnhancedInputComponent]]의 `BindAction()` 함수를 사용하여 `UInputAction`과 실제 실행될 함수를 연결합니다.
+
+## 관련 클래스
+* [[UInputMappingContext]]
+* [[UInputTrigger]]
+* [[UInputModifier]]
+* [[UEnhancedInputComponent]]
+* [[ETriggerEvent]]
+
+## 코드 예시
+```cpp
+// UInputAction 값 읽어 이동/점프 처리하기
+void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+    Super::SetupPlayerInputComponent(PlayerInputComponent);
+    if (auto* EIC = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+    {
+        EIC->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AMyCharacter::OnMove);
+        EIC->BindAction(IA_Jump, ETriggerEvent::Started, this, &AMyCharacter::OnJumpStarted);
+        EIC->BindAction(IA_Jump, ETriggerEvent::Completed, this, &AMyCharacter::OnJumpCompleted);
+    }
+}
+
+void AMyCharacter::OnMove(const FInputActionInstance& Instance)
+{
+    const FVector2D Axis = Instance.GetValue().Get<FVector2D>();
+    AddMovementInput(GetActorForwardVector(), Axis.Y);
+    AddMovementInput(GetActorRightVector(), Axis.X);
+}
+```

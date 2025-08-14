@@ -36,7 +36,7 @@
 * **`FVector::ForwardVector`:** (1, 0, 0)
 * **`FVector::RightVector`:** (0, 1, 0)
 
-### **5. 관련 구조체**
+## 관련 클래스
 * **[[FRotator]]:**
     회전을 나타내는 구조체입니다.
 * **[[FQuat]]:**
@@ -44,7 +44,7 @@
 * **[[FTransform]]:**
     이동(Location, `FVector`), 회전(Rotation, [[FQuat]]), 크기(Scale, `FVector`)를 모두 포함하는 변환 정보의 집합입니다.
 
-### **6. 코드 예시**
+## 코드 예시
 ```cpp
 // 벡터 정규화와 내적/외적 사용 예시
 FVector A(1.f, 2.f, 0.f);

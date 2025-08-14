@@ -4,15 +4,9 @@
 
 ### **1. 주요 역할 및 책임**
 > `APawn`은 단순한 [[AActor]]를 넘어, 제어의 주체가 될 수 있는 특별한 존재입니다. 컨트롤러와 연결되어 월드와 상호작용하는 핵심적인 다리 역할을 합니다.
-* **제어의 대상 (Subject of Control):
-**
-	[[AController]]에 의해 '빙의(`Possess`)'될 수 있는 가장 기본적인 클래스입니다. `APawn`은 자신을 누가 조종하는지 알 수 있으며, 이를 통해 플레이어의 입력이나 AI의 명령을 받아들입니다.
-* **입력 처리 (Input Handling):
-**
-	컨트롤러로부터 입력을 전달받아 실제 행동으로 변환하는 로직을 담습니다. `SetupPlayerInputComponent` 함수를 통해 "점프"나 "발사" 같은 입력에 특정 함수를 바인딩할 수 있습니다.
-* **유연한 표현 (Flexible Representation):
-**
-	[[ACharacter]]와 달리, `APawn`은 특정 형태나 이동 방식에 얽매이지 않습니다. 개발자는 `APawn`을 기반으로 차량, 포탑, 유령 카메라 등 어떤 형태의 제어 가능한 객체든 자유롭게 만들 수 있습니다.
+* **제어의 대상 (Subject of Control):** [[AController]]에 의해 '빙의(`Possess`)'될 수 있는 가장 기본적인 클래스입니다. `APawn`은 자신을 누가 조종하는지 알 수 있으며, 이를 통해 플레이어의 입력이나 AI의 명령을 받아들입니다.
+* **입력 처리 (Input Handling):** 컨트롤러로부터 입력을 전달받아 실제 행동으로 변환하는 로직을 담습니다. `SetupPlayerInputComponent` 함수를 통해 "점프"나 "발사" 같은 입력에 특정 함수를 바인딩할 수 있습니다.
+* **유연한 표현 (Flexible Representation):** [[ACharacter]]와 달리, `APawn`은 특정 형태나 이동 방식에 얽매이지 않습니다. 개발자는 `APawn`을 기반으로 차량, 포탑, 유령 카메라 등 어떤 형태의 제어 가능한 객체든 자유롭게 만들 수 있습니다.
 
 ### **2. 핵심 함수 및 속성**
 > `APawn`을 제어하고 외부 입력을 받아들이기 위한 기본적인 도구들입니다.
@@ -29,7 +23,12 @@
 * `SpawnDefaultController()`:
 	`APawn`이 월드에 스폰될 때, 아무런 컨트롤러에 의해 빙의되지 않은 상태라면 이 함수를 통해 기본 컨트롤러를 스스로 생성하고 빙의를 시도합니다.
 
-### **3. 코드 예시**
+## 관련 클래스
+* [[AController]] / [[APlayerController]] / [[AAIController]]
+* [[ACharacter]]
+* [[UMovementComponent]] / [[UCharacterMovementComponent]]
+
+## 코드 예시
 ```cpp
 // 간단한 Pawn: 입력을 받아 회전/이동 의도를 전달하는 예시
 #include "GameFramework/Pawn.h"

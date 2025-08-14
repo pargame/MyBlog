@@ -34,3 +34,44 @@
 2.  **[[UInputMappingContext]] 애셋 생성:** 'IMC_Default' 컨텍스트를 만들고, `W`키를 'IA_Move'에, `Space Bar`를 'IA_Jump'에 매핑하는 등 규칙을 설정합니다.
 3.  **서브시스템에 컨텍스트 추가:** 플레이어 컨트롤러의 `BeginPlay` 등에서 [[UEnhancedInputLocalPlayerSubsystem]]을 가져와 `AddMappingContext` 함수로 'IMC_Default'를 추가합니다.
 4.  **입력 컴포넌트에 함수 바인딩:** 캐릭터의 `SetupPlayerInputComponent` 함수에서 [[UEnhancedInputComponent]]를 통해 'IA_Move'가 발동되면 `Move()` 함수를, 'IA_Jump'가 발동되면 `Jump()` 함수를 호출하도록 바인딩합니다.
+
+## 관련 클래스
+* [[UInputAction]]
+* [[UInputMappingContext]]
+* [[UInputModifier]]
+* [[UInputTrigger]]
+* [[UEnhancedInputLocalPlayerSubsystem]]
+* [[UEnhancedInputComponent]]
+* [[ETriggerEvent]]
+
+## 코드 예시
+```cpp
+// 기본 매핑 컨텍스트 추가 (LocalPlayer Subsystem)
+void UMyHUDWidget::NativeConstruct()
+{
+    Super::NativeConstruct();
+
+    if (APlayerController* PC = GetOwningPlayer())
+    {
+        if (ULocalPlayer* LP = PC->GetLocalPlayer())
+        {
+            if (auto* Subsys = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LP))
+            {
+                Subsys->AddMappingContext(IMC_Default, 0);
+            }
+        }
+    }
+}
+
+// 입력 바인딩 (EnhancedInputComponent)
+void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+    Super::SetupPlayerInputComponent(PlayerInputComponent);
+    if (auto* EIC = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+    {
+        EIC->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AMyCharacter::OnMove);
+        EIC->BindAction(IA_Jump, ETriggerEvent::Started, this, &AMyCharacter::OnJumpStarted);
+        EIC->BindAction(IA_Jump, ETriggerEvent::Completed, this, &AMyCharacter::OnJumpCompleted);
+    }
+}
+```

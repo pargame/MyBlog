@@ -48,7 +48,7 @@ void AMyActor::MyFunction()
 ```
 블루프린트에서는 `Set Timer by Event`, `Set Timer by Function Name` 노드를 사용하여 동일한 기능을 구현할 수 있습니다.
 
-### **4. 관련 클래스 및 구조체**
+## 관련 클래스
 * **`FTimerHandle`:**
     각 타이머를 고유하게 식별하고 제어하기 위한 핸들 구조체입니다.
 * **[[UWorld]]:**
@@ -56,7 +56,7 @@ void AMyActor::MyFunction()
 * **[[FTimerDelegate]]:**
     타이머가 만료되었을 때 호출될 함수를 바인딩하는 데 사용되는 델리게이트입니다.
 
-### **5. 코드 예시**
+## 코드 예시
 ```cpp
 // 루프 타이머를 설정하고 액터 종료 시 정리하는 예시
 #include "TimerManager.h"

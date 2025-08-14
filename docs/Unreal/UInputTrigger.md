@@ -14,24 +14,37 @@
 
 ### **2. 주요 기본 트리거 종류**
 > [[Enhanced Input System]]은 자주 사용되는 여러 종류의 트리거를 기본으로 제공합니다.
-* **[[UInputTrigger]] `Pressed`:
-**
-	키가 눌리는 바로 그 프레임에 `Triggered` 상태가 됩니다. 가장 기본적인 트리거입니다.
-* **[[UInputTrigger]] `Released`:
-**
-      눌렀던 키에서 손을 떼는 바로 그 프레임에 `Triggered` 상태가 됩니다.
-* **[[UInputTrigger]] `Held`:
-**
-      지정된 시간(`Hold Time Threshold`) 이상으로 키를 계속 누르고 있으면 `Triggered` 상태가 됩니다.
-* **[[UInputTrigger]] `Tap`:
-**
-      키를 눌렀다가 지정된 시간(`Tap Speed Threshold`) 안에 떼면 `Triggered` 상태가 됩니다.
-* **[[UInputTrigger]] `Pulse`:
-**
-      키를 누르고 있는 동안, 지정된 시간 간격(`Interval`)마다 반복적으로 `Triggered` 상태가 됩니다. (예: 자동 연사)
-* **[[UInputTrigger]] `Chorded Action`:
-**
-      다른 [[UInputAction]]이 활성화되어 있는 상태에서 이 키를 눌러야만 `Triggered` 상태가 됩니다. (예: `Shift` 키를 누른 상태에서 클릭)
+* **[[UInputTrigger]] `Pressed`:** 키가 눌리는 바로 그 프레임에 `Triggered` 상태가 됩니다. 가장 기본적인 트리거입니다.
+* **[[UInputTrigger]] `Released`:** 눌렀던 키에서 손을 떼는 바로 그 프레임에 `Triggered` 상태가 됩니다.
+* **[[UInputTrigger]] `Held`:** 지정된 시간(`Hold Time Threshold`) 이상으로 키를 계속 누르고 있으면 `Triggered` 상태가 됩니다.
+* **[[UInputTrigger]] `Tap`:** 키를 눌렀다가 지정된 시간(`Tap Speed Threshold`) 안에 떼면 `Triggered` 상태가 됩니다.
+* **[[UInputTrigger]] `Pulse`:** 키를 누르고 있는 동안, 지정된 시간 간격(`Interval`)마다 반복적으로 `Triggered` 상태가 됩니다. (예: 자동 연사)
+* **[[UInputTrigger]] `Chorded Action`:** 다른 [[UInputAction]]이 활성화되어 있는 상태에서 이 키를 눌러야만 `Triggered` 상태가 됩니다. (예: `Shift` 키를 누른 상태에서 클릭)
 
 ### **3. 사용 방법**
 > `UInputTrigger`는 [[UInputMappingContext]] 애셋 안에서, 특정 키 매핑의 Triggers 배열에 추가하여 사용합니다. 개발자는 원하는 트리거를 선택하고, 필요에 따라 세부 속성(예: `Hold Time`)을 조정하기만 하면 됩니다. 별도의 코딩 없이도 복잡한 입력 패턴을 쉽게 구현할 수 있습니다.
+
+## 관련 클래스
+* [[UInputAction]]
+* [[UInputMappingContext]]
+* [[ETriggerEvent]]
+
+## 코드 예시
+```cpp
+// 코드에서 MappingContext에 Hold 트리거 추가(예시)
+// 보통은 에디터에서 설정하지만, C++로도 구성할 수 있습니다.
+void UMySetupFunction( UInputMappingContext* IMC, UInputAction* IA )
+{
+    if (!IMC || !IA) return;
+
+    // Space 키에 IA를 매핑하고 Hold 트리거를 추가
+    FEnhancedActionKeyMapping& Map = IMC->MapKey(IA, EKeys::SpaceBar);
+
+    // UInputTriggerHold는 UObject 파생이므로 Outer를 지정해 생성
+    if (auto* Hold = NewObject<UInputTriggerHold>(IMC))
+    {
+        Hold->HoldTimeThreshold = 0.25f; // 0.25초 이상 눌러야 발동
+        Map.Triggers.Add(Hold);
+    }
+}
+```
