@@ -3,10 +3,12 @@
   "private": true,
   "version": "0.0.1",
   "scripts": {
-  "build:graph": "node scripts/build-graph.js",
-  "build:meta": "node scripts/build-meta.js",
-  "build": "npm run build:graph && npm run build:meta",
-  "fix:md:bold": "node scripts/fix-markdown-bold.js",
-  "deploy": "git add -A && git commit -m \"chore: commit & push (auto-deploy)\" || true && git push origin main"
+    "build:graph": "node scripts/build-graph.js",
+    "build:meta": "node scripts/build-meta.js",
+    "build": "npm run build:graph && npm run build:meta",
+    "fix:md:bold": "node scripts/fix-markdown-bold.js",
+    "fix:bullets": "node scripts/fix-markdown-bullets-break.js",
+  "fix:all": "npm run fix:md:bold && npm run fix:bullets && npm run build:meta",
+    "deploy": "git add -A && git commit -m \"chore: commit & push (auto-deploy)\" || true && git push origin main"
   }
 }

@@ -55,4 +55,4 @@ Key docs:
 - `handbook/SYSTEM.md`
 
 ## File map
-See `FILEMAP.md` for a quick repository overview.
+See `handbook/FILEMAP.md` for a quick repository overview.

@@ -1,63 +1,36 @@
 ---
 ---
 
-> **월드에 배치할 수 있는 가장 단순한 형태의 '카메라'입니다.** 레벨의 특정 지점에서 특정 방향을 바라보는 시점을 나타내기 위해 사용되며, 게임플레이 중에 카메라를 동적으로 전환하거나 시네마틱 시퀀스를 연출하는 데 기본적인 빌딩 블록 역할을 합니다.
+> 월드에 배치할 수 있는 가장 단순한 형태의 카메라 액터입니다. 시점을 배치·전환하거나 시네마틱을 연결할 때 기본 단위로 사용합니다.
 
-### **1. 주요 역할 및 책임**
-> `ACameraActor`는 그 자체로 복잡한 로직을 가지기보다는, 레벨 디자이너나 시네마틱 아티스트가 월드에 '시점'을 배치하는 직관적인 수단을 제공합니다.
-* **시점 제공 (Providing a Viewpoint):** 월드 내에 특정 위치와 회전을 가진 카메라를 배치합니다. [[APlayerController]]의 `SetViewTarget` 함수를 통해 플레이어의 시점을 이 `ACameraActor`로 손쉽게 전환할 수 있습니다.
-* **카메라 설정의 컨테이너 (Container for Camera Settings):** 시야각(Field of View), 종횡비(Aspect Ratio), 포스트 프로세스 설정 등 카메라와 관련된 다양한 속성을 미리 설정해 둘 수 있는 컨테이너 역할을 합니다.
-* **시네마틱의 기본 요소 (Fundamental Element of Cinematics):** 레벨 시퀀서(Level Sequencer)와 같은 툴에서, 시간에 따라 카메라의 위치를 바꾸거나 여러 `ACameraActor` 사이를 전환하며 컷씬을 연출하는 데 사용됩니다.
+## 주요 역할 및 책임
+> **월드의 특정 위치·회전을 카메라 시점으로 제공합니다.**
+* **시점 제공 (Viewpoint Provision):**
+	월드의 특정 위치·회전을 카메라 시점으로 제공합니다.
+* **카메라 설정 컨테이너 (Camera Settings Container):**
+	FOV·Aspect·PostProcess 등 카메라 파라미터를 한 곳에서 관리합니다.
+* **시네마틱 기본 요소 (Cinematic Element):**
+	시퀀서에서 컷 전환과 키프레임 애니메이션에 활용됩니다.
 
-### **2. 핵심 구성 요소**
-> `ACameraActor`는 매우 단순한 구조로 이루어져 있습니다.
-* **[[UCameraComponent]]:** 실질적인 카메라의 모든 기능(FOV, 종횡비, 프로젝션 타입 등)을 담당하는 핵심 컴포넌트입니다. `ACameraActor`는 이 [[UCameraComponent]]를 담기 위한 편리한 [[AActor]] 래퍼(Wrapper)라고 할 수 있습니다. `ACameraActor`를 생성하면 이 컴포넌트가 자동으로 루트 컴포넌트로 추가됩니다.
-
-### **3. 사용 방법**
-> `ACameraActor`는 주로 다음과 같은 상황에서 사용됩니다.
-* **고정 카메라 게임:** CCTV 시점이나, 특정 구역에 진입했을 때 고정된 뷰를 보여주는 게임(예: 고전 어드벤처 게임)을 만들 때 여러 개의 `ACameraActor`를 레벨에 배치하고, 트리거 볼륨 등을 이용해 플레이어의 시점을 전환합니다.
-* **컷씬 연출:** 플레이어가 특정 지점에 도달했을 때, `SetViewTarget` 함수를 호출하여 `ACameraActor`로 시점을 잠시 전환함으로써 연출적인 장면을 보여줄 수 있습니다.
-* **디버깅 및 개발:** 개발 중에 특정 위치를 쉽게 확인하기 위한 북마크처럼 사용할 수 있습니다.
-
-### **4. 관련 클래스**
+## 핵심 구성요소
+> **실제 카메라 파이프라인을 담당합니다.**
 * **[[UCameraComponent]]:**
-    `ACameraActor`의 핵심 기능을 제공하는 컴포넌트입니다.
-* **[[APlayerController]]:**
-    `SetViewTarget` 함수를 통해 플레이어의 시점을 이 액터로 전환할 수 있습니다.
-* **[[APlayerCameraManager]]:**
-    플레이어의 최종적인 카메라 뷰를 관리하고, 카메라 효과를 추가하는 역할을 합니다.
-* **[[APawn]]:**
-    플레이어가 직접 조종하는 액터로, 보통 자체적인 카메라 컴포넌트를 가지고 있습니다.
+	실제 카메라 파이프라인을 담당합니다. `ACameraActor` 생성 시 루트에 자동 부착됩니다.
 
-### **5. `ACameraActor` vs. [[APlayerCameraManager]]**
-* **`ACameraActor` (카메라 자체):** 월드에 배치되는 '물리적인' 카메라입니다. 위치와 방향을 가진 단순한 액터입니다.
-* **[[APlayerCameraManager]] (카메라 감독):** 플레이어의 '눈'입니다. 어떤 카메라(`ACameraActor`가 될 수도, [[APawn]]에 달린 카메라 컴포넌트가 될 수도 있음)를 통해 세상을 볼지 결정하고, 화면 흔들림이나 페이드 같은 '효과'를 추가하는 역할을 합니다.
-
-### **6. 코드 예시**
+## 코드 예시
+> **#include "Kismet/GameplayStatics.h" #include "Camera/CameraActor.h" #include "GameFramework/PlayerController.h"**
 ```cpp
-// 월드에 배치된 특정 ACameraActor를 찾아 플레이어의 뷰로 설정하는 예시
 #include "Kismet/GameplayStatics.h"
 #include "Camera/CameraActor.h"
 #include "GameFramework/PlayerController.h"
 
 void AMyPlayerController::SetFixedCameraView()
 {
-    // 월드에 있는 모든 ACameraActor를 찾습니다.
-    TArray<AActor*> FoundActors;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACameraActor::StaticClass(), FoundActors);
-
-    if (FoundActors.Num() > 0)
+    TArray<AActor*> Found;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACameraActor::StaticClass(), Found);
+    if (Found.Num() > 0)
     {
-        // 첫 번째로 찾은 카메라 액터를 타겟으로 설정합니다.
-        // 실제 게임에서는 태그나 다른 식별자를 사용하여 특정 카메라를 찾는 것이 좋습니다.
-        AActor* TargetCamera = FoundActors[0];
-
-        // 플레이어의 뷰 타겟을 해당 카메라 액터로 부드럽게 전환합니다.
-        if (TargetCamera)
-        {
-            SetViewTargetWithBlend(TargetCamera, 0.5f);
-        }
+        SetViewTargetWithBlend(Found[0], 0.5f);
     }
 }
-```
 ```
