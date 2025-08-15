@@ -5,19 +5,20 @@
 
 ### **1. 주요 역할 및 책임**
 > **물리적으로 시뮬레이션되는 물체를 잡아 특정 위치로 이동시킬 수 있습니다. 실무 팁: 구현 시 성능과 안정성에 유의하세요.**
-* **물체 잡기 (Grabbing Objects):**
+* **물체 잡기 (Grabbing Objects)**:
 	물리적으로 시뮬레이션되는 물체를 잡아 특정 위치로 이동시킬 수 있습니다.
-* **물체 회전 (Rotating Objects):**
+* **물체 회전 (Rotating Objects)**:
 	잡은 물체를 특정 회전 값으로 조정할 수 있습니다.
-* **물리적 상호작용 (Physical Interaction):**
+* **물리적 상호작용 (Physical Interaction)**:
 	물리 엔진과의 상호작용을 통해 자연스러운 움직임을 구현합니다.
 
 ### **2. 핵심 함수 및 속성**
 > **현재 잡고 있는 물체를 놓습니다. 실무 팁: 기본값과 런타임 영향부터 확인하세요.**
-* **`GrabComponentAtLocation(UPrimitiveComponent* Component, FName BoneName, FVector Location)`:** 지정된 위치에서 물체를 잡습니다.
-* **`ReleaseComponent()`:**
+* **`GrabComponentAtLocation(UPrimitiveComponent* Component, FName BoneName, FVector Location)`**:
+	지정된 위치에서 물체를 잡습니다.
+* **`ReleaseComponent()`**:
 	현재 잡고 있는 물체를 놓습니다.
-* **`SetTargetLocationAndRotation(FVector Location, FRotator Rotation)`:**
+* **`SetTargetLocationAndRotation(FVector Location, FRotator Rotation)`**:
 	잡은 물체의 목표 위치와 회전을 설정합니다.
 
 ### **3. 사용 예시**
@@ -44,8 +45,8 @@ void AMyActor::ReleaseObject()
 
 ### **4. 관련 클래스**
 > **물리적으로 시뮬레이션되는 모든 컴포넌트의 부모 클래스. 실무 팁: 연관 클래스의 생명주기와 의존도를 반드시 확인하세요.**
-* **[[UPrimitiveComponent]]:**
+* **[[UPrimitiveComponent]]**:
 	물리적으로 시뮬레이션되는 모든 컴포넌트의 부모 클래스.
-* **[[AActor]]:**
+* **[[AActor]]**:
 	물리 핸들이 부착될 수 있는 액터.
 ```

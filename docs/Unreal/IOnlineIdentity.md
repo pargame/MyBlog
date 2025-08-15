@@ -5,22 +5,22 @@
 
 ### **1. 주요 역할 및 책임**
 > **Steam, Xbox Live, PlayStation Network 등 각기 다른 플랫폼의 로그인 및 계정 관리 API를 공통된 함수 호출로 사용할 수 있게 해줍니다.**
-* **플랫폼 추상화 (Platform Abstraction):**
+* **플랫폼 추상화 (Platform Abstraction)**:
 	Steam, Xbox Live, PlayStation Network 등 각기 다른 플랫폼의 로그인 및 계정 관리 API를 공통된 함수 호출로 사용할 수 있게 해줍니다.
-* **계정 정보 관리 (Account Information Management):**
+* **계정 정보 관리 (Account Information Management)**:
 	플레이어의 고유 ID, 닉네임, 이메일 주소 등의 계정 정보를 플랫폼으로부터 가져오는 기능을 제공합니다.
-* **로그인 상태 관리 (Login State Management):**
+* **로그인 상태 관리 (Login State Management)**:
 	플레이어의 로그인 상태를 확인하고, 로그인/로그아웃 작업을 수행할 수 있습니다.
 
 ### **2. 핵심 함수**
 > **지정된 사용자 번호(LocalUserNum)로 로그인합니다. 실무 팁: 기본값과 런타임 영향부터 확인하세요.**
-* **`Login(int32 LocalUserNum, const FOnlineAccountCredentials& AccountCredentials, ...)`:**
+* **`Login(int32 LocalUserNum, const FOnlineAccountCredentials& AccountCredentials, ...)`**:
 	지정된 사용자 번호(LocalUserNum)로 로그인합니다. `AccountCredentials`에는 플랫폼별로 필요한 사용자 이름, 비밀번호, 인증 토큰 등이 포함됩니다.
-* **`Logout(int32 LocalUserNum)`:**
+* **`Logout(int32 LocalUserNum)`**:
 	지정된 사용자 번호(LocalUserNum)로 로그아웃합니다.
-* **`GetUniquePlayerId(int32 LocalUserNum)`:**
+* **`GetUniquePlayerId(int32 LocalUserNum)`**:
 	지정된 사용자 번호(LocalUserNum)에 해당하는 플레이어의 고유 ID([[FUniqueNetId]])를 반환합니다.
-* **`GetPlayerNickname(int32 LocalUserNum)`:**
+* **`GetPlayerNickname(int32 LocalUserNum)`**:
 	지정된 사용자 번호(LocalUserNum)에 해당하는 플레이어의 닉네임을 반환합니다.
 
 ### **3. 사용 방법**
@@ -44,9 +44,9 @@ if (Subsystem)
 
 ### **4. 관련 클래스 및 구조체**
 > **이 인터페이스를 포함한 모든 온라인 기능에 대한 접근점을 제공합니다. 실무 팁: 연관 클래스의 생명주기와 의존도를 반드시 확인하세요.**
-* **[[Online Subsystem]]:**
+* **[[Online Subsystem]]**:
 	이 인터페이스를 포함한 모든 온라인 기능에 대한 접근점을 제공합니다.
-* **[[FUniqueNetId]]:**
+* **[[FUniqueNetId]]**:
 	온라인상의 플레이어를 고유하게 식별하는 ID입니다.
-* **`FOnlineAccountCredentials`:**
+* **`FOnlineAccountCredentials`**:
 	로그인에 필요한 사용자 이름, 비밀번호, 인증 토큰 등을 담는 구조체입니다.

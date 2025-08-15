@@ -5,20 +5,23 @@
 
 ### **1. 주요 역할 및 책임**
 > **AI가 피해를 입었을 때 이를 감지하고, 피해를 준 대상에 대한 정보를 수집합니다. 실무 팁: 구현 시 성능과 안정성에 유의하세요.**
-* **피해 감각 정의 (Defining Damage Sense):**
+* **피해 감각 정의 (Defining Damage Sense)**:
 	AI가 피해를 입었을 때 이를 감지하고, 피해를 준 대상에 대한 정보를 수집합니다.
-* **데이터 기반 설정 (Data-Driven Configuration):**
+* **데이터 기반 설정 (Data-Driven Configuration)**:
 	이 설정 객체를 [[UAIPerceptionComponent]]의 'Senses Config' 배열에 추가하여 AI의 피해 감각을 쉽게 조정할 수 있습니다.
 
 ### **2. 핵심 속성**
 > **사용할 피해 감각의 구현체를 지정합니다. 실무 팁: 기본값과 런타임 영향부터 확인하세요.**
-* **`Implementation`:**
+* **`Implementation`**:
 	사용할 피해 감각의 구현체를 지정합니다. 보통 `AISense_Damage`로 설정됩니다.
-* **`DetectionByAffiliation`:**
+* **`DetectionByAffiliation`**:
 	피해를 준 대상의 소속(아군, 적군, 중립)에 따라 감지 여부를 필터링합니다.
-    *   `DetectEnemies`: 적이 준 피해를 감지합니다.
-    *   `DetectNeutrals`: 중립 대상이 준 피해를 감지합니다.
-    *   `DetectFriendlies`: 아군이 준 피해를 감지합니다.
+    *   `DetectEnemies`:
+	적이 준 피해를 감지합니다.
+    *   `DetectNeutrals`:
+	중립 대상이 준 피해를 감지합니다.
+    *   `DetectFriendlies`:
+	아군이 준 피해를 감지합니다.
 
 ### **3. 사용 방법**
 > **1. 실무 팁: 프로젝트 요구에 맞는 설정을 우선 검토하세요.**
@@ -28,9 +31,9 @@
 
 ### **4. 관련 클래스**
 > **이 설정을 사용하여 실제로 피해 이벤트를 처리하는 주체입니다. 실무 팁: 연관 클래스의 생명주기와 의존도를 반드시 확인하세요.**
-* **[[UAIPerceptionComponent]]:**
+* **[[UAIPerceptionComponent]]**:
 	이 설정을 사용하여 실제로 피해 이벤트를 처리하는 주체입니다.
-* **[[UAISenseConfig]]:**
+* **[[UAISenseConfig]]**:
 	모든 감각 설정 클래스의 부모 클래스입니다.
-* **`AISense_Damage`:**
+* **`AISense_Damage`**:
 	피해 이벤트를 감지하고 처리하는 실제 감각 클래스입니다.

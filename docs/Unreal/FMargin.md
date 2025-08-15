@@ -5,30 +5,30 @@
 
 ### **1. 주요 역할 및 책임**
 > **위젯의 경계와 내부 콘텐츠 사이의 공간을 정의합니다.**
-* **여백(Padding) 지정:**
+* **여백(Padding) 지정**:
 	위젯의 경계와 내부 콘텐츠 사이의 공간을 정의합니다. 예를 들어, 버튼의 텍스트가 버튼 테두리에서 얼마나 떨어져 있을지를 결정합니다.
-* **경계(Border/Margin) 지정:**
+* **경계(Border/Margin) 지정**:
 	*   [[UCanvasPanelSlot]]에서는 `Offsets` 속성으로 사용되어, 앵커로부터 위젯의 각 경계가 얼마나 떨어져 있는지를 나타냅니다.
     *   [[FSlateBrush]]에서는 `Margin` 속성으로 사용되어, 이미지를 9분할(Box) 렌더링할 때 늘어나지 않을 코너 영역을 정의합니다.
 
 ### **2. 핵심 멤버 변수**
 > **왼쪽 여백/경계 값입니다.**
-* **`Left` (`float`):**
+* **`Left` (`float`)**:
 	왼쪽 여백/경계 값입니다.
-* **`Top` (`float`):**
+* **`Top` (`float`)**:
 	위쪽 여백/경계 값입니다.
-* **`Right` (`float`):**
+* **`Right` (`float`)**:
 	오른쪽 여백/경계 값입니다.
-* **`Bottom` (`float`):**
+* **`Bottom` (`float`)**:
 	아래쪽 여백/경계 값입니다.
 
 ### **3. 사용 예시**
 > **`Padding` 속성에 `FMargin` 값을 설정하여 위젯 주변에 여백을 추가합니다.**
-*   **[[UVerticalBoxSlot]], [[UHorizontalBoxSlot]], [[UGridSlot]] 등:**
+*   **[[UVerticalBoxSlot]], [[UHorizontalBoxSlot]], [[UGridSlot]] 등**:
 	`Padding` 속성에 `FMargin` 값을 설정하여 위젯 주변에 여백을 추가합니다.
-*   **[[UCanvasPanelSlot]]:**
+*   **[[UCanvasPanelSlot]]**:
 	`LayoutData`의 `Offsets` 속성에 `FMargin` 값을 설정하여 위치를 미세 조정합니다.
-*   **[[FSlateBrush]]:**
+*   **[[FSlateBrush]]**:
 	`Draw As`가 `Box`일 때 `Margin` 값을 설정하여 9분할 영역을 정의합니다. 예를 들어, `0.25`로 설정하면 이미지의 가장자리 25%는 늘어나지 않고 중앙 50% 영역만 늘어납니다.
 
 ### **4. 관련 클래스 및 구조체**

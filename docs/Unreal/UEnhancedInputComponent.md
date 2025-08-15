@@ -4,11 +4,11 @@
 
 ### **1. 주요 역할 및 책임**
 > **`BindAction()` 함수를 통해, 특정 [[UInputAction]] 애셋이 특정 [[ETriggerEvent]](예: `Triggered`, `Started`, `Completed`) 상태가 되었을 때, 어떤 객체의 어떤 함수를 호출할지를 명확하게 지정합니다. 실무 팁: 구현 시 성능과 안정성에 유의하세요.**
-* **액션과 함수의 바인딩 (Binding Actions to Functions):**
+* **액션과 함수의 바인딩 (Binding Actions to Functions)**:
 	`BindAction()` 함수를 통해, 특정 [[UInputAction]] 애셋이 특정 [[ETriggerEvent]](예: `Triggered`, `Started`, `Completed`) 상태가 되었을 때, 어떤 객체의 어떤 함수를 호출할지를 명확하게 지정합니다.
-* **입력 처리의 종착점 (Destination of Input Processing):**
+* **입력 처리의 종착점 (Destination of Input Processing)**:
 	[[UEnhancedInputLocalPlayerSubsystem]]이 플레이어의 입력을 받아 [[UInputMappingContext]]와 [[UInputTrigger]]를 거쳐 최종적으로 [[UInputAction]]을 발동시키면, 그 결과가 이 컴포넌트에 도달하여 바인딩된 함수를 실행시킵니다.
-* **입력 값 전달 (Passing Input Values):**
+* **입력 값 전달 (Passing Input Values)**:
 	바인딩된 함수에 [[UInputAction]]이 생성한 값(예: `bool`, `float`, `FVector2D`)을 파라미터로 전달합니다. 이를 통해 개발자는 이동 방향, 마우스 움직임 등의 값을 함수 내에서 직접 사용할 수 있습니다.
 
 ### **2. 핵심 함수**
@@ -19,9 +19,9 @@
 	바인딩할 [[UInputAction]] 애셋을 지정합니다.
 	* `TriggerEvent`:
 	함수가 호출될 [[ETriggerEvent]]의 종류를 지정합니다. (`Triggered`가 가장 일반적으로 사용됩니다.)
-	* `Object`: 
+	* `Object`:
 	함수를 소유하고 있는 객체(`this`)를 지정합니다.
-	* `FunctionName`: 
+	* `FunctionName`:
 	호출될 함수의 이름을 지정합니다.
 
 ### **3. 사용 예시**

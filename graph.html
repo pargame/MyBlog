@@ -474,7 +474,13 @@
         frame.src = url.toString();
         overlay.classList.add('open');
 
-        const focusAfterOpen = () => focusNodeById(id, { offsetX: -0.225 });
+        const focusAfterOpen = () => {
+          // Suppress hover effects while programmatically focusing to avoid flicker
+          try { suppressHover = true; } catch {}
+          focusNodeById(id, { offsetX: -0.225 });
+          // Release suppression after the expected animation duration (slightly larger than transition)
+          setTimeout(() => { try { suppressHover = false; } catch {} }, 600);
+        };
         const onEnd = (e) => {
           if (e.propertyName === 'width') {
             overlay.removeEventListener('transitionend', onEnd);
@@ -696,16 +702,20 @@
           adj.get(s).add(t);
           adj.get(t).add(s);
         }
-        let hoverTimer = null;
+  let hoverTimer = null;
+  // When programmatic focus/overlay animation occurs, briefly suppress hover handlers to avoid flicker
+  let suppressHover = false;
   circleSel.on('mouseover', (_, d) => {
-          if (hoverTimer) { clearTimeout(hoverTimer); hoverTimer = null; }
-          applyHighlight(d.id);
-        });
+    if (hoverTimer) { clearTimeout(hoverTimer); hoverTimer = null; }
+    if (suppressHover) return; // ignore hover while suppressed
+    applyHighlight(d.id);
+  });
   circleSel.on('mouseout', () => {
-          // defer clearing slightly for smoother feel
-          if (hoverTimer) clearTimeout(hoverTimer);
-          hoverTimer = setTimeout(() => clearHighlight(), 90);
-        });
+    if (suppressHover) return; // ignore mouseout while suppressed
+    // defer clearing slightly for smoother feel
+    if (hoverTimer) clearTimeout(hoverTimer);
+    hoverTimer = setTimeout(() => clearHighlight(), 90);
+  });
         function applyHighlight(id){
           nodeSel.classed('faded', n => (n.id !== id && !adj.get(id).has(n.id)));
           linkSel.classed('faded', e => {

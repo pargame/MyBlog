@@ -5,54 +5,54 @@
 
 ### **1. 주요 역할 및 책임**
 > **화면상의 좌표(예: 마우스 커서 위치)나 위젯의 위치를 나타냅니다.**
-* **2D 위치 표현 (Representing 2D Position):**
+* **2D 위치 표현 (Representing 2D Position)**:
 	화면상의 좌표(예: 마우스 커서 위치)나 위젯의 위치를 나타냅니다.
-* **2D 크기 표현 (Representing 2D Size):**
+* **2D 크기 표현 (Representing 2D Size)**:
 	위젯의 너비(Width)와 높이(Height)를 나타냅니다.
-* **2D 벡터 연산 (2D Vector Operations):**
+* **2D 벡터 연산 (2D Vector Operations)**:
 	2차원 벡터 수학에 필요한 다양한 함수와 연산자를 제공하여 UI 계산을 용이하게 합니다.
 
 ### **2. 핵심 멤버 변수**
 > **2차원 공간의 각 축에 해당하는 `float` 타입의 값입니다.**
-* **`X`, `Y`:**
+* **`X`, `Y`**:
 	2차원 공간의 각 축에 해당하는 `float` 타입의 값입니다.
 
 ### **3. 주요 함수 및 연산자**
 > **`FVector2D`는 [[FVector]]와 유사하게 편리한 벡터 연산을 지원합니다.**
 `FVector2D`는 [[FVector]]와 유사하게 편리한 벡터 연산을 지원합니다.
-* **`+`, `-`, `*`, `/`:**
-    벡터 간의 덧셈, 뺄셈 및 스칼라 곱셈, 나눗셈을 지원합니다.
-* **`Size()` 또는 `Length()`:**
+* **`+`, `-`, `*`, `/`**:
+	벡터 간의 덧셈, 뺄셈 및 스칼라 곱셈, 나눗셈을 지원합니다.
+* **`Size()` 또는 `Length()`**:
 	벡터의 크기(길이)를 반환합니다.
-* **`GetSafeNormal()` 또는 `Normalize()`:**
+* **`GetSafeNormal()` 또는 `Normalize()`**:
 	벡터의 크기를 1로 만들면서 방향은 그대로 유지하는 '단위 벡터'를 구합니다.
-* **`DotProduct(const FVector2D& V1, const FVector2D& V2)`:**
+* **`DotProduct(const FVector2D& V1, const FVector2D& V2)`**:
 	두 벡터의 내적을 계산합니다.
 
 ### **4. 정적 변수 (Static Variables)**
 > **자주 사용되는 2D 벡터 값들이 미리 정의되어 있습니다.**
 자주 사용되는 2D 벡터 값들이 미리 정의되어 있습니다.
-* **`FVector2D::ZeroVector`:**
+* **`FVector2D::ZeroVector`**:
 	(0, 0)
-* **`FVector2D::OneVector`:**
+* **`FVector2D::OneVector`**:
 	(1, 1)
-* **`FVector2D::UnitVector`:**
+* **`FVector2D::UnitVector`**:
 	(1, 1)
 
 ### **5. 사용 예시**
 > **`Alignment` 속성에서 위젯의 정렬을 지정하는 데 사용됩니다.**
-* **[[UCanvasPanelSlot]]:**
+* **[[UCanvasPanelSlot]]**:
 	`Alignment` 속성에서 위젯의 정렬을 지정하는 데 사용됩니다.
-* **[[FAnchors]]:**
+* **[[FAnchors]]**:
 	앵커의 최소/최대 위치를 지정하는 데 사용됩니다.
-* **[[UWidget]]:**
+* **[[UWidget]]**:
 	`GetDesiredSize()` 함수는 위젯의 이상적인 크기를 `FVector2D`로 반환합니다.
-* **마우스 이벤트:**
+* **마우스 이벤트**:
 	마우스의 화면 좌표를 얻어올 때 `FVector2D` 타입으로 받습니다.
 
 ### **6. 관련 구조체**
 > **3차원 벡터를 나타내는 구조체입니다. 실무 팁: 연관 클래스의 생명주기와 의존도를 반드시 확인하세요.**
-* **[[FVector]]:**
+* **[[FVector]]**:
 	3차원 벡터를 나타내는 구조체입니다.
-* **[[FIntPoint]]:**
+* **[[FIntPoint]]**:
 	정수(Integer)를 사용하는 2차원 좌표를 나타내는 구조체로, 주로 텍스처나 렌더 타겟의 해상도를 다룰 때 사용됩니다.

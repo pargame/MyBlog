@@ -4,9 +4,9 @@
 
 ### **1. 주요 역할 및 책임**
 > **[[UAudioComponent]]의 `SetSound` 함수나 [[UGameplayStatics]]의 `PlaySound` 계열 함수는 모두 이 `USoundBase` 타입의 객체를 인자로 받습니다. 실무 팁: 구현 시 성능과 안정성에 유의하세요.**
-* **재생 가능한 사운드의 기반 (Base for Playable Sounds):**
+* **재생 가능한 사운드의 기반 (Base for Playable Sounds)**:
 	[[UAudioComponent]]의 `SetSound` 함수나 [[UGameplayStatics]]의 `PlaySound` 계열 함수는 모두 이 `USoundBase` 타입의 객체를 인자로 받습니다. 이를 통해 어떤 종류의 사운드 에셋이든 일관된 방식으로 재생할 수 있습니다.
-* **공통 속성 제공 (Provides Common Properties):**
+* **공통 속성 제공 (Provides Common Properties)**:
 	모든 파생 사운드 클래스가 공유하는 기본 속성(예: 동시 재생 가능한 최대 수, 사운드 분류 등)을 정의합니다.
 
 ### **2. 주요 서브클래스**
@@ -18,9 +18,9 @@
 
 ### **3. 관련 클래스**
 > **월드에 `USoundBase` 에셋을 실제로 재생시키는 스피커 역할을 하는 컴포넌트입니다. 실무 팁: 연관 클래스의 생명주기와 의존도를 반드시 확인하세요.**
-* **[[UAudioComponent]]:**
+* **[[UAudioComponent]]**:
 	월드에 `USoundBase` 에셋을 실제로 재생시키는 스피커 역할을 하는 컴포넌트입니다.
-* **[[UGameplayStatics]]:**
+* **[[UGameplayStatics]]**:
 	`PlaySoundAtLocation`, `SpawnSound2D` 등의 함수를 통해 `USoundBase` 에셋을 간편하게 재생할 수 있는 유틸리티 함수들을 제공합니다.
 * **[[USoundAttenuation]]**:
 	3D 월드에서 소리가 거리에 따라 어떻게 감쇠할지에 대한 규칙을 정의하는 데이터 애셋으로, `USoundBase`에 적용하여 공간감을 만듭니다.

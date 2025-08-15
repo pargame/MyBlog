@@ -5,20 +5,20 @@
 
 ### **1. 주요 역할 및 책임**
 > **데코레이터는 자신이 붙어 있는 노드나 하위 트리의 실행 여부를 결정합니다.**
-* **조건부 실행 (Conditional Execution):**
+* **조건부 실행 (Conditional Execution)**:
 	데코레이터는 자신이 붙어 있는 노드나 하위 트리의 실행 여부를 결정합니다. (예: 블랙보드의 특정 값이 조건과 일치하는가?)
-* **상태 확인 (State Checking):**
+* **상태 확인 (State Checking)**:
 	AI의 현재 상태나 환경 정보를 기반으로 조건을 평가합니다.
-* **실행 흐름 제어 (Flow Control):**
+* **실행 흐름 제어 (Flow Control)**:
 	조건이 충족되지 않으면, 해당 노드나 트리의 실행을 건너뛰거나 중단합니다.
 
 ### **2. 주요 서브클래스**
 > **블랙보드의 특정 키 값이 조건과 일치하는지 확인합니다.**
-* **`UBTDecorator_Blackboard`:**
+* **`UBTDecorator_Blackboard`**:
 	블랙보드의 특정 키 값이 조건과 일치하는지 확인합니다. (예: `TargetActor` 키가 설정되어 있는가?)
-* **`UBTDecorator_Cooldown`:**
+* **`UBTDecorator_Cooldown`**:
 	지정된 쿨타임이 지나야만 실행을 허용합니다.
-* **`UBTDecorator_ForceSuccess`:**
+* **`UBTDecorator_ForceSuccess`**:
 	하위 노드의 실행 결과와 상관없이 항상 성공을 반환합니다.
 
 ### **3. 사용 방법**
@@ -27,9 +27,9 @@
 
 ### **4. 관련 클래스**
 > **모든 비헤이비어 트리 노드의 부모 클래스입니다. 실무 팁: 연관 클래스의 생명주기와 의존도를 반드시 확인하세요.**
-* **[[UBTNode]]:**
+* **[[UBTNode]]**:
 	모든 비헤이비어 트리 노드의 부모 클래스입니다.
-* **[[UBTCompositeNode]]:**
+* **[[UBTCompositeNode]]**:
 	데코레이터가 붙을 수 있는 복합 노드의 부모 클래스입니다.
-* **[[UBlackboardComponent]]:**
+* **[[UBlackboardComponent]]**:
 	데코레이터가 조건을 평가할 때 사용하는 데이터 저장소입니다.

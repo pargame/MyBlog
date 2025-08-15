@@ -5,16 +5,16 @@
 
 ## 주요 역할 및 책임
 > **`DrawHUD()`를 오버라이드하여 2D 요소를 그립니다.**
-* **HUD 요소 렌더링:**
+* **HUD 요소 렌더링**:
 	`DrawHUD()`를 오버라이드하여 2D 요소를 그립니다.
-* **UI 연동:**
+* **UI 연동**:
 	[[UUserWidget]]을 생성/표시하여 복잡한 UI를 화면에 띄웁니다.
 
 ## 관련 클래스
 > **HUD를 소유하고 관리합니다.**
-* **[[APlayerController]]:**
+* **[[APlayerController]]**:
 	HUD를 소유하고 관리합니다.
-* **[[UUserWidget]]:**
+* **[[UUserWidget]]**:
 	화면에 표시되는 위젯 기반 UI입니다.
 
 ## 코드 예시
