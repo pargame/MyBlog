@@ -37,3 +37,48 @@
 	모든 감각 설정 클래스의 부모 클래스입니다.
 * **`AISense_Damage`**:
 	피해 이벤트를 감지하고 처리하는 실제 감각 클래스입니다.
+
+### **5. 예제: C++에서 설정 추가하기**
++다음은 `UAIPerceptionComponent`에 `UAISenseConfig_Damage`를 추가하는 간단한 예제입니다.
++
++```cpp
++// MyAIController.cpp (예시)
++#include "Perception/AIPerceptionComponent.h"
++#include "Perception/AISenseConfig_Damage.h"
++
++void AMyAIController::BeginPlay()
++{
++    Super::BeginPlay();
++
++    if (PerceptionComponent == nullptr) return;
++
++    UAISenseConfig_Damage* DamageConfig = NewObject<UAISenseConfig_Damage>(this);
++    DamageConfig->Implementation = UAISense_Damage::StaticClass();
++    DamageConfig->DetectionByAffiliation.bDetectEnemies = true;
++    DamageConfig->DetectionByAffiliation.bDetectNeutrals = false;
++    DamageConfig->DetectionByAffiliation.bDetectFriendlies = false;
++
++    PerceptionComponent->ConfigureSense(*DamageConfig);
++    PerceptionComponent->SetDominantSense(UAISense_Damage::StaticClass());
++}
++```
++
++### **6. 예제: 블루프린트 사용 팁**
++- `AI Perception` 컴포넌트를 가진 액터를 선택합니다.
++- `Senses Config` 배열에 `AISense_Damage_Config` 항목을 추가합니다.
++- 디테일 패널에서 `Detection By Affiliation` 옵션을 조정하세요.
++
++### **7. 실무 팁 및 주의사항**
++- 성능: 피해 이벤트는 빈번히 발생할 수 있으므로, 모든 AI에 대해 높은 빈도로 감지하도록 설정하면 성능에 영향이 옵니다. 필요한 대상에만 활성화하세요.
++- 이벤트 소스 검증: 피해 이벤트의 Instigator나 DamageCauser를 신뢰할 수 있는지 확인하세요. 네트워크 환경에서는 권한 검증이 필요합니다.
++- 디버깅: `DrawDebug`나 로그를 이용해 피해 감지 이벤트가 예상대로 발생하는지 확인하세요.
++- 소속 필터링: `DetectionByAffiliation`을 적절히 설정하면 불필요한 감지를 줄일 수 있습니다.
++
++### **8. 변경 이력**
++- 2025-08-15: 문서 보완 및 예제 추가 (작성자: 자동화 편집)
++
++### **9. 관련 문서**
++- `UAIPerceptionComponent`
++- `UAISense_Damage`
++- `UAISenseConfig`
++
