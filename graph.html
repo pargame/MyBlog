@@ -653,6 +653,18 @@
 
   // Node click opens overlay instead of iframe
   circleSel.on('click', (_, d) => {
+    // Temporarily disable hover to prevent lingering highlight while overlay opens.
+    try {
+      suppressHover = true;
+      if (hoverTimer) { clearTimeout(hoverTimer); hoverTimer = null; }
+      clearHighlight();
+      // Use overlay timeout control to determine how long to suppress hover (fallback 2.5s)
+      const tEl = document.getElementById('ctl-timeout');
+      const t = tEl ? parseFloat(tEl.value) : 2.5;
+      // Ensure a minimum suppression (600ms) so transitions have time to complete
+      const ms = Math.max(600, Math.round(t * 1000) + 120);
+      setTimeout(() => { try { suppressHover = false; } catch {} }, ms);
+    } catch {}
     openDocumentOverlay(d.id);
   });
 
