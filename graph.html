@@ -297,6 +297,8 @@
   // Graph state
   let isolatedIds = new Set();
   let isOverlayOpen = false;
+  // When programmatic focus/overlay animation occurs, briefly suppress hover handlers to avoid flicker
+  let suppressHover = false;
 
   async function load() {
         const res = await fetch('./public/graph.json', { cache: 'no-store' });
@@ -703,8 +705,6 @@
           adj.get(t).add(s);
         }
   let hoverTimer = null;
-  // When programmatic focus/overlay animation occurs, briefly suppress hover handlers to avoid flicker
-  let suppressHover = false;
   circleSel.on('mouseover', (_, d) => {
     if (hoverTimer) { clearTimeout(hoverTimer); hoverTimer = null; }
     if (suppressHover) return; // ignore hover while suppressed
