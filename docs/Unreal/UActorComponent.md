@@ -1,4 +1,5 @@
 ---
+title: "UActorComponent"
 ---
 
 > **[[AActor]]에게 특정 '기능'이나 '행동'을 부여하는 재사용 가능한 부품입니다.** 인벤토리, 체력 시스템, 능력치 관리처럼 월드 내에서 특정 위치를 가질 필요가 없는 모든 논리적인 기능의 가장 기본적인 형태입니다.
@@ -35,16 +36,16 @@
 * **기본 도형 컴포넌트 (Basic Shape Components)**:
 	[[UPrimitiveComponent]]를 상속받는 가장 기본적인 `UActorComponent`입니다. 복잡한 메시 없이 간단한 기하학적 형태로 충돌이나 영역 감지를 위해 주로 사용됩니다.
     * **[[UBoxComponent]]**:
-	사각 박스 형태의 충돌체를 가집니다.
+    	사각 박스 형태의 충돌체를 가집니다.
     * **[[USphereComponent]]**:
-	구 형태의 충돌체를 가집니다.
+    	구 형태의 충돌체를 가집니다.
     * **[[UCapsuleComponent]]**:
-	캡슐(알약) 형태의 충돌체를 가집니다. [[ACharacter]]의 기본 충돌체로 사용됩니다.
+    	캡슐(알약) 형태의 충돌체를 가집니다. [[ACharacter]]의 기본 충돌체로 사용됩니다.
 * **메시 컴포넌트 (Mesh Components)**:
 	실제 3D 모델을 화면에 표시하기 위한 `UActorComponent`입니다.
     * **[[UStaticMeshComponent]]**:
-	움직이지 않는 정적인 3D 모델(예: 건물, 나무, 돌)을 렌더링합니다.
+    	움직이지 않는 정적인 3D 모델(예: 건물, 나무, 돌)을 렌더링합니다.
     * **[[USkeletalMeshComponent]]**:
-	뼈대(Skeleton)를 가지고 있어 애니메이션이 가능한 3D 모델(예: 캐릭터, 동물)을 렌더링합니다.
+    	뼈대(Skeleton)를 가지고 있어 애니메이션이 가능한 3D 모델(예: 캐릭터, 동물)을 렌더링합니다.
 * **[[UMovementComponent]]**:
 	소유자 [[AActor]]의 이동을 처리하는 `UActorComponent`의 부모 클래스입니다. [[UCharacterMovementComponent]]가 대표적인 예입니다.

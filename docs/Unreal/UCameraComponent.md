@@ -1,4 +1,5 @@
 ---
+title: "UCameraComponent"
 ---
 
 > **월드에 '시점(Viewpoint)'을 제공하는 카메라의 핵심 기능 부품입니다.** 시야각(FOV), 종횡비(Aspect Ratio), 투영 방식(Projection Mode) 등 카메라의 모든 광학적 속성을 정의하며, [[AActor]]에 부착되어 그 액터를 카메라로 만들어주는 역할을 합니다.
@@ -8,11 +9,11 @@
 * **뷰 프로젝션 설정 (View Projection Setup)**:
 	카메라의 가장 기본적인 속성들을 제공합니다.
     * **`FieldOfView` (FOV)**:
-	카메라의 시야각을 조절합니다. 값이 클수록 더 넓은 영역을 볼 수 있습니다. (광각 렌즈 효과)
+    	카메라의 시야각을 조절합니다. 값이 클수록 더 넓은 영역을 볼 수 있습니다. (광각 렌즈 효과)
     * **`ProjectionMode`**:
-	투영 방식을 결정합니다. `Perspective`(원근) 또는 `Orthographic`(직교) 모드를 선택할 수 있습니다.
+    	투영 방식을 결정합니다. `Perspective`(원근) 또는 `Orthographic`(직교) 모드를 선택할 수 있습니다.
     * **`AspectRatio`**:
-	카메라 뷰의 종횡비를 설정합니다.
+    	카메라 뷰의 종횡비를 설정합니다.
 * **포스트 프로세싱 (Post Processing)**:
 	이 카메라를 통해 보는 뷰에만 적용되는 포스트 프로세스 효과(블룸, 블렌스 오브 필드, 색 보정 등)를 개별적으로 적용할 수 있습니다.
 * **뷰 타깃 제공 (Providing a View Target)**:

@@ -1,4 +1,5 @@
 ---
+title: "USlateWidgetStyleAsset"
 ---
 
 > **UMG/Slate 위젯의 '스타일(Style)' 구조체(예: [[FButtonStyle]], [[FProgressBarStyle]])를 에셋으로 만들어 재사용할 수 있도록 하는 컨테이너 클래스입니다.**

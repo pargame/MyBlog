@@ -1,4 +1,5 @@
 ---
+title: "ETriggerEvent"
 ---
 
 > **[[Enhanced Input System]]에서 [[UInputAction]]이 어떤 상태에 도달했는지를 나타내는 '입력 상태의 종류'를 정의한 열거형(Enum)입니다.** `BindAction` 함수를 통해 특정 [[UInputAction]]과 C++ 함수를 연결할 때, 어떤 상태에서 함수를 호출할지를 결정하는 핵심적인 조건으로 사용됩니다.

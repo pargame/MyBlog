@@ -1,27 +1,27 @@
-# Requirements (Snapshot)
+## Requirements (snapshot)
 
 User goals
 - Personal blog hosted on GitHub Pages
-- Knowledge graph view like Obsidian (separate page)
-- Homepage shows recent posts, not the graph
-	- Only list items within the Posts collection (configurable via site.json `postsCollection`, default "Posts")
-- Consistent header/footer; footer shows email + version + commit
-- Topic filter: multi-select from folder hierarchy + #tags
-- Archive filter: years and months, human-friendly labels
+- Knowledge graph view (separate page) similar to Obsidian
+- Homepage shows recent posts (not the graph)
+	- Only include items from the Posts collection (configurable via `public/site.json` → `postsCollection`, default "Posts")
+- Consistent header and footer; footer shows email, version, and commit
+- Topic filter: multi-select from folder hierarchy plus `#tags`
+- Archive filter: years and months with human-friendly labels
 - Graph UX: neighbor highlight on hover, outline on select, stable container height
 	- Zoom via native gestures only (no ± buttons)
-- Document list synced with filters; clean labels (no stray chars)
-- Secure markdown viewer with code highlighting and backlinks
-- Git automation that “just works” in VS Code terminal
+- Document list synchronizes with filters; labels should be clean (no stray chars)
+- Secure Markdown viewer with code highlighting and backlinks
+- Git automation that works smoothly in the VS Code terminal
 
-Non-functional
+Non-functional requirements
 - Static site (no server)
 - Safe content rendering (sanitization)
 - Simple build and CI deploy to GitHub Pages
 
 Status
 - Implemented and deployed with CI
-- Bugs fixed: edge filtering after D3 mutation; graph height jump; archive label polish; doc list label cleanup; topic reset stability
+- Recent fixes: edge filtering after D3 mutation, graph height jump, archive label polish, doc list label cleanup, topic reset stability
 
 Out of scope for now
 - Full-text search

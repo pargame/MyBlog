@@ -1,4 +1,5 @@
 ---
+title: "AAIController"
 ---
 > 인공지능(AI) 캐릭터의 '뇌'가 되어, 스스로 판단하고 행동하며 [[APawn]]을 제어하는 특수한 [[AController]]입니다.
 

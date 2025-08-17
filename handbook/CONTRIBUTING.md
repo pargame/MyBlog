@@ -1,41 +1,46 @@
-# Contributing / Workflow
 
-This document summarizes the minimum you need to work in this repo.
+# Contributing & workflow
+
+This document lists the minimum steps to contribute and work with this repository.
 
 ## Quick start
-- Node 20+
-- Dependencies (if needed): `npm install`
-- Build: `npm run build` → generates `public/graph.json`, `public/meta.json`
+- Node.js 20+
+- (Optional) Install dependencies:
+
+```bash
+npm install
+```
+- Build: `npm run build` → generates `public/graph.json` and `public/meta.json`
 - Preview: open `index.html` in a browser (static site)
 
 ## Workflow
-1. Add/edit documents under `posts/**/*.md` (preferred) or `docs/**/*.md` (legacy)
-2. Update graph/meta: `npm run build`
-3. Commit/push to `main` → GitHub Pages auto-deploy
+1. Add or edit documents under `posts/**/*.md` (preferred) or `docs/**/*.md` (legacy).
+2. Rebuild graph/meta: `npm run build`.
+3. Commit and push to `main` → GitHub Pages will auto-deploy.
 
 ## Code guide
-- Styles: edit CSS variables first in `assets/css/styles.css`
-- Graph view logic: in `graph.html` (controls update forces and styles)
-- Viewer: `viewer.html` (Marked + DOMPurify + highlight.js)
-- Builders: `scripts/build-graph.js`, `scripts/build-meta.js`
+- Styles: update CSS variables first in `assets/css/styles.css`.
+- Graph view logic: `graph.html` (controls, forces, styles).
+- Viewer: `viewer.html` uses Marked + DOMPurify + highlight.js.
+- Builders: `scripts/build-graph.js`, `scripts/build-meta.js`.
 
 ## Architecture / pipeline
-- See files in `handbook/` for overview, data flow, deploy, and notes.
+- See handbook files for the overview, data flow, build, and deploy notes.
 
 ## Deployment pipeline
-- `.github/workflows/pages.yml` (Node setup → build → upload → deploy)
+- GitHub Actions workflow: `.github/workflows/pages.yml` (Node setup → build → upload → deploy)
 
 ## Issues / enhancements
-- Ideas: better label collision, persisting settings, home summary cards — see “Future work” in `handbook/ARCHITECTURE.md`.
+- Ideas: improve label collision handling, persist settings, add home summary cards — see "Future work" in `handbook/ARCHITECTURE.md`.
 
 ## Maintenance policy
-- UI language: English only.
-- Documentation language: all work/maintenance docs are in English only.
-- Homepage scope: Posts collection via `public/site.json` → `postsCollection`; default "Posts" when omitted.
+- UI language: English.
+- Maintenance/handbook documents: English.
+- Homepage scope: Posts collection via `public/site.json` → `postsCollection`; default is "Posts" when omitted.
 
-## Commit & Push rules
-- Use a simple workflow for commits: stage all changes, create a single commit, then push to `main`.
-- Specifically: `git add -A` → `git commit -m "<concise message>"` → `git push origin HEAD`.
-- Files that should not be committed must be listed in the repository's `.gitignore` and managed there; do not create ad-hoc local excludes or per-commit omissions.
+## Commit & push rules
+- Recommended flow: stage all changes, create a single commit, then push to `main`.
+- Example: `git add -A` → `git commit -m "<concise message>"` → `git push origin HEAD`.
+- Generated or personal files must be listed in `.gitignore`; do not use ad-hoc local excludes to hide files.
 
-This keeps the workflow straightforward and ensures ignore patterns are centrally managed.
+This keeps the workflow simple and ensures ignore patterns are centrally managed.

@@ -1,4 +1,5 @@
 ---
+title: "UPanelWidget"
 ---
 > **다른 위젯들을 자식으로 담아, 특정 규칙에 따라 배치하고 정렬하는 '컨테이너' 위젯입니다.** `UPanelWidget`은 UMG(Unreal Motion Graphics)에서 복잡한 UI 레이아웃을 구성하는 뼈대 역할을 합니다.
 

@@ -1,4 +1,5 @@
 ---
+title: "UAnimInstance"
 ---
 
 > **[[UAnimBlueprint]]라는 '설계도'를 바탕으로, 게임 월드에서 실제로 살아 움직이며 애니메이션을 실행하는 '인스턴스'이자 '일꾼'입니다.** `UAnimBlueprint`가 에디터에서 편집하는 애셋이라면, `UAnimInstance`는 게임이 실행될 때 [[USkeletalMeshComponent]] 내에서 생성되어 매 프레임마다 애니메이션 로직을 업데이트하는 실제 C++ 객체입니다.

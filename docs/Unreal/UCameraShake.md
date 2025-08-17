@@ -1,4 +1,5 @@
 ---
+title: "UCameraShake"
 ---
 
 > **플레이어의 화면을 절차적으로 흔들어, 폭발, 피격, 지진 등 강력한 충격 효과를 시각적으로 전달하는 '카메라 연출' 애셋입니다.** 단순히 카메라를 무작위로 흔드는 것을 넘어, 정교한 패턴과 강도를 제어하여 게임의 몰입감을 극대화하는 역할을 합니다.
@@ -19,9 +20,9 @@
 * **`UCameraShakePattern` (흔들림 패턴)**:
 	실제로 어떻게 흔들릴지를 정의하는 로직입니다.
     * **`Wave Oscillator`**:
-	사인파와 같은 파동 함수를 사용하여 규칙적인 흔들림을 만듭니다.
+    	사인파와 같은 파동 함수를 사용하여 규칙적인 흔들림을 만듭니다.
     * **`Perlin Noise`**:
-	펄린 노이즈를 사용하여 불규칙하고 자연스러운 흔들림을 만듭니다.
+    	펄린 노이즈를 사용하여 불규칙하고 자연스러운 흔들림을 만듭니다.
     * 이들을 조합하여 복잡한 패턴을 만들 수 있습니다.
 * **`UCameraShakeSourceComponent`**:
 	월드의 특정 위치에 이 컴포넌트를 배치하면, 플레이어가 이 컴포넌트에 가까이 다가갈수록 설정된 카메라 쉐이크가 강하게 적용됩니다. (예: 거대한 폭포수 옆)
@@ -34,6 +35,6 @@
 	생성된 블루프린트를 열어, 디테일 패널에서 흔들림의 강도, 시간, 패턴(예: `Wave Oscillator`) 등을 원하는 대로 설정합니다.
 3.  **게임플레이 코드에서 재생**:
 	* **[[APlayerController]]에서**:
-	`ClientStartCameraShake` (레거시) 또는 `PlayerController->PlayerCameraManager->StartCameraShake` (새로운 시스템) 함수를 호출하여 특정 플레이어의 화면에만 쉐이크를 재생합니다.
+		`ClientStartCameraShake` (레거시) 또는 `PlayerController->PlayerCameraManager->StartCameraShake` (새로운 시스템) 함수를 호출하여 특정 플레이어의 화면에만 쉐이크를 재생합니다.
     * **월드에 배치**:
-	`UCameraShakeSourceComponent`를 액터에 추가하여 특정 위치에 쉐이크 효과를 배치합니다.
+    	`UCameraShakeSourceComponent`를 액터에 추가하여 특정 위치에 쉐이크 효과를 배치합니다.

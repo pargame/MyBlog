@@ -1,4 +1,5 @@
 ---
+title: "FTransform"
 ---
 
 > **3차원 공간에서 한 오브젝트의 '변환(Transform)' 정보, 즉 이동(Location), 회전(Rotation), 크기(Scale)를 모두 포함하는 핵심 구조체입니다.** [[USceneComponent]]를 가진 모든 액터는 `FTransform`을 사용하여 월드에서의 자신의 상태를 나타냅니다.

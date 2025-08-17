@@ -1,4 +1,5 @@
 ---
+title: "USceneComponent"
 ---
 
 > **[[AActor]]를 월드에 존재하게 하는 '공간적 앵커'이자, 모든 시각적/물리적 [[UActorComponent]]가 붙는 '뿌리'입니다.** [[UActorComponent]]가 가진 추상적인 '기능'에 '위치'라는 개념을 처음으로 부여하며, [[UActorComponent]] 간의 계층 구조를 만드는 기반이 됩니다.

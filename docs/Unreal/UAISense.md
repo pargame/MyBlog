@@ -1,4 +1,5 @@
 ---
+title: "UAISense"
 ---
 
 > **AI의 '감각(Sense)' 하나하나의 실제 로직을 처리하는 핵심 클래스입니다.** 시각, 청각, 촉각 등 특정 감각이 어떻게 자극(Stimulus)을 등록하고, 처리하며, 만료시키는지를 정의합니다. 개발자가 직접 상호작용하기보다는 [[UAIPerceptionComponent]]와 [[UAISenseConfig]]를 통해 간접적으로 사용됩니다.
@@ -33,9 +34,9 @@
 	* **청각:**
 		블루프린트에서 `Make Noise` 노드를 사용하거나 C++에서 `UAISense_Hearing::ReportNoiseEvent`를 호출합니다.
     * **피해**:
-	`UGameplayStatics::ApplyDamage`를 호출합니다.
+    	`UGameplayStatics::ApplyDamage`를 호출합니다.
     * **시각/촉각**:
-	[[AIPerceptionStimuliSourceComponent]]를 부착하는 것만으로도 자극의 원천이 됩니다.
+    	[[AIPerceptionStimuliSourceComponent]]를 부착하는 것만으로도 자극의 원천이 됩니다.
 * **감각 설정하기**:
 	[[UAIPerceptionComponent]]에 [[UAISenseConfig]]의 자식 클래스(예: [[UAISenseConfig_Sight]])를 추가하여 각 감각의 세부 사항을 설정합니다.
 

@@ -1,4 +1,5 @@
 ---
+title: "UInputMappingContext"
 ---
 
 > **"어떤 키가 어떤 행동을 하는가?"에 대한 규칙들을 모아놓은 '입력 규칙 사전'입니다.** 플레이어의 특정 상황(예: '걷는 중', '차량 운전 중', '메뉴 탐색 중')에 맞는 입력 체계를 정의하는 **[[Data Asset]]**으로, [[Enhanced Input System]]의 핵심적인 구성 요소입니다.
@@ -18,13 +19,13 @@
 * **Mappings 배열**:
 	이 컨텍스트의 핵심인 입력 매핑 목록입니다. 각 항목은 하나의 [[UInputAction]]과 하나 이상의 키를 연결합니다.
     * **`Action`**:
-	매핑할 [[UInputAction]] 애셋을 지정합니다.
+    	매핑할 [[UInputAction]] 애셋을 지정합니다.
     * **`Key`**:
-	해당 액션을 발동시킬 물리적인 키(예: `W`, `Left Mouse Button`)를 지정합니다.
+    	해당 액션을 발동시킬 물리적인 키(예: `W`, `Left Mouse Button`)를 지정합니다.
     * **`Triggers`**:
-	액션이 발동될 조건을 정의하는 배열입니다. (예: `Pressed`, `Held`, `Tapped`)
+    	액션이 발동될 조건을 정의하는 배열입니다. (예: `Pressed`, `Held`, `Tapped`)
     * **`Modifiers`**:
-	입력의 원시 값을 가공하는 규칙의 배열입니다. (예: `Dead Zone`, `Negate`, `Swizzle`)
+    	입력의 원시 값을 가공하는 규칙의 배열입니다. (예: `Dead Zone`, `Negate`, `Swizzle`)
 
 ### **3. 사용 흐름**
 > **1. 실무 팁: 프로젝트 요구에 맞는 설정을 우선 검토하세요.**

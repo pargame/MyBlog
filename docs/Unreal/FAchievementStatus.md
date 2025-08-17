@@ -1,4 +1,5 @@
 ---
+title: "FAchievementStatus"
 ---
 
 > **[[Online Subsystem]]을 통해 조회된 단일 '도전과제(Achievement)'의 상태 정보를 담는 구조체입니다.** 도전과제의 ID, 진행률, 잠금 해제 여부 등을 포함합니다.

@@ -1,4 +1,5 @@
 ---
+title: "FSlateColor"
 ---
 
 > **UMG/Slate UI에서 사용되는 '색상'을 나타내는 구조체입니다.** 단순한 색상 값을 넘어, 특정 상태(예: 비활성화, 마우스 오버)에 따라 다른 색상을 사용하거나, [[UObject]]의 속성에 색상을 바인딩하는 등 동적인 색상 표현을 지원합니다.
@@ -19,13 +20,13 @@
 * **`ColorUseRule` (`ESlateColorStylingMode::Type`)**:
 	색상을 어떻게 사용할지를 결정하는 규칙입니다.
     * **`UseColor_Specified`**:
-	`SpecifiedColor`에 지정된 색상을 항상 사용합니다.
+    	`SpecifiedColor`에 지정된 색상을 항상 사용합니다.
     * **`UseColor_Foreground`**:
-	위젯의 전경색(Foreground Color)을 상속받아 사용합니다.
+    	위젯의 전경색(Foreground Color)을 상속받아 사용합니다.
     * **`UseColor_Hover`**:
-	마우스가 올라왔을 때의 색상을 사용합니다.
+    	마우스가 올라왔을 때의 색상을 사용합니다.
     * **`UseColor_Disabled`**:
-	비활성화 상태일 때의 색상을 사용합니다.
+    	비활성화 상태일 때의 색상을 사용합니다.
 
 ### **3. 사용 방법**
 > **UMG 위젯의 'Details' 패널에 있는 색상 속성(예: [[UTextBlock]]의 `Color and Opacity`)에서 `FSlateColor` 값을 직접 설정할 수 있습니다.**

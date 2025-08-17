@@ -1,4 +1,5 @@
 ---
+title: "UAISenseConfig Sight"
 ---
 
 > **AI의 '시각(Sight)' 감각에 대한 세부 설정을 정의하는 데이터 클래스입니다.** [[UAIPerceptionComponent]]에 추가되어, AI가 무엇을, 얼마나 멀리, 어떤 각도에서 볼 수 있는지를 결정합니다.

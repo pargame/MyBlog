@@ -1,4 +1,5 @@
 ---
+title: "ULocalPlayerSubsystem"
 ---
 > **각각의 로컬 플레이어([[ULocalPlayer]])와 생명 주기를 함께하는 '플레이어 전용 서비스'입니다.** 화면 분할(Split-screen) 환경을 포함하여, 각 플레이어에게 개별적으로 필요한 시스템을 관리하는 데 사용됩니다. [[UGameInstanceSubsystem]]이나 [[UWorldSubsystem]]보다 더 좁은, 개인화된 스코프를 가집니다.
 

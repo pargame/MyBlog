@@ -1,4 +1,5 @@
 ---
+title: "FProgressBarStyle"
 ---
 
 > **[[UProgressBar]] 위젯의 시각적 외형을 정의하는 스타일 구조체입니다.** 프로그레스 바의 배경, 채워지는 부분(Fill), 테두리(Marquee) 이미지를 지정하고, 전체적인 스타일을 결정합니다.

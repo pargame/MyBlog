@@ -1,4 +1,5 @@
 ---
+title: "UPanelSlot"
 ---
 
 > **[[UPanelWidget]]에 포함된 자식 [[UWidget]]의 레이아웃 속성을 관리하는 모든 '슬롯(Slot)' 클래스들의 부모 클래스입니다.** 자식 위젯과 부모 패널 사이의 연결고리 역할을 하며, 공통적인 슬롯 기능을 제공합니다.
@@ -22,13 +23,13 @@
 `UPanelSlot` 자체는 직접 사용되지 않으며, 항상 특정 패널에 맞는 자식 슬롯 클래스를 통해 사용됩니다.
 *   `UPanelSlot`
     * **[[UCanvasPanelSlot]]**:
-	[[UCanvasPanel]]의 자식 위젯을 위한 슬롯입니다.
+    	[[UCanvasPanel]]의 자식 위젯을 위한 슬롯입니다.
     * **[[UGridSlot]]**:
-	[[UGridPanel]]의 자식 위젯을 위한 슬롯입니다.
+    	[[UGridPanel]]의 자식 위젯을 위한 슬롯입니다.
     * **[[UHorizontalBoxSlot]]**:
-	[[UHorizontalBox]]의 자식 위젯을 위한 슬롯입니다.
+    	[[UHorizontalBox]]의 자식 위젯을 위한 슬롯입니다.
     * **[[UVerticalBoxSlot]]**:
-	[[UVerticalBox]]의 자식 위젯을 위한 슬롯입니다.
+    	[[UVerticalBox]]의 자식 위젯을 위한 슬롯입니다.
     *   ... 등등
 
 ### **4. 관련 클래스**

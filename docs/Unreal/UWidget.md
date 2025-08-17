@@ -1,4 +1,5 @@
 ---
+title: "UWidget"
 ---
 > **UMG(Unreal Motion Graphics)에서 화면에 표시되는 모든 시각적 요소의 가장 근본적인 '원자(Atom)'입니다.** 버튼, 이미지, 텍스트 블록 등 우리가 보는 모든 UI 요소는 이 `UWidget` 클래스를 직접 또는 간접적으로 상속받습니다.
 
