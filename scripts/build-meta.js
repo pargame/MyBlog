@@ -23,7 +23,8 @@ function main(){
   fs.writeFileSync(META_FILE, JSON.stringify({ version, commit }, null, 2));
   // site.json example — user can edit later; create if missing
   if (!fs.existsSync(SITE_FILE)) {
-    fs.writeFileSync(SITE_FILE, JSON.stringify({ emailUser: "me", emailDomain: "example.com" }, null, 2));
+    // default site.json — set to repo owner's email to avoid placeholder showing up on new builds
+    fs.writeFileSync(SITE_FILE, JSON.stringify({ emailUser: "001201parg", emailDomain: "gmail.com" }, null, 2));
   }
   // meta written
 }
