@@ -32,3 +32,10 @@ This document summarizes the minimum you need to work in this repo.
 - UI language: English only.
 - Documentation language: all work/maintenance docs are in English only.
 - Homepage scope: Posts collection via `public/site.json` → `postsCollection`; default "Posts" when omitted.
+
+## Commit & Push rules
+- Use a simple workflow for commits: stage all changes, create a single commit, then push to `main`.
+- Specifically: `git add -A` → `git commit -m "<concise message>"` → `git push origin HEAD`.
+- Files that should not be committed must be listed in the repository's `.gitignore` and managed there; do not create ad-hoc local excludes or per-commit omissions.
+
+This keeps the workflow straightforward and ensures ignore patterns are centrally managed.
