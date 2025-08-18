@@ -1,5 +1,5 @@
 ---
-title: "Storage io techniques"
+title: "입출력 기법 심화 (I/O Techniques Deep Dive)"
 ---
 
 # 입출력 기법 심화 (I/O Techniques Deep Dive)

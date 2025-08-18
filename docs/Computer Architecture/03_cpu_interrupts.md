@@ -1,5 +1,5 @@
 ---
-title: "Cpu interrupts"
+title: "인터럽트와 예외 처리 (Interrupts & Exceptions)"
 ---
 
 # 인터럽트와 예외 처리 (Interrupts & Exceptions)
@@ -47,3 +47,10 @@ void irq_handler() {
 ```
 	[User code] --interrupt--> [Save PC/Regs] --> [ISR executes] --> [Restore PC/Regs] --> [Resume User]
 ```
+
+## 추가: 인터럽트 설계 고려사항
+- 우선순위와 마스킹: 실시간 요구사항이 있는 장치는 높은 우선순위를 부여
+- 락과 인터럽트: 인터럽트 중 잠금 동작은 교착 상태를 유발할 수 있으므로 주의
+
+### 연습 문제
+1) 폴링과 인터럽트 중 어느 쪽이 저전력 환경에서 유리한가? 이유를 설명하라.

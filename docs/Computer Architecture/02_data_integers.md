@@ -1,8 +1,7 @@
 ---
-title: "Data integers"
+title: "정수 표현과 비트 연산 (Integers & Bitwise)"
 ---
 
-# 정수 표현과 비트 연산 (Integers & Bitwise)
 # 정수 표현과 비트 연산 (Integers & Bitwise)
 
 이 문서는 정수의 표현 방식, 범위, 2의 보수, 비트 연산과 관련된 실용 예시를 다룹니다.

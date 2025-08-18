@@ -1,8 +1,7 @@
 ---
-title: "Data encoding"
+title: "문자 인코딩과 UTF-8 (Encoding & Unicode)"
 ---
 
-# 문자 인코딩과 UTF-8 (Encoding & Unicode)
 # 문자 인코딩과 UTF-8 (Encoding & Unicode)
 
 문자 인코딩의 원리, UTF-8의 구조, 그리고 문자열 처리 시 주의점을 정리합니다.

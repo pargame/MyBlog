@@ -1,5 +1,5 @@
 ---
-title: "Storage raid"
+title: "RAID 상세"
 ---
 
 # RAID 상세

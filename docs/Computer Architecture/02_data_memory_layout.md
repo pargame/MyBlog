@@ -1,8 +1,7 @@
 ---
-title: "Data memory layout"
+title: "메모리 레이아웃과 정렬(Padding & Alignment)"
 ---
 
-# 메모리 레이아웃과 정렬(Padding & Alignment)
 # 메모리 레이아웃과 정렬(Padding & Alignment)
 
 메모리에 변수와 구조체가 배치되는 방식, 엔디언과 정렬이 성능에 미치는 영향에 대해 설명합니다.

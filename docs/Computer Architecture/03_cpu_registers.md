@@ -1,5 +1,5 @@
 ---
-title: "레지스터"
+title: "레지스터 (Registers)"
 ---
 
 # 레지스터 (Registers)

@@ -85,3 +85,35 @@ Guidelines for documents inside `docs/Computer Architecture/`:
 - Missing linked files: create a stub file containing only frontmatter for the missing document.
 *** End Patch
 - [ ] Build artifacts (`public/graph.json`, `public/meta.json`) are current
+
+### Publishing & graph checklist
+
+When a change affects documentation structure (new archive folder, new files, renamed files, or frontmatter changes), follow these extra steps to ensure the visual graph and GitHub Pages reflect the change:
+
+- Regenerate graph and metadata locally
+	- `npm run build` (this runs `build-graph` and `build-meta`) — this rewrites `public/graph.json` and `public/meta.json` in your working copy.
+
+- Verify the generated graph contains the expected archive and nodes
+	- Open `public/graph.json` and search for the archive name (e.g., `"Computer Architecture"`) or the new document `id`.
+	- Confirm `nodes` include entries with `archive` set correctly and `file` paths pointing to the intended docs.
+
+- Understand `public/` artifacts are ignored by default
+	- The repository intentionally ignores `public/graph.json` and `public/meta.json` to avoid committing build artifacts.
+	- Because of this, pushing a content-only commit may not update the published site immediately if the Pages workflow expects new artifacts. Options to trigger a Pages deploy:
+		- Re-run the Pages workflow in GitHub Actions (Actions → select run → Re-run jobs). This is the preferred method.
+		- Create an empty commit to the branch to force a workflow trigger: `git commit --allow-empty -m "ci: trigger GitHub Pages redeploy" && git push origin main`.
+		- (Not recommended) Commit `public/*` artifacts if you have a maintained workflow that tracks them.
+
+- Check GitHub Actions / Pages logs when the site doesn't refresh
+	- Visit Actions → "Deploy to GitHub Pages" and inspect the latest run; check the `Build` and `Deploy` steps for errors and for the `page_url` output.
+	- Common failures: dependency installation error, script exception during `build-graph`/`build-meta`, permission issues for Pages (check repository settings and workflow permissions).
+
+- Graph UI notes
+	- The graph builder derives `archive` from the first folder under `docs/` or `posts/`. Ensure folder names are correct (no leading/trailing spaces) and files are placed under `docs/<ArchiveName>/`.
+	- If an archive is present in `public/graph.json` but not visible in the graph UI, check `graph.html` archive selector logic — by default the UI may prefer a specific archive (e.g., `Unreal`); modify the selector to show all archives if you want every archive visible in the overlay.
+
+- Quick troubleshooting flow
+	1. Locally: `npm run build` → inspect `public/graph.json` for nodes/archives. If missing, check document frontmatter and file paths. Ensure title/frontmatter rules are followed.
+ 2. If graph is correct locally, re-run Pages workflow or push an empty commit to retrigger deployment.
+ 3. If deployment fails, copy the Actions failure log and attach it to the PR or send it to a maintainer for analysis.
+

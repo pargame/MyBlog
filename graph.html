@@ -190,14 +190,14 @@
   /* zoom-controls removed per request */
   
       .node { cursor: pointer; transition: opacity .22s ease, transform .22s ease; }
-      .node circle { fill: #6ea8fe; transition: opacity .22s ease, fill-opacity .22s ease, stroke-opacity .22s ease; }
-  .node.topic-ROOT circle { fill: #6ea8fe; }
-  .node.topic-1 circle { fill: #60d394; }
-  .node.topic-2 circle { fill: #ee6055; }
-  .node.topic-3 circle { fill: #ffd97d; }
-  .node.topic-4 circle { fill: #aaf683; }
-  .node.topic-5 circle { fill: #57c7ff; }
-  .node text { fill: #e7ecff; font-size: 12px; pointer-events: none; }
+    .node circle { fill: #345875; transition: opacity .22s ease, fill-opacity .22s ease, stroke-opacity .22s ease; }
+  .node.topic-ROOT circle { fill: #2f4f68; }
+  .node.topic-1 circle { fill: #3b6b4f; }
+  .node.topic-2 circle { fill: #8b3b39; }
+  .node.topic-3 circle { fill: #b3863a; }
+  .node.topic-4 circle { fill: #6b7a3f; }
+  .node.topic-5 circle { fill: #2f6b82; }
+  .node text { fill: #f0f6ff; font-size: 12px; pointer-events: none; }
   .link { stroke: #3a4b86; stroke-opacity: .6; transition: opacity .18s ease, stroke-opacity .18s ease; }
   .faded { opacity: 0.15; }
   .node.selected circle { stroke: #ffd97d; stroke-width: 3px; }
@@ -346,7 +346,8 @@
     const preferred = 'Unreal';
     const shown = uniq.includes(preferred) ? [preferred, ...uniq.filter(a => a !== preferred)] : uniq;
         const label = (a) => a;
-        const btns = shown.map(a => `<button class="btn" data-arch="${a}">${label(a)}</button>`).join('');
+  // Use exact archive string for data-arch to preserve spaces and case
+  const btns = shown.map(a => `<button class="btn" data-arch="${a}">${label(a)}</button>`).join('');
         container.innerHTML = btns;
         const buttons = container.querySelectorAll('button');
         function refreshActive(){ buttons.forEach(b => b.classList.toggle('active', b.getAttribute('data-arch')===getSelectedArchive())); }

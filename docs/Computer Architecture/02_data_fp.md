@@ -1,8 +1,7 @@
 ---
-title: "Data fp"
+title: "부동소수점(IEEE 754) 심화 (Floating Point)"
 ---
 
-# 부동소수점(IEEE 754) 심화 (Floating Point)
 # 부동소수점(IEEE 754) 심화 (Floating Point)
 
 이 문서는 IEEE-754 표준의 기본 구조, 표현 한계, 특수값 및 흔한 문제(반올림, 정규화, denormal)를 설명합니다.

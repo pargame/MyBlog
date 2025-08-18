@@ -1,5 +1,5 @@
 ---
-title: "Memory cache"
+title: "캐시 심화 (Cache Deep Dive)"
 ---
 
 # 캐시 심화 (Cache Deep Dive)

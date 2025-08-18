@@ -38,6 +38,23 @@ function parseWikiLinks(content) {
   return [...targets];
 }
 
+// Extract standard Markdown links: [label](target)
+// Returns an array of raw target strings as they appear inside (...)
+function parseMarkdownLinks(content) {
+  const re = /\[[^\]]*\]\(([^)]+)\)/g;
+  const out = new Set();
+  let m;
+  while ((m = re.exec(content))) {
+    const href = (m[1] || '').trim();
+    if (!href) continue;
+    // Skip external links and anchors
+    if (/^(?:[a-z]+:)?\/\//i.test(href)) continue; // http(s)://, mailto:, etc.
+    if (href.startsWith('#')) continue;
+    out.add(href);
+  }
+  return [...out];
+}
+
 function parseFrontMatterTags(raw) {
   // Quick-parse only the tags inside an initial --- ... --- block
   if (!raw.startsWith('---')) return [];
@@ -102,6 +119,24 @@ function parseFrontMatterAuthor(raw) {
   return null;
 }
 
+function parseFrontMatterTitle(raw) {
+  if (!raw.startsWith('---')) return null;
+  const end = raw.indexOf('\n---', 3);
+  if (end === -1) return null;
+  const header = raw.slice(3, end).split('\n');
+  for (const lineRaw of header) {
+    const line = lineRaw.trim();
+    const m = /^title\s*:\s*(.+)$/i.exec(line);
+    if (m) {
+      let v = m[1].trim();
+      // Unwrap quotes if present
+      if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) v = v.slice(1, -1);
+      return v;
+    }
+  }
+  return null;
+}
+
 function parseSimpleTags(raw) {
   // Support a simple "tags: [a, b]" pattern within the first ~20 lines
   const head = raw.split('\n').slice(0, 20).join('\n');
@@ -130,6 +165,7 @@ function main() {
   const topics = new Set();
   const archives = new Set();
   const byBaseName = new Map(); // basename -> [ids]
+  const idToArchive = new Map();
 
   for (const entry of filesLabeled) {
     const file = entry.file;
@@ -145,8 +181,10 @@ function main() {
     archives.add(archive);
 
   const raw = fs.readFileSync(file, 'utf8');
-    const firstHeading = /^\s*#\s+(.+)$/m.exec(raw)?.[1]?.trim();
-    const title = firstHeading || base;
+  // Prefer explicit YAML frontmatter title when present; otherwise fall back to the filename (base)
+  // NOTE: intentionally do NOT use the first H1 heading as the node label to avoid noisy titles.
+  const fmTitle = parseFrontMatterTitle(raw);
+  const title = fmTitle || base;
   const stat = fs.statSync(file);
   const mtime = stat.mtimeMs || Date.now();
   const dateStr = parseFrontMatterDate(raw);
@@ -163,6 +201,7 @@ function main() {
     const id = relFromRoot.replace(/\\/g, '/').replace(/\.md$/i, '');
   const node = { id, label: title, base, file: relFromRepo, archive, topics: [...tagSet], mtime, date: dateStr, author };
     nodeIndex.set(id, nodes.length);
+  idToArchive.set(id, archive);
     nodes.push(node);
 
     const arr = byBaseName.get(base) || [];
@@ -170,20 +209,75 @@ function main() {
     byBaseName.set(base, arr);
   }
 
-  // Wikilinks -> edges
+  // Link resolution helpers
+  const toPosix = (p) => p.replace(/\\/g, '/');
+  const stripFragment = (s) => s.split('#')[0].split('?')[0];
+  const stripMdExt = (s) => s.replace(/\.md$/i, '');
+  const dirnamePosix = (p) => toPosix(path.posix.dirname(p));
+  const joinPosix = (...segs) => toPosix(path.posix.join(...segs));
+  const normalizePosix = (p) => toPosix(path.posix.normalize(p));
+  function preferSameArchive(base, srcArchive) {
+    const candidates = byBaseName.get(base);
+    if (!candidates || !candidates.length) return null;
+    const same = candidates.find(id => idToArchive.get(id) === srcArchive);
+    return same || candidates[0];
+  }
+
+  function resolveTargetIdMarkdown(rawTarget, srcId, srcArchive) {
+    // Clean target
+    let t = stripFragment(rawTarget.trim());
+    // Remove surrounding quotes if present (rare in MD)
+    if ((t.startsWith('"') && t.endsWith('"')) || (t.startsWith("'") && t.endsWith("'"))) {
+      t = t.slice(1, -1);
+    }
+    // If it looks like a file path (contains '/' or ends with .md), try relative resolution
+    const hasSlash = t.includes('/') || t.includes('\\');
+    const hasMd = /\.md$/i.test(t);
+    if (hasSlash || hasMd) {
+      const srcDir = dirnamePosix(srcId);
+      // Normalize against src directory
+      const norm = normalizePosix(joinPosix(srcDir, stripMdExt(toPosix(t))));
+      if (nodeIndex.has(norm)) return norm;
+      // Also try basename preference if exact id not found
+      const base = path.posix.basename(norm);
+      const byBase = preferSameArchive(base, srcArchive);
+      if (byBase) return byBase;
+    } else {
+      // No slash and no .md: treat as basename
+      const base = t;
+      const byBase = preferSameArchive(base, srcArchive);
+      if (byBase) return byBase;
+    }
+    return null;
+  }
+
+  // Wikilinks + Markdown links -> edges
   for (const entry of filesLabeled) {
     const file = entry.file;
     const rootDir = entry.root;
     const relFromRoot = path.relative(rootDir, file);
     const srcId = relFromRoot.replace(/\\/g, '/').replace(/\.md$/i, '');
     const content = fs.readFileSync(file, 'utf8');
-    const links = parseWikiLinks(content);
-    for (const target of links) {
+    const srcArchive = idToArchive.get(srcId);
+    // 1) Wiki links [[Target]]
+    const wikiLinks = parseWikiLinks(content);
+    for (const target of wikiLinks) {
       const tgtBase = target.endsWith('.md') ? target.replace(/\.md$/i, '') : target;
-      const candidates = byBaseName.get(tgtBase);
-      if (!candidates || candidates.length === 0) continue;
-      const tgtId = candidates[0];
-      edges.push({ source: srcId, target: tgtId });
+      const tgtId = preferSameArchive(tgtBase, srcArchive);
+      if (tgtId) edges.push({ source: srcId, target: tgtId });
+    }
+    // 2) Standard Markdown links [label](target)
+    const mdLinks = parseMarkdownLinks(content);
+    const isCADoc = srcId.startsWith('Computer Architecture/');
+    if (isCADoc) {
+      console.error('[graph] MD links in', srcId, '=>', mdLinks);
+    }
+    for (const rawHref of mdLinks) {
+      const tgtId = resolveTargetIdMarkdown(rawHref, srcId, srcArchive);
+      if (isCADoc) {
+        console.error('  resolve', rawHref, '=>', tgtId);
+      }
+      if (tgtId) edges.push({ source: srcId, target: tgtId });
     }
   }
 

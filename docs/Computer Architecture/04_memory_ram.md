@@ -1,5 +1,5 @@
 ---
-title: "Memory ram"
+title: "RAM (DRAM vs SRAM)"
 ---
 
 # RAM (DRAM vs SRAM)

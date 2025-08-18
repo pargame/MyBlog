@@ -147,29 +147,79 @@
           .join('/');
 
         const tryFetch = async (paths) => {
+          // Diagnostic logging: show attempted candidate URLs
+          console.debug('viewer: tryFetch candidates', paths);
           for (const p of paths) {
             try {
+              console.debug('viewer: attempting fetch', p);
               const r = await fetch(p);
-              if (r.ok) return { res: r, urlTried: p };
-            } catch {}
+              if (r && r.ok) {
+                console.debug('viewer: fetch ok', p);
+                return { res: r, urlTried: p };
+              } else {
+                console.debug('viewer: fetch failed', p, r && r.status);
+              }
+            } catch (err) {
+              console.debug('viewer: fetch error', p, err && err.message);
+            }
+            // Try a decoded variant (help when server treats %20 differently)
+            try {
+              const dec = decodeURIComponent(p);
+              if (dec !== p) {
+                try {
+                  console.debug('viewer: attempting decoded fetch', dec);
+                  const r2 = await fetch(dec);
+                  if (r2 && r2.ok) return { res: r2, urlTried: dec };
+                } catch (err2) {
+                  console.debug('viewer: decoded fetch error', dec, err2 && err2.message);
+                }
+              }
+            } catch (e) {}
           }
           return { res: null, urlTried: paths[paths.length - 1] };
         };
 
         let primaryUrl = null;
+        let primaryRaw = null;
         if (nodeObj && nodeObj.file) {
           const clean = nodeObj.file.replace(/^\.\//, '');
           // Encode each segment to support spaces and special characters in filenames
           primaryUrl = `./${clean.split('/').map(encodeURIComponent).join('/')}`;
+          // Also try the raw recorded path (unencoded)
+          primaryRaw = `./${clean}`;
         }
   const safe = buildSafe(id);
   const candidates = [];
+        // Prefer the direct file recorded in graph.json (encoded/raw variants)
         if (primaryUrl) candidates.push(primaryUrl);
+        if (primaryRaw && primaryRaw !== primaryUrl) candidates.push(primaryRaw);
+        // Also try a decoded variant in case the server treats %20 differently
+        try { if (primaryUrl) candidates.push(decodeURIComponent(primaryUrl)); } catch(e){}
+
         // Heuristics if graph lookup failed
         candidates.push(`./posts/${safe}.md`);
-  // Archive 하위 폴더 우선 탐색 (예: docs/Unreal/APawn.md)
-  if (arch) candidates.push(`./docs/${encodeURIComponent(arch)}/${safe}.md`);
+  // Archive-aware candidates: try both encoded and raw archive folder names and multiple basename variants
+  if (arch) {
+    try { candidates.push(`./docs/${encodeURIComponent(arch)}/${safe}.md`); } catch(e){}
+    candidates.push(`./docs/${arch}/${safe}.md`);
+    // id may already include the archive; try the last path segment as filename
+    const last = id.split('/').slice(-1)[0];
+    candidates.push(`./docs/${arch}/${last}.md`);
+  }
+  // Fallback to top-level docs folder (safe and raw)
   candidates.push(`./docs/${safe}.md`);
+  candidates.push(`./docs/${id.split('/').slice(-1)[0]}.md`);
+  // Also try parent-level docs/posts in case files are served from repo root rather than public/
+  candidates.push(`../docs/${encodeURIComponent(arch || '')}/${safe}.md`);
+  candidates.push(`../docs/${safe}.md`);
+  candidates.push(`../posts/${safe}.md`);
+  // Also try public/ prefixed locations (when site is served from repo root but built files are under public/)
+  if (primaryUrl) candidates.push(primaryUrl.replace(/^\.\//, './public/'));
+  if (primaryRaw) candidates.push(primaryRaw.replace(/^\.\//, './public/'));
+  try { candidates.push(decodeURIComponent(`./public/docs/${encodeURIComponent(arch || '')}/${safe}.md`)); } catch(e){}
+  candidates.push(`./public/docs/${arch || ''}/${safe}.md`);
+  candidates.push(`./public/docs/${safe}.md`);
+  candidates.push(`./public/posts/${safe}.md`);
 
         const { res, urlTried } = await tryFetch(candidates);
         if (!res) {
