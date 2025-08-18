@@ -338,12 +338,13 @@
         if (archiveParam) setSelectedArchive(archiveParam);
         const container = document.getElementById('archives');
   // Derive archive list from non-post documents only
-        const docNodes = (data.nodes || []).filter(n => !isPost(n));
-        let uniq = Array.from(new Set(docNodes.map(n => n.archive))).sort();
-  // Requirement: remove All/Default, show only Unreal by default
-        uniq = uniq.filter(a => a && a !== '(default)');
-        const preferred = 'Unreal';
-        const shown = uniq.includes(preferred) ? [preferred] : uniq;
+    const docNodes = (data.nodes || []).filter(n => !isPost(n));
+    let uniq = Array.from(new Set(docNodes.map(n => n.archive))).sort();
+  // Remove empty/default entries
+    uniq = uniq.filter(a => a && a !== '(default)');
+  // Show all archives in the archive selector, but prefer to surface 'Unreal' first if present
+    const preferred = 'Unreal';
+    const shown = uniq.includes(preferred) ? [preferred, ...uniq.filter(a => a !== preferred)] : uniq;
         const label = (a) => a;
         const btns = shown.map(a => `<button class="btn" data-arch="${a}">${label(a)}</button>`).join('');
         container.innerHTML = btns;
