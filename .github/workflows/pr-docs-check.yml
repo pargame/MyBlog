@@ -1,0 +1,22 @@
+name: PR Docs Check
+
+on:
+  pull_request:
+    paths:
+      - 'posts/**'
+      - 'docs/**'
+      - 'handbook/**'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install deps
+        run: npm ci || npm install
+      - name: Run post checks
+        run: npm run check:posts

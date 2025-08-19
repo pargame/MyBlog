@@ -9,6 +9,8 @@
     "fix:md:bold": "node scripts/fix-markdown-bold.js",
     "fix:bullets": "node scripts/fix-markdown-bullets-break.js",
   "fix:all": "npm run fix:md:bold && npm run fix:bullets && npm run build:meta",
-    "deploy": "git add -A && git commit -m \"chore: commit & push (auto-deploy)\" || true && git push origin main"
+  "deploy": "git add -A && git commit -m \"chore: commit & push (auto-deploy)\" || true && git push origin main",
+  "check:posts": "node scripts/check-posts.js"
+  ,"fix:frontmatter": "node scripts/add-empty-frontmatter.js"
   }
 }

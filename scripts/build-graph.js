@@ -55,12 +55,23 @@ function parseMarkdownLinks(content) {
   return [...out];
 }
 
+function _getFrontMatterHeader(raw) {
+  // Return the inner lines of a YAML front-matter block (between the leading and closing '---').
+  // Be lenient about line endings and optional spaces on delimiter lines.
+  if (!raw.startsWith('---')) return null;
+  // Search for a closing delimiter that sits on its own line: '\n---\n' or '\n---\r\n' or EOF
+  const regex = /\n---\s*(?:\r?\n|$)/g;
+  const rest = raw.slice(3);
+  const m = regex.exec(rest);
+  if (!m) return null;
+  const endIndex = m.index; // index in rest
+  return rest.slice(0, endIndex).split('\n');
+}
+
 function parseFrontMatterTags(raw) {
   // Quick-parse only the tags inside an initial --- ... --- block
-  if (!raw.startsWith('---')) return [];
-  const end = raw.indexOf('\n---', 3);
-  if (end === -1) return [];
-  const header = raw.slice(3, end).split('\n');
+  const header = _getFrontMatterHeader(raw);
+  if (!header) return [];
   const tags = [];
   let inTags = false;
   for (const lineRaw of header) {
@@ -94,10 +105,8 @@ function parseFrontMatterTags(raw) {
 }
 
 function parseFrontMatterDate(raw) {
-  if (!raw.startsWith('---')) return null;
-  const end = raw.indexOf('\n---', 3);
-  if (end === -1) return null;
-  const header = raw.slice(3, end).split('\n');
+  const header = _getFrontMatterHeader(raw);
+  if (!header) return null;
   for (const lineRaw of header) {
     const line = lineRaw.trim();
     const m = /^date\s*:\s*(.+)$/i.exec(line);
@@ -107,10 +116,8 @@ function parseFrontMatterDate(raw) {
 }
 
 function parseFrontMatterAuthor(raw) {
-  if (!raw.startsWith('---')) return null;
-  const end = raw.indexOf('\n---', 3);
-  if (end === -1) return null;
-  const header = raw.slice(3, end).split('\n');
+  const header = _getFrontMatterHeader(raw);
+  if (!header) return null;
   for (const lineRaw of header) {
     const line = lineRaw.trim();
     const m = /^author\s*:\s*(.+)$/i.exec(line);
@@ -120,10 +127,8 @@ function parseFrontMatterAuthor(raw) {
 }
 
 function parseFrontMatterTitle(raw) {
-  if (!raw.startsWith('---')) return null;
-  const end = raw.indexOf('\n---', 3);
-  if (end === -1) return null;
-  const header = raw.slice(3, end).split('\n');
+  const header = _getFrontMatterHeader(raw);
+  if (!header) return null;
   for (const lineRaw of header) {
     const line = lineRaw.trim();
     const m = /^title\s*:\s*(.+)$/i.exec(line);
@@ -162,6 +167,7 @@ function main() {
   const nodes = [];
   const nodeIndex = new Map();
   const edges = [];
+  const edgesSet = new Set(); // dedupe by "source|target"
   const topics = new Set();
   const archives = new Set();
   const byBaseName = new Map(); // basename -> [ids]
@@ -264,20 +270,32 @@ function main() {
     for (const target of wikiLinks) {
       const tgtBase = target.endsWith('.md') ? target.replace(/\.md$/i, '') : target;
       const tgtId = preferSameArchive(tgtBase, srcArchive);
-      if (tgtId) edges.push({ source: srcId, target: tgtId });
+      if (tgtId) {
+        const key = srcId + '|' + tgtId;
+        if (!edgesSet.has(key)) {
+          edgesSet.add(key);
+          edges.push({ source: srcId, target: tgtId });
+        }
+      }
     }
     // 2) Standard Markdown links [label](target)
     const mdLinks = parseMarkdownLinks(content);
     const isCADoc = srcId.startsWith('Computer Architecture/');
-    if (isCADoc) {
+    if (isCADoc && process.env.DEBUG_GRAPH) {
       console.error('[graph] MD links in', srcId, '=>', mdLinks);
     }
     for (const rawHref of mdLinks) {
       const tgtId = resolveTargetIdMarkdown(rawHref, srcId, srcArchive);
-      if (isCADoc) {
+      if (isCADoc && process.env.DEBUG_GRAPH) {
         console.error('  resolve', rawHref, '=>', tgtId);
       }
-      if (tgtId) edges.push({ source: srcId, target: tgtId });
+      if (tgtId) {
+        const key = srcId + '|' + tgtId;
+        if (!edgesSet.has(key)) {
+          edgesSet.add(key);
+          edges.push({ source: srcId, target: tgtId });
+        }
+      }
     }
   }
 

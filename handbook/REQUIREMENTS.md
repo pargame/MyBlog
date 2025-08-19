@@ -1,29 +1,30 @@
 ## Requirements (snapshot)
+---
 
-User goals
-- Personal blog hosted on GitHub Pages
-- Knowledge graph view (separate page) similar to Obsidian
-- Homepage shows recent posts (not the graph)
-	- Only include items from the Posts collection (configurable via `public/site.json` → `postsCollection`, default "Posts")
-- Consistent header and footer; footer shows email, version, and commit
-- Topic filter: multi-select from folder hierarchy plus `#tags`
-- Archive filter: years and months with human-friendly labels
-- Graph UX: neighbor highlight on hover, outline on select, stable container height
-	- Zoom via native gestures only (no ± buttons)
-- Document list synchronizes with filters; labels should be clean (no stray chars)
-- Secure Markdown viewer with code highlighting and backlinks
-- Git automation that works smoothly in the VS Code terminal
+# Korean
 
-Non-functional requirements
-- Static site (no server)
-- Safe content rendering (sanitization)
-- Simple build and CI deploy to GitHub Pages
+## 요구사항 요약
 
-Status
-- Implemented and deployed with CI
-- Recent fixes: edge filtering after D3 mutation, graph height jump, archive label polish, doc list label cleanup, topic reset stability
+### 사용자 목표
+- GitHub Pages에 호스팅되는 개인 블로그
+- Obsidian 유사 지식 그래프(별도 페이지)
+- 홈페이지는 최근 포스트(Posts 컬렉션)만 표시(`public/site.json` → `postsCollection`, 기본값 "Posts")
+- 일관된 헤더/푸터; 푸터에 이메일/버전/SHA 표시
+- 토픽 필터(폴더 계층 + `#tags`)와 아카이브 필터(연/월 라벨)
+- 그래프 UX: 이웃 하이라이트, 선택 외곽선, 네이티브 제스처 줌
+- 안전한 Markdown 뷰어(코드 하이라이트, 백링크)
+- VS Code 터미널에서 동작하는 Git 자동화 (Task)
 
-Out of scope for now
-- Full-text search
-- Dark mode toggle (can be added later)
-- Mobile drag physics tuning beyond defaults
+### 비기능 요구사항
+- 정적 사이트(서버 없음)
+- 콘텐츠 정화(보안)
+- 간단한 빌드 + CI → GitHub Pages 배포
+
+### 상태
+- 구현 및 CI 배포 완료
+- 최근 수정: D3 엣지/높이 이슈, 라벨/토픽 정리
+
+### 범위 제외(현재)
+- 전체 텍스트 검색
+- 다크 모드 토글
+- 모바일 물리 튜닝(기본값 유지)
