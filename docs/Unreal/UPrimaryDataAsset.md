@@ -1,6 +1,9 @@
 ---
-title: "UPrimaryDataAsset"
+title: 'UPrimaryDataAsset
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **[[UDataAsset]]에 '고유한 신분증'을 부여하여, 애셋 관리 시스템이 이를 식별하고 검색할 수 있도록 만든 강력한 데이터 애셋입니다.** 일반 [[UDataAsset]]이 익명의 데이터 덩어리라면, `UPrimaryDataAsset`은 이름과 주소가 명확한, 체계적으로 관리되는 데이터입니다.
 

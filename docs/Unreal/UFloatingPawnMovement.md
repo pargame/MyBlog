@@ -1,6 +1,9 @@
 ---
-title: "UFloatingPawnMovement"
+title: 'UFloatingPawnMovement
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 > **중력의 영향을 받지 않고 자유롭게 공간을 떠다니는 [[APawn]]을 위한 '이동 엔진'입니다.** 주로 비행기, 우주선, 유령, 관전 카메라(Spectator)처럼 땅에 발을 붙이지 않는 캐릭터를 구현하는 데 사용됩니다.
 
 ### **1. 주요 역할 및 책임**

@@ -1,6 +1,9 @@
 ---
-title: "USphereComponent"
+title: 'USphereComponent
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **보이지 않는 '구체(Sphere)' 형태의 볼륨을 제공하여, 특정 영역을 감지하거나 간단한 물리적 충돌을 표현하는 데 사용되는 컴포넌트입니다.**
 

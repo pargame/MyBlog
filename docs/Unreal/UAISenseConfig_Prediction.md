@@ -1,6 +1,9 @@
 ---
-title: "UAISenseConfig Prediction"
+title: 'UAISenseConfig Prediction
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **AI의 '예측(Prediction)' 감각에 대한 세부 설정을 정의하는 데이터 클래스입니다.** [[UAIPerceptionComponent]]에 추가되어, AI가 다른 AI의 행동을 예측하고 이에 반응할 수 있도록 설정합니다.
 

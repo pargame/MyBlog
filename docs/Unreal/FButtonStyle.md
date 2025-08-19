@@ -1,6 +1,9 @@
 ---
-title: "FButtonStyle"
+title: 'FButtonStyle
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **[[UButton]] 위젯의 시각적 외형을 정의하는 스타일 구조체입니다.** 버튼이 평소(Normal), 마우스 오버(Hovered), 눌렸을 때(Pressed), 비활성화(Disabled) 상태일 때 각각 어떻게 보일지를 결정하는 이미지와 색상, 여백 등의 정보를 담고 있습니다.
 

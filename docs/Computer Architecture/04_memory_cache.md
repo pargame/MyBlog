@@ -1,6 +1,9 @@
 ---
-title: "캐시 심화 (Cache Deep Dive)"
+title: '캐시 심화 (Cache Deep Dive)
+date: '2025-08-18T13:44:57+09:00'
 ---
+
+
 
 # 캐시 심화 (Cache Deep Dive)
 

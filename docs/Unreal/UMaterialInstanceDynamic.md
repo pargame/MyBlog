@@ -1,6 +1,9 @@
 ---
-title: "UMaterialInstanceDynamic"
+title: 'UMaterialInstanceDynamic
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **머티리얼의 속성을 런타임에 동적으로 변경할 수 있는 인스턴스입니다.** [[UMaterial]] 또는 [[UMaterialInstance]]를 기반으로 생성되며, 게임 중에 머티리얼의 색상, 텍스처, 파라미터 등을 실시간으로 조정할 수 있습니다.
 

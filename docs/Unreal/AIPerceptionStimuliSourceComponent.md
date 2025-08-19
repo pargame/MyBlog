@@ -1,6 +1,9 @@
 ---
-title: "AIPerceptionStimuliSourceComponent"
+title: 'AIPerceptionStimuliSourceComponent
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **[[AActor]]가 다른 AI의 '인공지능 감각(AI Perception)'에 의해 감지될 수 있는 '자극(Stimulus)'을 발생시키는 원천이 되도록 만들어주는 컴포넌트입니다.** 이 컴포넌트가 부착된 액터만이 시각, 청각 등의 감각에 의해 인지될 수 있습니다.
 

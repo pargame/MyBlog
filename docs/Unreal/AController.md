@@ -1,6 +1,9 @@
 ---
-title: "AController"
+title: 'AController
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > [[APawn]]의 의지를 결정하는 원격 조종사로, 플레이어 입력 또는 AI 로직을 [[APawn]]의 행동으로 변환합니다.
 

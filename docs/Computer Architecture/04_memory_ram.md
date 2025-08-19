@@ -1,6 +1,9 @@
 ---
-title: "RAM (DRAM vs SRAM)"
+title: 'RAM (DRAM vs SRAM)
+date: '2025-08-18T13:44:57+09:00'
 ---
+
+
 
 # RAM (DRAM vs SRAM)
 

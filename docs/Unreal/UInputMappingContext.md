@@ -1,6 +1,9 @@
 ---
-title: "UInputMappingContext"
+title: 'UInputMappingContext
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **"어떤 키가 어떤 행동을 하는가?"에 대한 규칙들을 모아놓은 '입력 규칙 사전'입니다.** 플레이어의 특정 상황(예: '걷는 중', '차량 운전 중', '메뉴 탐색 중')에 맞는 입력 체계를 정의하는 **[[Data Asset]]**으로, [[Enhanced Input System]]의 핵심적인 구성 요소입니다.
 

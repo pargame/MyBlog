@@ -1,6 +1,9 @@
 ---
-title: "UMyGameSettingsSave"
+title: 'UMyGameSettingsSave
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **[[USaveGame]]을 상속하여 게임의 설정을 저장하기 위해 특별히 만들어진 클래스입니다.** 주로 그래픽, 오디오, 컨트롤 키 등 플레이어의 개인적인 환경 설정을 디스크에 저장하고 불러오는 데 사용됩니다.
 

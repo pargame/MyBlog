@@ -1,6 +1,9 @@
 ---
-title: "FTimerDelegate"
+title: 'FTimerDelegate
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **[[FTimerManager]]에 의해 호출될 함수를 '바인딩(Binding)'하는 데 사용되는 특별한 델리게이트입니다.** `SetTimer` 함수에 어떤 함수를, 어떤 인자와 함께 호출할지를 알려주는 역할을 합니다.
 

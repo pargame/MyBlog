@@ -1,6 +1,9 @@
 ---
-title: "인터럽트와 예외 처리 (Interrupts & Exceptions)"
+title: '인터럽트와 예외 처리 (Interrupts & Exceptions)
+date: '2025-08-18T13:44:57+09:00'
 ---
+
+
 
 # 인터럽트와 예외 처리 (Interrupts & Exceptions)
 

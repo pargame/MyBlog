@@ -1,6 +1,9 @@
 ---
-title: "문자 인코딩과 UTF-8 (Encoding & Unicode)"
+title: '문자 인코딩과 UTF-8 (Encoding & Unicode)
+date: '2025-08-18T13:44:57+09:00'
 ---
+
+
 
 # 문자 인코딩과 UTF-8 (Encoding & Unicode)
 

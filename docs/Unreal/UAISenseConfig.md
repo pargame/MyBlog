@@ -1,6 +1,9 @@
 ---
-title: "UAISenseConfig"
+title: 'UAISenseConfig
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **[[UAIPerceptionComponent]]가 사용할 '감각(Sense)'의 세부 설정을 정의하는 데이터 클래스입니다.** 시각, 청각, 촉각 등 특정 감각이 어떻게 작동할지(예: 시야 범위, 감지 거리, 유효 시간 등)에 대한 규칙을 담고 있습니다.
 

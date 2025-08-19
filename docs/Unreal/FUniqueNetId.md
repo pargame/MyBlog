@@ -1,6 +1,9 @@
 ---
-title: "FUniqueNetId"
+title: 'FUniqueNetId
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **[[Online Subsystem]]을 사용하는 온라인 환경에서 각 플레이어를 '고유하게 식별'하기 위한 ID를 나타내는 구조체입니다.** 플랫폼마다 다른 플레이어 ID 형식(예: Steam의 64비트 ID, PSN의 유저 이름)을 일관된 방식으로 다룰 수 있도록 추상화한 래퍼(Wrapper)입니다.
 

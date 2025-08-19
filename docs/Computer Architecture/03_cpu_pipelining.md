@@ -1,6 +1,9 @@
 ---
-title: "파이프라이닝 심화 (Pipelining Deep Dive)"
+title: '파이프라이닝 심화 (Pipelining Deep Dive)
+date: '2025-08-18T13:44:57+09:00'
 ---
+
+
 
 # 파이프라이닝 심화 (Pipelining Deep Dive)
 

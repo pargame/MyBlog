@@ -1,5 +1,9 @@
 ---
+title: 'CASE
+date: '2025-08-19T16:31:12+09:00'
 ---
+
+
 
 # CASE (Computer Aided Software Engineering)
 

@@ -1,6 +1,9 @@
 ---
-title: "UBTCompositeNode"
+title: 'UBTCompositeNode
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **[[UBehaviorTree]]에서 자식 노드들을 가지고, 그 자식들을 어떤 순서와 조건으로 실행할지를 결정하는 '복합 노드'의 부모 클래스입니다.** 대표적으로 Sequence, Selector, Simple Parallel 노드가 여기에 속합니다.
 

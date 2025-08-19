@@ -1,6 +1,9 @@
 ---
-title: "FFontOutlineSettings"
+title: 'FFontOutlineSettings
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **[[FSlateFontInfo]] 내에서 텍스트의 '외곽선(Outline)'에 대한 시각적 속성을 정의하는 구조체입니다.** 외곽선의 두께, 색상, 그리고 렌더링에 사용할 재질 등을 설정할 수 있습니다.
 

@@ -1,6 +1,9 @@
 ---
-title: "UAchievementSubsystem"
+title: 'UAchievementSubsystem
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **플레이어의 도전 과제(Achievement) 달성 상태를 추적, 관리하고, 영구적으로 저장하는 '업적 관리자'입니다.** [[UGameInstanceSubsystem]]으로 구현하여, 게임 세션 전체에 걸쳐 플레이어의 업적 데이터를 유지하고, 특정 조건이 충족되었을 때 업적 달성 [[Event]]를 발생시키는 역할을 합니다.
 

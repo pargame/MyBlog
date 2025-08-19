@@ -1,6 +1,9 @@
 ---
-title: "IOnlineAchievements"
+title: 'IOnlineAchievements
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **[[Online Subsystem]] 내에서 플랫폼별 '도전과제(Achievements)' 시스템과 상호작용하기 위한 기능을 제공하는 C++ 인터페이스입니다.** 이 인터페이스를 통해 도전과제 정보를 쿼리하고, 도전과제를 해제하며, 진행률을 업데이트하는 등의 작업을 플랫폼에 독립적인 방식으로 수행할 수 있습니다.
 

@@ -1,6 +1,9 @@
 ---
-title: "UCanvasPanelSlot"
+title: 'UCanvasPanelSlot
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **[[UCanvasPanel]]에 포함된 자식 위젯의 레이아웃을 제어하는 '슬롯'입니다.** 앵커(Anchors), 위치(Position), 크기(Size), 정렬(Alignment) 등 절대 좌표 기반의 자유로운 배치를 위한 모든 속성을 담고 있습니다.
 

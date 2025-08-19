@@ -1,6 +1,9 @@
 ---
-title: "UBehaviorTreeComponent"
+title: 'UBehaviorTreeComponent
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **[[UBehaviorTree]] 에셋을 실제로 실행하고 관리하는 '엔진' 역할을 하는 컴포넌트입니다.** [[AAIController]]에 부착되어, 할당된 비헤이비어 트리 로직에 따라 AI의 의사 결정을 매 프레임 처리합니다.
 

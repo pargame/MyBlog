@@ -1,6 +1,9 @@
 ---
-title: "UPrimitiveComponent"
+title: 'UPrimitiveComponent
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **화면에 보이거나 물리적으로 상호작용하는 모든 것의 '원형(Primitive)'입니다.** [[USceneComponent]]가 가진 추상적인 위치 정보에 '형태'와 '물질'을 부여한 첫 번째 단계로, 렌더링과 충돌이 가능한 모든 [[UActorComponent]]의 최종 부모 클래스입니다.
 

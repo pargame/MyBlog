@@ -1,6 +1,9 @@
 ---
-title: "UEnhancedInputComponent"
+title: 'UEnhancedInputComponent
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 > **[[UInputAction]]이라는 '추상적인 행동'과, 그 행동이 발동되었을 때 실제로 실행될 'C++ 함수'를 연결하는 '전기 배선반'입니다.** 플레이어의 입력이 최종적으로 어떤 코드를 실행할지를 결정하는 바인딩(Binding) 로직을 담당하는 핵심 [[UActorComponent]]입니다.
 
 ### **1. 주요 역할 및 책임**

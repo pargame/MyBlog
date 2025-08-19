@@ -1,6 +1,9 @@
 ---
-title: "UBTDecorator BlueprintBase"
+title: 'UBTDecorator BlueprintBase
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **[[UBehaviorTree]]에서 특정 브랜치나 노드의 실행 여부를 결정하는 '조건문'을 블루프린트로 직접 구현할 수 있도록 제공되는 기반 클래스입니다.** 데코레이터의 조건이 참(True)일 때만 해당 노드나 서브트리가 실행될 수 있습니다.
 

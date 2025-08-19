@@ -1,6 +1,9 @@
 ---
-title: "USlateThemeManager"
+title: 'USlateThemeManager
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **USlateThemeManager는 엔진에서 사용되는 클래스/컴포넌트로, 주요 속성 및 사용법을 설명합니다.**
 

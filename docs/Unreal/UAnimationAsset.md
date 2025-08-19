@@ -1,6 +1,9 @@
 ---
-title: "UAnimationAsset"
+title: 'UAnimationAsset
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **[[USkeletalMeshComponent]]가 재생할 수 있는 모든 종류의 '애니메이션 데이터'를 대표하는 최상위 클래스입니다.** 걷기, 뛰기 같은 기본적인 애니메이션부터, 여러 애니메이션을 조합한 복잡한 시퀀스까지, 뼈대의 포즈를 시간에 따라 변화시키는 모든 애셋이 바로 `UAnimationAsset`입니다.
 

@@ -1,6 +1,9 @@
 ---
-title: "UCameraShakeBase"
+title: 'UCameraShakeBase
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **[[APlayerCameraManager]]를 통해 재생되어 플레이어의 시점을 흔드는 '카메라 흔들림' 효과의 기본 클래스입니다.** 폭발, 피격, 지진 등 다양한 상황에서 화면을 흔들어 게임에 역동성과 타격감을 더하는 데 사용됩니다.
 

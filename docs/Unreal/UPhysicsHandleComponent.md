@@ -1,6 +1,9 @@
 ---
-title: "UPhysicsHandleComponent"
+title: 'UPhysicsHandleComponent
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **물체를 잡고 이동하거나 회전시키는 데 사용되는 물리 핸들 컴포넌트입니다.** [[UActorComponent]]를 상속받아, 물리 기반 상호작용을 구현하는 데 사용됩니다.
 

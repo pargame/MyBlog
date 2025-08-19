@@ -1,6 +1,9 @@
 ---
-title: "UMusicManagerSubsystem"
+title: 'UMusicManagerSubsystem
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 > **레벨이 전환되어도 끊기지 않고 배경 음악(BGM)을 계속 재생하고, 게임의 상황에 따라 음악을 동적으로 변경하는 '음악 감독' 서브시스템입니다.** [[UGameInstanceSubsystem]]으로 구현하여, 게임 세션 전체에 걸쳐 음악의 연속성과 상태를 관리하는 역할을 합니다.
 
 ### **1. 주요 역할 및 책임**

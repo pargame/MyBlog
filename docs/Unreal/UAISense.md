@@ -1,6 +1,9 @@
 ---
-title: "UAISense"
+title: 'UAISense
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **AI의 '감각(Sense)' 하나하나의 실제 로직을 처리하는 핵심 클래스입니다.** 시각, 청각, 촉각 등 특정 감각이 어떻게 자극(Stimulus)을 등록하고, 처리하며, 만료시키는지를 정의합니다. 개발자가 직접 상호작용하기보다는 [[UAIPerceptionComponent]]와 [[UAISenseConfig]]를 통해 간접적으로 사용됩니다.
 

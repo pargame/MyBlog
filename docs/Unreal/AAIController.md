@@ -1,6 +1,9 @@
 ---
-title: "AAIController"
+title: 'AAIController
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 > 인공지능(AI) 캐릭터의 '뇌'가 되어, 스스로 판단하고 행동하며 [[APawn]]을 제어하는 특수한 [[AController]]입니다.
 
 ## 주요 역할 및 책임

@@ -1,5 +1,9 @@
 ---
+title: 'Prototype Model
+date: '2025-08-19T16:31:12+09:00'
 ---
+
+
 
 
 

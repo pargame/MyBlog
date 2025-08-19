@@ -1,6 +1,9 @@
 ---
-title: "UProjectileMovementComponent"
+title: 'UProjectileMovementComponent
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **총알, 로켓, 수류탄 등 '발사체'의 움직임을 시뮬레이션하는 데 특화된 강력한 [[UMovementComponent]]입니다.** 단순한 직선 운동을 넘어, 탄도(포물선) 운동, 바운스(튐), 목표 추적(호밍) 등 발사체에 필요한 거의 모든 물리적 동작을 손쉽게 구현할 수 있도록 설계되었습니다.
 

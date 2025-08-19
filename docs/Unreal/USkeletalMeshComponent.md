@@ -1,6 +1,9 @@
 ---
-title: "USkeletalMeshComponent"
+title: 'USkeletalMeshComponent
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **움직이는 모든 것의 '뼈대'이자 '피부'입니다.** 3D 모델에 [[USkeleton]]이라는 뼈대를 심어, 애니메이션을 통해 생동감 넘치는 움직임을 만들어내는 모든 캐릭터와 생명체의 시각적 핵심입니다.
 

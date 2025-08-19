@@ -1,6 +1,9 @@
 ---
-title: "부동소수점(IEEE 754) 심화 (Floating Point)"
+title: '부동소수점(IEEE 754) 심화 (Floating Point)
+date: '2025-08-18T13:44:57+09:00'
 ---
+
+
 
 # 부동소수점(IEEE 754) 심화 (Floating Point)
 

@@ -1,6 +1,9 @@
 ---
-title: "UAISenseConfig Hearing"
+title: 'UAISenseConfig Hearing
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **AI의 '청각(Hearing)' 감각에 대한 세부 설정을 정의하는 데이터 클래스입니다.** [[UAIPerceptionComponent]]에 추가되어, AI가 어떤 소리를, 얼마나 멀리서, 어떤 소속의 대상으로부터 들을 수 있는지를 결정합니다.
 

@@ -1,6 +1,9 @@
 ---
-title: "Enhanced Input System"
+title: 'Enhanced Input System
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **데이터 기반의 유연하고 강력한 차세대 입력 시스템입니다.** 기존의 고정적인 축/액션 매핑 방식에서 벗어나, '입력 액션'([[UInputAction]])과 '매핑 컨텍스트'([[UInputMappingContext]])라는 개념을 도입하여, 게임의 상황에 따라 입력 방식을 동적으로 변경하고 복잡한 입력을 쉽게 처리할 수 있도록 설계되었습니다.
 

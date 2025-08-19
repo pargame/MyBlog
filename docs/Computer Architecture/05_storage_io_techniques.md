@@ -1,6 +1,9 @@
 ---
-title: "입출력 기법 심화 (I/O Techniques Deep Dive)"
+title: '입출력 기법 심화 (I/O Techniques Deep Dive)
+date: '2025-08-18T13:44:57+09:00'
 ---
+
+
 
 # 입출력 기법 심화 (I/O Techniques Deep Dive)
 

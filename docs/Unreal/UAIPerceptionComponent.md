@@ -1,6 +1,9 @@
 ---
-title: "UAIPerceptionComponent"
+title: 'UAIPerceptionComponent
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **AI가 월드를 '보고 듣고 느끼게' 해주는 감각 기관입니다.** 시각, 청각, 촉각 등 다양한 감각(Sense)을 통해 주변 환경의 자극(Stimulus)을 감지하고, 이를 [[AAIController]]에게 보고하여 AI가 상황을 인지하고 반응할 수 있도록 돕습니다.
 

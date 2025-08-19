@@ -12,5 +12,6 @@
   "deploy": "git add -A && git commit -m \"chore: commit & push (auto-deploy)\" || true && git push origin main",
   "check:posts": "node scripts/check-posts.js"
   ,"fix:frontmatter": "node scripts/add-empty-frontmatter.js"
+  ,"fix:frontmatter:fill": "node scripts/fill-frontmatter.js"
   }
 }

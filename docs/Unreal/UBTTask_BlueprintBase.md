@@ -1,6 +1,9 @@
 ---
-title: "UBTTask BlueprintBase"
+title: 'UBTTask BlueprintBase
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **[[UBehaviorTree]]에서 AI가 수행할 '행동' 하나를 블루프린트로 직접 구현할 수 있도록 제공되는 기반 클래스입니다.** '적에게 이동', '공격 실행', '특정 위치 순찰' 등 비헤이비어 트리의 리프(Leaf) 노드에서 실제 로직을 수행하는 역할을 합니다.
 

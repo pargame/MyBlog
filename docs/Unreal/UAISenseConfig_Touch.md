@@ -1,6 +1,9 @@
 ---
-title: "UAISenseConfig Touch"
+title: 'UAISenseConfig Touch
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **AI의 '촉각(Touch)' 감각에 대한 세부 설정을 정의하는 데이터 클래스입니다.** [[UAIPerceptionComponent]]에 추가되어, AI가 물리적 접촉(Overlap) 이벤트를 감지하고 이에 반응할 수 있도록 설정합니다.
 

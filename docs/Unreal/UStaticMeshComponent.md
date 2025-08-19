@@ -1,6 +1,9 @@
 ---
-title: "UStaticMeshComponent"
+title: 'UStaticMeshComponent
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **움직이지 않는 3D 모델([[UStaticMesh]])을 월드에 렌더링하고, 물리적으로 상호작용하게 만드는 가장 기본적인 '시각적 부품'입니다.** [[AActor]]에 시각적 형태와 물리적 실체를 부여하는 데 가장 널리 사용되는 컴포넌트입니다.
 

@@ -1,6 +1,9 @@
 ---
-title: "UCameraComponent"
+title: 'UCameraComponent
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **월드에 '시점(Viewpoint)'을 제공하는 카메라의 핵심 기능 부품입니다.** 시야각(FOV), 종횡비(Aspect Ratio), 투영 방식(Projection Mode) 등 카메라의 모든 광학적 속성을 정의하며, [[AActor]]에 부착되어 그 액터를 카메라로 만들어주는 역할을 합니다.
 

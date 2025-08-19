@@ -1,6 +1,9 @@
 ---
-title: "UUserWidget"
+title: 'UUserWidget
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 > **화면에 표시되는 모든 UI의 기반이 되는 '위젯 블루프린트'의 실체입니다.** UMG(Unreal Motion Graphics)를 사용하여 만드는 모든 커스텀 UI는 이 `UUserWidget` 클래스를 상속받아 만들어지며, UI의 시각적 요소와 상호작용 로직을 모두 담는 컨테이너 역할을 합니다.
 
 ### **1. 주요 역할 및 책임**

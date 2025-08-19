@@ -1,6 +1,9 @@
 ---
-title: "UAISenseConfig Damage"
+title: 'UAISenseConfig Damage
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **AI의 '피해(Damage)' 감각에 대한 세부 설정을 정의하는 데이터 클래스입니다.** [[UAIPerceptionComponent]]에 추가되어, AI가 피해 이벤트를 감지하고 이에 반응할 수 있도록 설정합니다.
 

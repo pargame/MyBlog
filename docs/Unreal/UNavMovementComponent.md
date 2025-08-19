@@ -1,6 +1,9 @@
 ---
-title: "UNavMovementComponent"
+title: 'UNavMovementComponent
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **AI 또는 플레이어가 제어하는 액터가 내비게이션 메시(NavMesh)를 따라 이동할 수 있도록 지원하는 컴포넌트입니다.** [[APawn]]에 부착되어, 경로 탐색 및 이동 로직을 처리합니다.
 

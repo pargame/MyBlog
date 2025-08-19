@@ -1,6 +1,9 @@
 ---
-title: "AGameMode"
+title: 'AGameMode
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > `AGameMode`는 [[AGameModeBase]]를 상속받아, '데스매치'나 '깃발 뺏기'와 같이 명확한 시작, 진행, 종료 상태를 가지는 전통적인 멀티플레이어 게임을 위해 설계된 클래스입니다. [[AGameModeBase]]의 모든 기능 위에, **매치 상태 머신(Match State Machine)**과 관련된 추가적인 규칙 및 흐름 제어 기능을 제공합니다.
 

@@ -1,6 +1,9 @@
 ---
-title: "UHorizontalBoxSlot"
+title: 'UHorizontalBoxSlot
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **[[UHorizontalBox]]에 포함된 자식 위젯의 레이아웃을 제어하는 '슬롯'입니다.** 각 위젯이 수평 상자 안에서 어떻게 크기를 조절하고, 정렬되며, 여백을 가질지 결정하는 속성들을 담고 있습니다.
 

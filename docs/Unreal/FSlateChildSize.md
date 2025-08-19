@@ -1,6 +1,9 @@
 ---
-title: "FSlateChildSize"
+title: 'FSlateChildSize
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **[[UHorizontalBox]]나 [[UVerticalBox]]와 같은 특정 패널에서 자식 위젯의 크기를 어떻게 결정할지를 정의하는 규칙 구조체입니다.**
 

@@ -1,6 +1,9 @@
 ---
-title: "FDetachmentTransformRules"
+title: 'FDetachmentTransformRules
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **[[USceneComponent]]를 부모로부터 분리(Detach)할 때, 월드 공간에서의 위치, 회전, 크기를 어떻게 처리할지를 결정하는 규칙의 집합입니다.**
 

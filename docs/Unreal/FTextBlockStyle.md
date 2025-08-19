@@ -1,6 +1,9 @@
 ---
-title: "FTextBlockStyle"
+title: 'FTextBlockStyle
+date: '2025-08-17T16:17:41+09:00'
 ---
+
+
 
 > **[[UTextBlock]] 위젯의 전체적인 시각적 외형을 정의하는 스타일 구조체입니다.** 폰트, 색상, 그림자 등 텍스트 블록의 모든 외형 관련 속성을 하나로 묶어 관리합니다.
 
