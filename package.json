@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "vite",
     "check": "npm ci && npx eslint \"src/**/*.{ts,tsx,js,jsx}\" --fix && npx prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md,css}\" && (npm audit fix || true) && npx vite build",
-  "deploy": "npm ci && npx vite build"
+  "deploy": "npm ci && npx vite build && (gh workflow run deploy-gh-pages.yml --repo pargame/MyBlog || ( [ -n \"$GH_TOKEN\" ] && curl -sSf -X POST -H \"Accept: application/vnd.github+json\" -H \"Authorization: token $GH_TOKEN\" https://api.github.com/repos/pargame/MyBlog/actions/workflows/deploy-gh-pages.yml/dispatches -d '{\"ref\":\"main\"}' ) || echo 'No GH trigger executed. Install gh CLI or set GH_TOKEN to trigger remote deploy.')"
   },
   "dependencies": {
     "react": "^19.1.1",

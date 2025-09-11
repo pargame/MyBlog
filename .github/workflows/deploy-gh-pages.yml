@@ -27,7 +27,9 @@ jobs:
         run: npx vite build
 
       - name: Upload artifact for Pages
-        uses: actions/upload-pages-artifact@v1
+        # v1이 내부적으로 deprecated된 actions/upload-artifact:v3를 호출할 수 있어 실패 발생
+        # 최신 버전으로 교체해 내부 의존성을 업데이트하도록 시도
+        uses: actions/upload-pages-artifact@v2
         with:
           path: ./dist
 
