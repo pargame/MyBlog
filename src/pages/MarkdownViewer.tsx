@@ -133,6 +133,28 @@ export default function MarkdownViewer({
       }
     }
 
+    // Normalize indentation: convert tabs to 2 spaces, strip leading/trailing
+    // empty lines, and remove the minimal common indent so pasted blocks that
+    // include surrounding indentation won't display overly indented in the
+    // sidebar. This keeps visual indentation compact while preserving relative
+    // indentation inside the snippet.
+    const normalizeIndent = (s: string) => {
+      if (!s) return s;
+      const withTabs = s.replace(/\t/g, '  ');
+      const lines = withTabs.replace(/\r\r?/g, '\n').split('\n');
+      // trim leading/trailing blank lines
+      while (lines.length && lines[0].trim() === '') lines.shift();
+      while (lines.length && lines[lines.length - 1].trim() === '') lines.pop();
+      const nonEmpty = lines.filter((l) => l.trim() !== '');
+      if (nonEmpty.length === 0) return lines.join('\n');
+      const indents = nonEmpty.map((l) => (l.match(/^ */) || [''])[0].length);
+      const minIndent = Math.min(...indents);
+      if (minIndent <= 0) return lines.join('\n');
+      return lines.map((l) => l.slice(minIndent)).join('\n');
+    };
+
+    body = normalizeIndent(body);
+
     const langClass = langTrim ? `language-${langTrim}` : 'language-plaintext';
     const langLabel = langTrim ? `<div class="code-lang">${langTrim}</div>` : '';
     // Insert soft-wrap opportunities at sensible code boundaries so long
