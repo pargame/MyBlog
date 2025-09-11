@@ -1,4 +1,4 @@
-name: Manual GitHub Pages deploy
+name: Manual GitHub Pages deploy (build → publish)
 
 on:
   workflow_dispatch: {}
@@ -9,13 +9,14 @@ permissions:
   id-token: write
 
 jobs:
-  build-and-deploy:
+  build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node 20
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -23,35 +24,25 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build (dist)
+      - name: 'Vite: build dist'
         run: npx vite build
 
-      - name: Upload artifact for Pages (upload-artifact v4 사용)
-        # deploy-pages 단계가 찾는 아티팩트 이름은 'github-pages'입니다. 동일한 이름으로 업로드합니다.
-        uses: actions/upload-artifact@v4
+      - name: 'Info: prepare to upload artifact'
+        run: echo "Uploading ./dist as artifact 'github-pages'"
+
+      - name: Upload dist artifact (github-pages)
+        uses: actions/upload-pages-artifact@v1
         with:
-          name: github-pages
           path: ./dist
 
-  deploy:
-    needs: build-and-deploy
+  publish:
+    name: Publish to gh-pages
+    needs: build
     runs-on: ubuntu-latest
     environment: github-pages
     steps:
-      - name: Download pages artifact
-        # upload-artifact로 업로드한 'github-pages' 아티팩트를 받아 배포에 사용
-        uses: actions/download-artifact@v4
-        with:
-          name: github-pages
-          path: ./dist
+      - name: 'Info: preparing download'
+        run: echo "Downloading artifact 'github-pages' into ./dist for publishing"
 
-      - name: Deploy to gh-pages branch (peaceiris)
-        # deploy-pages action의 artifact 요구사항 문제를 우회하기 위해
-        # dist를 gh-pages 브랜치로 직접 푸시합니다.
-        # 주의: GitHub Pages 설정에서 Source를 'gh-pages branch'로 변경해야 합니다.
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          publish_dir: ./dist
-          publish_branch: gh-pages
-          # GITHUB_TOKEN 권한으로 푸시
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: 'Deploy artifact to GitHub Pages (actions/deploy-pages)'
+        uses: actions/deploy-pages@v1
