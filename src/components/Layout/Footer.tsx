@@ -30,18 +30,9 @@ export default function Footer() {
         background: 'transparent',
       }}
     >
+      {/* Standard footer left: © YEAR Pargame */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        {/* simple mark: circle + 한즐 text + author */}
-        <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden>
-          <circle cx="18" cy="18" r="16" fill="var(--accent)" />
-          <text x="18" y="22" textAnchor="middle" fontSize="12" fill="white" fontWeight={700}>
-            한즐
-          </text>
-        </svg>
-        <div>
-          <div style={{ fontWeight: 600 }}>Pargame</div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--muted-text)' }}>©</div>
-        </div>
+        <div style={{ fontWeight: 600 }}>© {new Date().getFullYear()} Pargame</div>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
