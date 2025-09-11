@@ -200,14 +200,14 @@ export default function MarkdownViewer({
       <style>{`
 .markdown-content a { color: ${theme === 'dark' ? '#7ecbff' : 'var(--accent)'}; text-decoration: none; }
 .markdown-content .code-wrap {
-  margin: 1em 0;
+  margin: 0.5em 0; /* reduce vertical spacing to use sidebar space */
   border-radius: 8px;
-  overflow: hidden;
+  overflow: visible; /* allow floating label to be visible (not clipped) */
   box-sizing: border-box;
   /* make wrapper clearly distinct from page background */
   background: ${theme === 'dark' ? '#071826' : '#edf6fb'};
   color: ${theme === 'dark' ? '#dbeeff' : '#0b1220'};
-  padding: 0.6rem; /* ensure inner pre has spacing and wrapper bg is visible */
+  padding: 0.25rem 0.25rem; /* reduce horizontal padding to maximize usable width */
   border: 1px solid ${theme === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(11,18,32,0.04)'};
   position: relative; /* for label overlap positioning */
   box-shadow: ${theme === 'dark' ? '0 6px 18px rgba(0,0,0,0.6)' : '0 6px 18px rgba(2,6,23,0.06)'};
@@ -222,13 +222,13 @@ export default function MarkdownViewer({
   display: inline-block;
   position: absolute;
   top: 0; /* align near top of wrapper */
-  left: 0.6rem;
-  transform: translateY(-50%);
+  left: 0.5rem; /* reduce left offset to use more horizontal space */
+  transform: translateY(-55%); /* slightly lift the pill for better visual */
   z-index: 3;
 }
 .markdown-content pre.code-block {
   margin: 0;
-  padding: 1.25rem 12px 12px 12px; /* extra top padding so label doesn't overlap content */
+  padding: 1rem 8px 8px 8px; /* tighten left/right padding to maximize width */
   background: transparent; /* outer wrapper provides background */
   color: inherit;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Helvetica Neue", monospace;
