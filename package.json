@@ -1,0 +1,33 @@
+{
+  "name": "myblog",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MyBlog - Vite + React + TypeScript site",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pargame/MyBlog.git"
+  },
+  "scripts": {
+    "dev": "vite",
+    "check": "npm ci && npx eslint \"src/**/*.{ts,tsx,js,jsx}\" --fix && npx prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md,css}\" && (npm audit fix || true) && npx vite build",
+  "deploy": "npm ci && npx vite build"
+  },
+  "dependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.2",
+  "eslint": "^9.35.0",
+    "eslint-plugin-react": "^7.37.5",
+    "gh-pages": "^6.3.0",
+  "prettier": "^3.6.2",
+  "typescript": "5.9.2",
+    "vite": "^7.1.5",
+    "@typescript-eslint/parser": "^8.43.0",
+    "@typescript-eslint/eslint-plugin": "^8.43.0"
+  ,"eslint-config-prettier": "^10.1.8"
+  }
+}
