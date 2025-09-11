@@ -1,45 +1,107 @@
 :root {
-  --bg: #0f172a;
-  --panel: #0b1220;
-  --muted: #94a3b8;
-  --accent: #7dd3fc;
-  --card: #fff;
-  --radius: 10px;
-  --max-width: 1000px;
-}
+  :root {
+    --bg: #0b0f17;
+    --panel: #0f1724;
+    --muted: #94a3b8;
+    --accent: #60a5fa;
+    --accent-2: #7dd3fc;
+    --card: #071023;
+    --text: #e6eef8;
+    --muted-text: #9aa6b2;
+    --radius: 10px;
+    --max-width: 1100px;
+  }
 
-.dev-theme {
-  background: linear-gradient(180deg, #f7fafc 0%, #f1f5f9 100%);
-  min-height: 100vh;
-  color: #0b1220;
-  padding: 2rem 1rem;
-}
+  .dev-theme {
+    background: radial-gradient(circle at 10% 10%, #071428 0%, #05060a 60%);
+    min-height: 100vh;
+    color: var(--text);
+    padding: 2.5rem 1rem;
+  }
 
-.dev-theme .app {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  background: var(--card);
-  padding: 2rem;
-  border-radius: var(--radius);
-  box-shadow: 0 8px 30px rgba(2, 6, 23, 0.08);
-}
+  .dev-theme .app {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+    padding: 2.25rem;
+    border-radius: var(--radius);
+    box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+  }
 
-/* typography */
-h1,
-h2,
-h3 {
-  color: #0b1220;
-  margin-top: 0;
-}
-p {
-  color: #334155;
-  line-height: 1.6;
-}
+  /* typography */
+  h1,
+  h2,
+  h3 {
+    color: var(--text);
+    margin-top: 0;
+  }
+  p {
+    color: var(--muted-text);
+    line-height: 1.7;
+  }
 
-/* code block */
-pre,
-code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
+  /* code block */
+  pre,
+  code {
+    font-family:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
+  }
+  pre {
+    background: #071227;
+    color: #dbeafe;
+    padding: 1rem;
+    border-radius: 8px;
+    overflow: auto;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+  }
+  code {
+    background: rgba(255, 255, 255, 0.02);
+    padding: 0.15rem 0.35rem;
+    border-radius: 4px;
+  }
+
+  /* links */
+  a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  a:hover {
+    color: var(--accent-2);
+  }
+
+  /* nav tweaks */
+  .site-nav {
+    background: rgba(0, 0, 0, 0.18);
+    padding: 0.5rem 1rem;
+    margin-bottom: 1.25rem;
+    border-radius: 8px;
+  }
+  .site-nav .brand {
+    color: var(--text);
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+  .site-nav .links a {
+    color: var(--muted-text);
+    margin-left: 0.75rem;
+  }
+  .site-nav .links a:hover {
+    color: var(--text);
+  }
+
+  /* responsive */
+  @media (max-width: 640px) {
+    .dev-theme {
+      padding: 1rem;
+    }
+    .dev-theme .app {
+      padding: 1rem;
+    }
+    .site-nav .links {
+      display: none;
+    }
+  }
 }
 pre {
   background: #0b1220;
