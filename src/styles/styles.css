@@ -12,3 +12,28 @@ body {
   border-radius: 8px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
 }
+
+.site-nav {
+  background: #0f172a;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+.site-nav .nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.site-nav .brand {
+  font-weight: 700;
+}
+.site-nav .links a {
+  color: #cbd5e1;
+  text-decoration: none;
+  margin-left: 0.75rem;
+}
+.site-nav .links a:hover {
+  color: white;
+}
