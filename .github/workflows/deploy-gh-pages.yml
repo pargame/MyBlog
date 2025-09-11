@@ -29,22 +29,13 @@ jobs:
       - name: 'Vite: build dist'
         run: npx vite build
 
-      - name: 'Deploy to gh-pages branch (push built files)'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          SHA=$(git rev-parse --short HEAD || echo "local")
-          # prepare a temp directory with the built site
-          TMPDIR=$(mktemp -d)
-          cp -r ./dist/. "$TMPDIR/" || true
-          cd "$TMPDIR"
-          # initialize a repo and push to gh-pages branch
-          git init
-          git checkout -b gh-pages
-          git add --all
-          git commit -m "Deploy ${SHA} to gh-pages" || true
-          # push using the GITHUB_TOKEN
-          git push --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages:gh-pages
+      - name: 'Info: prepare to upload artifact'
+        run: echo "Uploading ./dist as artifact 'github-pages'"
+
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+      - name: 'Deploy artifact to GitHub Pages (actions/deploy-pages)'
+        uses: actions/deploy-pages@v1
