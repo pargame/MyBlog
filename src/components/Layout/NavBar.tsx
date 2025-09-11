@@ -13,7 +13,10 @@ export default function NavBar() {
     padding: '0.5rem 1rem',
     marginBottom: '1.25rem',
     borderRadius: 10,
-    background: theme === 'dark' ? 'linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))' : 'rgba(255,255,255,0.8)',
+    background:
+      theme === 'dark'
+        ? 'linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))'
+        : 'rgba(255,255,255,0.8)',
     boxShadow: '0 6px 20px rgba(2,6,23,0.45)',
   };
 
