@@ -221,3 +221,24 @@ a {
 .site-nav .links a {
   color: #0b1220;
 }
+
+/* Global, highest-priority override for links inside .dev-theme
+   This forces no underline and the bright link color for all anchors
+   including user-agent pseudo-classes. */
+.dev-theme a,
+.dev-theme a:visited,
+.dev-theme a:-webkit-any-link,
+.dev-theme a[href] {
+  color: var(--link-color) !important;
+  text-decoration: none !important;
+  text-decoration-color: transparent !important;
+  -webkit-text-decoration-color: transparent !important;
+  text-underline-offset: 0 !important;
+  text-decoration-skip-ink: none !important;
+}
+.dev-theme a:hover,
+.dev-theme a:focus,
+.dev-theme a:-webkit-any-link:hover {
+  color: var(--link-hover) !important;
+  text-decoration: none !important;
+}
