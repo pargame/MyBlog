@@ -2,25 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 type Props = {
-  title: string;
-  summary?: string;
-  date?: string;
   to?: string;
+  children?: React.ReactNode;
 };
+// Card is now a presentational wrapper — content is provided by caller via children
 
-function formatDateCard(iso?: string) {
-  if (!iso) return undefined;
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  const hh = String(d.getHours()).padStart(2, '0');
-  const mm = String(d.getMinutes()).padStart(2, '0');
-  return `${y}-${m}-${day} ${hh}:${mm}`;
-}
-
-export default function Card({ title, summary, date, to = '/' }: Props) {
+export default function Card({ children, to = '/' }: Props) {
   const [hover, setHover] = React.useState(false);
   const [glowBlend, setGlowBlend] = React.useState<string | undefined>(undefined);
   const [glowOpacity, setGlowOpacity] = React.useState<number | undefined>(undefined);
@@ -49,8 +36,6 @@ export default function Card({ title, summary, date, to = '/' }: Props) {
     fontSize: '0.85rem',
   };
 
-  const displayDate = date ? formatDateCard(date) : undefined;
-
   React.useEffect(() => {
     if (typeof window === 'undefined') return;
     const s = getComputedStyle(document.documentElement);
@@ -61,7 +46,7 @@ export default function Card({ title, summary, date, to = '/' }: Props) {
   }, []);
 
   return (
-    <Link to={to} style={{ textDecoration: 'none' }} aria-label={title}>
+    <Link to={to} style={{ textDecoration: 'none' }} aria-label="card-link">
       <div
         style={{ position: 'relative', display: 'block' }}
         onMouseEnter={() => setHover(true)}
@@ -106,9 +91,7 @@ export default function Card({ title, summary, date, to = '/' }: Props) {
           }}
           className="card"
         >
-          <h3 style={titleStyle}>{title}</h3>
-          {summary && <p style={summaryStyle}>{summary}</p>}
-          {displayDate && <div style={dateStyle}>{displayDate}</div>}
+          {children}
         </article>
       </div>
     </Link>

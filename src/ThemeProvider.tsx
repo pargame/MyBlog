@@ -27,7 +27,8 @@ const stylesLight = `:root { --bg: #ffffff; --panel: #f6f7fb; --card: #ffffff; -
 const baseStyles = `
 /* Global reset / base */
 html, body, #root { height: 100%; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin: 0; padding: 0; }
+/* 기본 글꼴을 코딩에 적합한 고정폭 폰트로 설정 */
+body { font-family: 'SFMono-Regular', Menlo, Monaco, 'Roboto Mono', 'Segoe UI Mono', 'Courier New', monospace; margin: 0; padding: 0; }
 .dev-theme { background: var(--bg); min-height: 100vh; color: var(--text); padding: 3rem 1.25rem;
   /* smooth transitions when theme variables change */
   transition: background-color 360ms ease, color 360ms ease;
