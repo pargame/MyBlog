@@ -137,30 +137,24 @@ export default function MarkdownViewer({
     const langLabel = langTrim ? `<div class="code-lang">${langTrim}</div>` : '';
     // Insert soft-wrap opportunities at sensible code boundaries so long
     // lines break at logical units (operators, punctuation) instead of
-    // mid-token. We insert a temporary marker, escape the content, then
-    // replace the marker with an actual <wbr> tag which the browser
-    // treats as a valid break opportunity inside <code>.
+    // mid-token. Use a single regex pass to append a temporary token and
+    // then replace that token with <wbr> after HTML-escaping.
+    const TOKEN = '___WBR___';
     const insertWraps = (s: string) => {
       if (!s) return s;
-      // Use a token unlikely to appear in source and without angle brackets
-      const TOKEN = '___WBR___';
-      // Order matters: handle multi-char operators first
-      const transforms: Array<[RegExp, string]> = [
-        [/->/g, '->' + TOKEN],
-        [/::/g, '::' + TOKEN],
-        [/(\.|,|;|\(|\)|\{|\}|\[|\])/g, '$1' + TOKEN],
-        [/([=+\-*/%<>!&|?:])/g, '$1' + TOKEN],
-      ];
-      let out = s;
-      transforms.forEach(([re, rep]) => {
-        out = out.replace(re as RegExp, rep as string);
-      });
-      return out;
+      // match multi-char operators first, then common punctuation/operators
+      const re = /(->|::|[.,;(){}\[\]\/=+\-\*%<>!&|?:])/g;
+      return s.replace(re, (m) => m + TOKEN);
     };
-    const withWraps = escaped ? body : insertWraps(body);
-    let content = escaped ? body : escapeHtml(withWraps);
-    // replace token with actual break opportunity tag (use split/join to avoid regex escaping)
-    content = content.split('___WBR___').join('<wbr>');
+
+    let content: string;
+    if (escaped) {
+      // already escaped by caller/renderer
+      content = body;
+    } else {
+      const withWraps = insertWraps(body);
+      content = escapeHtml(withWraps).split(TOKEN).join('<wbr>');
+    }
     return `<div class="code-wrap" data-language="${langTrim}">${langLabel}<pre class="code-block"><code class="${langClass}">${content}</code></pre></div>`;
   };
 
