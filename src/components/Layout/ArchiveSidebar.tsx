@@ -20,14 +20,17 @@ export default function ArchiveSidebar({ folder, slug: initialSlug, onClose }: P
   const [visible, setVisible] = React.useState(true);
   React.useEffect(() => setVisible(true), []);
 
-  // Sidebar ref: intercept wheel events to keep scrolling inside
+  // Sidebar ref (for containment checks) and inner scroll container ref
   const asideRef = React.useRef<HTMLElement | null>(null);
+  const scrollRef = React.useRef<HTMLDivElement | null>(null);
+
+  // Intercept wheel events on the inner scroll container to keep scrolling
+  // inside the sidebar while hiding native scrollbars.
   React.useEffect(() => {
-    const el = asideRef.current;
+    const el = scrollRef.current;
     if (!el) return;
 
     const onWheel = (ev: WheelEvent) => {
-      // Prevent page scroll and scroll the aside element instead
       ev.preventDefault();
       ev.stopPropagation();
       const delta = ev.deltaY;
@@ -36,9 +39,7 @@ export default function ArchiveSidebar({ folder, slug: initialSlug, onClose }: P
     };
 
     el.addEventListener('wheel', onWheel as EventListener, { passive: false });
-    return () => {
-      el.removeEventListener('wheel', onWheel as EventListener);
-    };
+    return () => el.removeEventListener('wheel', onWheel as EventListener);
   }, []);
 
   // Intercept touch events on mobile so panning the sidebar doesn't scroll the
@@ -46,7 +47,7 @@ export default function ArchiveSidebar({ folder, slug: initialSlug, onClose }: P
   // wheel handler: track the initial touch Y and adjust aside.scrollTop while
   // preventing default behavior on touchmove.
   React.useEffect(() => {
-    const el = asideRef.current;
+    const el = scrollRef.current;
     if (!el) return;
 
     let touchStartY = 0;
@@ -193,13 +194,29 @@ export default function ArchiveSidebar({ folder, slug: initialSlug, onClose }: P
           ✕
         </button>
       </div>
-      {/* reuse MarkdownViewer to render the document; pass base=archives and folder */}
-      <MarkdownViewer
-        slugProp={localSlug ?? undefined}
-        base="archives"
-        folder={folder}
-        onWikiLinkClick={(s) => setLocalSlug(s)}
-      />
+      {/* inner scroll container: hides native scrollbars but still allows scrolling */}
+      <div
+        ref={scrollRef}
+        style={{
+          maxHeight: 'calc(100vh - 72px)',
+          overflow: 'auto',
+          // hide native scrollbars across browsers while preserving scroll behavior
+          scrollbarWidth: 'none' as any,
+          msOverflowStyle: 'none',
+          WebkitOverflowScrolling: 'touch',
+        }}
+      >
+        <style>{`.archive-scroll::-webkit-scrollbar { display: none; } .archive-scroll { -ms-overflow-style: none; scrollbar-width: none; } .archive-scroll * { word-break: break-word; }`}</style>
+        <div className="archive-scroll">
+          {/* reuse MarkdownViewer to render the document; pass base=archives and folder */}
+          <MarkdownViewer
+            slugProp={localSlug ?? undefined}
+            base="archives"
+            folder={folder}
+            onWikiLinkClick={(s) => setLocalSlug(s)}
+          />
+        </div>
+      </div>
     </aside>
   );
 }

@@ -135,7 +135,32 @@ export default function MarkdownViewer({
 
     const langClass = langTrim ? `language-${langTrim}` : 'language-plaintext';
     const langLabel = langTrim ? `<div class="code-lang">${langTrim}</div>` : '';
-    const content = escaped ? body : escapeHtml(body);
+    // Insert soft-wrap opportunities at sensible code boundaries so long
+    // lines break at logical units (operators, punctuation) instead of
+    // mid-token. We insert a temporary marker, escape the content, then
+    // replace the marker with an actual <wbr> tag which the browser
+    // treats as a valid break opportunity inside <code>.
+    const insertWraps = (s: string) => {
+      if (!s) return s;
+      // Use a token unlikely to appear in source and without angle brackets
+      const TOKEN = '___WBR___';
+      // Order matters: handle multi-char operators first
+      const transforms: Array<[RegExp, string]> = [
+        [/->/g, '->' + TOKEN],
+        [/::/g, '::' + TOKEN],
+        [/(\.|,|;|\(|\)|\{|\}|\[|\])/g, '$1' + TOKEN],
+        [/([=+\-*/%<>!&|?:])/g, '$1' + TOKEN],
+      ];
+      let out = s;
+      transforms.forEach(([re, rep]) => {
+        out = out.replace(re as RegExp, rep as string);
+      });
+      return out;
+    };
+    const withWraps = escaped ? body : insertWraps(body);
+    let content = escaped ? body : escapeHtml(withWraps);
+    // replace token with actual break opportunity tag (use split/join to avoid regex escaping)
+    content = content.split('___WBR___').join('<wbr>');
     return `<div class="code-wrap" data-language="${langTrim}">${langLabel}<pre class="code-block"><code class="${langClass}">${content}</code></pre></div>`;
   };
 
@@ -171,8 +196,28 @@ export default function MarkdownViewer({
     <article>
       {meta?.title && <h1>{meta.title}</h1>}
       {meta?.date && <div style={{ color: 'var(--muted-text)' }}>{formatDate(meta.date)}</div>}
-      {/* scoped styles for markdown links: in dark mode use bright sky-blue and remove underline */}
-      <style>{`.markdown-content a { color: ${theme === 'dark' ? '#7ecbff' : 'var(--accent)'}; text-decoration: none; }`}</style>
+      {/* scoped styles for markdown: links and code block backgrounds for dark/light themes */}
+      <style>{`
+.markdown-content a { color: ${theme === 'dark' ? '#7ecbff' : 'var(--accent)'}; text-decoration: none; }
+.markdown-content .code-wrap { margin: 1em 0; border-radius: 8px; overflow: visible; box-sizing: border-box; padding: 0.25rem 0.25rem; }
+.markdown-content .code-lang { padding: 6px 10px; font-size: 0.75rem; font-weight: 600; color: ${theme === 'dark' ? '#cdeeff' : '#08306b'}; background: ${theme === 'dark' ? '#042331' : '#e8f3ff'}; border-top-left-radius: 6px; border-top-right-radius: 6px; }
+.markdown-content .code-block {
+          margin: 0;
+          padding: 12px;
+          background: ${theme === 'dark' ? '#07111a' : '#f6f8fa'};
+          color: ${theme === 'dark' ? '#dbeeff' : '#0b1220'};
+          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Helvetica Neue", monospace;
+          font-size: 0.85rem;
+          line-height: 1.5;
+          /* wrap long lines so content is always visible inside the sidebar */
+          white-space: pre-wrap;
+          overflow-wrap: anywhere;
+          word-break: break-word;
+          overflow: visible;
+        }
+.markdown-content pre.code-block { margin: 0; }
+.markdown-content code { background: transparent; color: inherit; }
+`}</style>
       <div
         ref={containerRef}
         className="markdown-content"
