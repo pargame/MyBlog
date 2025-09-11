@@ -13,10 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20.19.0'
           cache: 'npm'
@@ -28,8 +28,8 @@ jobs:
         run: npm run build
 
       - name: Upload Pages artifact
-        # use v2 to avoid deprecated upload-artifact v3 dependency
-        uses: actions/upload-pages-artifact@v2
+        # upgraded to v4 (latest) to use updated artifact internals
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ./dist
 
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Configure Pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v5
 
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4.0.5
