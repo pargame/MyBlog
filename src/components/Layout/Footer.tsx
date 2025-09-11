@@ -36,6 +36,7 @@ export default function Footer() {
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        <span style={{ color: 'var(--muted-text)', fontSize: '0.95rem' }}>Contact</span>
         <a
           href="https://github.com/pargame"
           target="_blank"
