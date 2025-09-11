@@ -55,7 +55,6 @@ date: '2025-08-17T16:17:41+09:00'
 	제어 대상 본체입니다.
 
 ## 코드 예시
-> **// 간단한 AIController: 비헤이비어 트리 실행 + 플레이어를 목표로 이동 #include "AIController.h" #include "BehaviorTree/BehaviorTree.h" #include "BehaviorTree/BlackboardComponent.h" #include "Kismet/GameplayStatics.h"**
 ```cpp
 // 간단한 AIController: 비헤이비어 트리 실행 + 플레이어를 목표로 이동
 #include "AIController.h"

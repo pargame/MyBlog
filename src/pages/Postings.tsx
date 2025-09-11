@@ -1,5 +1,6 @@
 import React from 'react';
 import CardGrid, { PostCard } from '../components/UI/CardGrid';
+import Footer from '../components/Layout/Footer';
 
 // Parse YAML frontmatter from a markdown string.
 // Returns { data: Record<key, value>, content: markdownBody }
@@ -78,6 +79,7 @@ export default function Postings() {
       <h2>Postings</h2>
       <p>최근 포스팅</p>
       {loading ? <p>로딩 중...</p> : <CardGrid posts={posts} />}
+      <Footer />
     </main>
   );
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { GraphGrid, GraphCard } from '../components/UI/CardGrid';
+import Footer from '../components/Layout/Footer';
 
 // helper to extract folder name from a path like '/.../contents/Archives/Algorithm/file.md'
 function folderFromPath(p: string) {
@@ -38,6 +39,7 @@ export default function Graphs() {
       <h2>Graphs</h2>
       <p>그래프 아카이브를 선택하세요.</p>
       <GraphGrid folders={folders} />
+      <Footer />
     </main>
   );
 }
