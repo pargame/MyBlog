@@ -204,11 +204,23 @@ export default function MarkdownViewer({
   border-radius: 8px;
   overflow: hidden;
   box-sizing: border-box;
-  /* background now belongs to the outer wrapper so the label and body match */
-  background: ${theme === 'dark' ? '#07111a' : '#f6f8fa'};
+  /* make wrapper clearly distinct from page background */
+  background: ${theme === 'dark' ? '#07111a' : '#edf6fb'};
   color: ${theme === 'dark' ? '#dbeeff' : '#0b1220'};
+  padding: 0.5rem; /* ensure inner pre has spacing and wrapper bg is visible */
+  border: 1px solid ${theme === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(11,18,32,0.04)'};
 }
-.markdown-content .code-lang { padding: 6px 10px; font-size: 0.75rem; font-weight: 600; color: ${theme === 'dark' ? '#cdeeff' : '#08306b'}; background: ${theme === 'dark' ? '#042331' : '#e8f3ff'}; border-top-left-radius: 6px; border-top-right-radius: 6px; display: inline-block; }
+.markdown-content .code-lang {
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: ${theme === 'dark' ? '#cdeeff' : '#08306b'};
+  background: ${theme === 'dark' ? '#042331' : '#e8f3ff'};
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  display: inline-block;
+  margin-left: 0.25rem;
+}
 .markdown-content pre.code-block {
   margin: 0;
   padding: 12px;
@@ -221,6 +233,7 @@ export default function MarkdownViewer({
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   word-break: break-word;
+  border-radius: 6px;
 }
 .markdown-content code { background: transparent; color: inherit; }
 `}</style>
