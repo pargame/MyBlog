@@ -6,10 +6,10 @@
 
 사용 가능한 명령 리스트(상단에 고정):
 
-1. npm run check
-2. npm run deploy
-3. gh 명령
-4. git 명령
+1. npm run check(개발중)
+2. npm run deploy(배포-워크플로 트리거)
+3. gh 명령(배포 검증용에만 사용)
+4. git 명령(커밋푸시)
 5. rm -f, ls, cat, grep 등 터미널 명령(명시적 승인 불필요)
 
 
