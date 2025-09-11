@@ -274,6 +274,38 @@ export default function MarkdownViewer({
         onClick={handleClick}
         dangerouslySetInnerHTML={{ __html: marked.parse(processed, markedOptions) }}
       />
+      {base === 'postings' && (
+        <div
+          style={{ marginTop: 18, display: 'flex', justifyContent: 'flex-end' }}
+          className="post-back"
+        >
+          <button
+            onClick={() => navigate('/posts')}
+            style={{
+              border: 'none',
+              background: 'transparent',
+              color: 'var(--muted-text)',
+              cursor: 'pointer',
+              padding: '6px 10px',
+              borderRadius: 8,
+              transition: 'background 120ms ease, color 120ms ease',
+            }}
+            onMouseEnter={(e) => {
+              const btn = e.currentTarget as HTMLButtonElement;
+              btn.style.background =
+                theme === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.04)';
+              btn.style.color = theme === 'dark' ? '#dbeeff' : 'var(--muted-text)';
+            }}
+            onMouseLeave={(e) => {
+              const btn = e.currentTarget as HTMLButtonElement;
+              btn.style.background = 'transparent';
+              btn.style.color = 'var(--muted-text)';
+            }}
+          >
+            ← 돌아가기
+          </button>
+        </div>
+      )}
     </article>
   );
 }
