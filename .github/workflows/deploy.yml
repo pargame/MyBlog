@@ -28,7 +28,8 @@ jobs:
         run: npm run build
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v1
+        # use v2 to avoid deprecated upload-artifact v3 dependency
+        uses: actions/upload-pages-artifact@v2
         with:
           path: ./dist
 
