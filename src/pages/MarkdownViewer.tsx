@@ -221,21 +221,23 @@ export default function MarkdownViewer({
   display: inline-block;
   position: absolute;
   top: 0; /* align near top of wrapper */
-  /* place label slightly inset from the sidebar inner edge */
-  left: 1rem;
+  /* place label slightly inset from the sidebar inner edge; reduced to match tighter padding */
+  left: 0.6rem;
   transform: translateY(-55%); /* slightly lift the pill for better visual */
   z-index: 3;
 }
 .markdown-content pre.code-block {
   margin: 0;
-  /* match the sidebar inner horizontal padding so code content doesn't get clipped
-     but allow the wrapper background to extend to the edge of the content area */
-  padding: 0.9rem 1.25rem 6px 1.25rem;
+  /* tighter horizontal padding to reduce perceived indentation */
+  padding: 0.6rem 0.8rem 0.6rem 0.8rem;
   background: transparent; /* outer wrapper provides background */
   color: inherit;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Helvetica Neue", monospace;
   font-size: 0.85rem;
   line-height: 1.5;
+  /* reduce tab rendering width so tab characters don't create huge indents */
+  tab-size: 2;
+  -moz-tab-size: 2;
   /* wrap long lines so content is always visible inside the sidebar */
   white-space: pre-wrap;
   overflow-wrap: anywhere;
