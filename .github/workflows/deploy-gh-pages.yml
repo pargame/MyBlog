@@ -27,11 +27,10 @@ jobs:
         run: npx vite build
 
       - name: Upload artifact for Pages (upload-artifact v4 사용)
-        # upload-pages-artifact 액션이 내부적으로 deprecated된 upload-artifact:v3를 참조하여 실패가 발생하므로
-        # 직접 안정된 actions/upload-artifact@v4로 dist를 업로드하여 deploy-pages가 사용할 수 있도록 함
+        # deploy-pages 단계가 찾는 아티팩트 이름은 'github-pages'입니다. 동일한 이름으로 업로드합니다.
         uses: actions/upload-artifact@v4
         with:
-          name: pages
+          name: github-pages
           path: ./dist
 
   deploy:
