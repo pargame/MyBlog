@@ -24,15 +24,20 @@ export default function Postings() {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    // Vite glob to load markdown as raw text
+    // Vite glob to load markdown as raw text (use query/import per Vite deprecation notice)
     // @ts-ignore
-    const modules = import.meta.glob('../../contents/Postings/*.md', { as: 'raw' });
+    const modules = import.meta.glob('../../contents/Postings/*.md', {
+      query: '?raw',
+      import: 'default',
+    });
 
     const load = async () => {
       const entries = Object.entries(modules) as [string, () => Promise<string>][];
       const loaded = await Promise.all(
         entries.map(async ([path, resolver]) => {
-          const raw = await resolver();
+          // resolver may return the raw string directly or a module with default
+          const res = await (resolver as any)();
+          const raw = typeof res === 'string' ? res : (res?.default ?? '');
           const { data } = parseFrontmatter(raw);
           const filename = path.split('/').pop() || path;
           const slug = filename.replace(/\.mdx?$|\.md$/i, '');

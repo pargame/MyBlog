@@ -28,14 +28,18 @@ export default function MarkdownViewer() {
   React.useEffect(() => {
     if (!slug) return;
     // @ts-ignore
-    const modules = import.meta.glob('../../contents/Postings/*.md', { as: 'raw' });
+    const modules = import.meta.glob('../../contents/Postings/*.md', {
+      query: '?raw',
+      import: 'default',
+    });
     const matchPath = Object.keys(modules).find((p) => p.includes(`/${slug}.md`));
     if (!matchPath) {
       setRaw('');
       return;
     }
-    (modules as Record<string, () => Promise<string>>)[matchPath]().then((r) => {
-      const { data, content } = parseFrontmatter(r);
+    (modules as Record<string, () => Promise<any>>)[matchPath]().then((r) => {
+      const raw = typeof r === 'string' ? r : (r?.default ?? '');
+      const { data, content } = parseFrontmatter(raw);
       setMeta(data);
       setRaw(content);
     });
