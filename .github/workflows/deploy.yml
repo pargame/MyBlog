@@ -1,3 +1,21 @@
+# 히스토리 요약 (간단한 기록)
+# - 초안: peaceiris/actions-gh-pages 액션으로 배포 시도
+#   - 로컬에서 `npm run deploy` 실행 시 GH_TOKEN 미설정으로 원격 dispatch 실패 메시지 발생
+# - 이후 `gh` CLI로 워크플로 수동 실행함
+# - CI 빌드 실패 원인:
+#   1) GitHub Actions 러너 기본 Node 버전(18)에서 Vite가 요구하는 Node(>=20.19) 불일치로 빌드 실패
+#   2) vite.config.ts에서 ESM 관련 require/import 오류가 함께 발생
+# - 조치:
+#   1) 워크플로에서 Node 버전을 '20.19.0'으로 변경해 빌드 오류 해결
+#   2) 초기에는 `peaceiris/actions-gh-pages`로 gh-pages 브랜치에 푸시하도록 사용(첫 배포 시 gh-pages 브랜치 생성됨)
+#   3) GitHub Pages UI의 배포 세부정보 인식을 위해 공식 Pages 워크플로로 전환(actions/configure-pages + upload-pages-artifact + deploy-pages)
+#   4) upload-pages-artifact의 deprecated 의존성 문제로 v2→v4로 업그레이드 및 관련 액션들을 최신 안정 태그로 갱신
+#   5) 불필요해진 `gh-pages` 브랜치는 원격에서 삭제함
+# - 결과: 공식 Pages 워크플로로 성공 배포(성공 run id: 17634011939)
+#
+# 이 주석은 워크플로의 변경 이력과 문제 해결 과정을 간단히 남긴 것으로,
+# 실제 동작에는 영향을 주지 않습니다.
+
 name: Deploy to GitHub Pages (official)
 
 on:
