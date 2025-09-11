@@ -6,9 +6,10 @@ export default function NavBar() {
   return (
     <nav className="site-nav">
       <div className="nav-container">
-        <div className="brand">MyBlog</div>
+        <Link to="/" className="brand">
+          Home
+        </Link>
         <div className="links">
-          <Link to="/">Postings</Link>
           <Link to="/graphs">Graphs</Link>
         </div>
       </div>
