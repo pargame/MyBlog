@@ -207,12 +207,12 @@ export default function MarkdownViewer({
   /* make wrapper clearly distinct from page background */
   background: ${theme === 'dark' ? '#071826' : '#edf6fb'};
   color: ${theme === 'dark' ? '#dbeeff' : '#0b1220'};
-  /* expand horizontally to cover the sidebar inner padding (1.25rem each side)
-    width + negative margins let the wrapper reach the edges while staying centered */
-  width: calc(100% + 2.5rem);
-  margin-left: -1.25rem;
-  margin-right: -1.25rem;
-  padding: 0.15rem 0.15rem; /* minimal wrapper padding */
+  /* fill the available content width inside the sidebar (respect aside padding)
+     avoid negative margins which caused left-side clipping */
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0.15rem 0; /* minimal vertical padding; horizontal padding handled in pre */
   border: 1px solid ${theme === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(11,18,32,0.04)'};
   position: relative; /* for label overlap positioning */
   box-shadow: ${theme === 'dark' ? '0 6px 18px rgba(0,0,0,0.6)' : '0 6px 18px rgba(2,6,23,0.06)'};
@@ -227,13 +227,16 @@ export default function MarkdownViewer({
   display: inline-block;
   position: absolute;
   top: 0; /* align near top of wrapper */
-  left: 0.5rem; /* reduce left offset to use more horizontal space */
+  /* place label slightly inset from the sidebar inner edge */
+  left: 1rem;
   transform: translateY(-55%); /* slightly lift the pill for better visual */
   z-index: 3;
 }
 .markdown-content pre.code-block {
   margin: 0;
-  padding: 0.9rem 6px 6px 6px; /* tighten left/right padding to maximize width */
+  /* match the sidebar inner horizontal padding so code content doesn't get clipped
+     but allow the wrapper background to extend to the edge of the content area */
+  padding: 0.9rem 1.25rem 6px 1.25rem;
   background: transparent; /* outer wrapper provides background */
   color: inherit;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Helvetica Neue", monospace;
