@@ -44,10 +44,29 @@ export default function ArchiveSidebar({ folder, slug: initialSlug, onClose }: P
     const el = asideRef.current;
     if (!el) return;
     const onDocClick = (ev: MouseEvent) => {
-      const target = ev.target as Node | null;
+      const target = ev.target as HTMLElement | null;
       if (!target) return;
+      // If click was inside the aside, ignore
       if (el.contains(target)) return;
-      // start exit transition; onTransitionEnd will call onClose
+      // If a vis-network node was clicked very recently, don't close the
+      // sidebar — the Archive page marks such clicks by setting
+      // window.__archiveNodeClick for a short window. This compensates for
+      // event ordering differences where the network's stopPropagation may
+      // not prevent the document listener from firing.
+      try {
+        if ((window as any).__archiveNodeClick) return;
+      } catch (e) {
+        // ignore
+      }
+      // Previously clicks anywhere in the graph container were ignored which
+      // prevented background canvas clicks from closing the sidebar. We only
+      // want to keep the sidebar open for node clicks; those node clicks
+      // already stop propagation inside the Archive page's network click
+      // handler. So do not special-case the whole container here — let node
+      // clicks (which call stopPropagation) naturally be ignored, while
+      // background clicks on the canvas will bubble here and close the
+      // sidebar.
+      // otherwise start exit transition; onTransitionEnd will call onClose
       setVisible(false);
     };
     document.addEventListener('click', onDocClick);

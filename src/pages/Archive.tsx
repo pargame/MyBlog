@@ -160,6 +160,40 @@ export default function Archive() {
       network.on('click', (params: any) => {
         if (params.nodes && params.nodes.length > 0) {
           setActiveSlug(String(params.nodes[0]));
+          // Mark that a vis-network node was clicked. This helps other
+          // document-level listeners (like ArchiveSidebar's click handler)
+          // distinguish node clicks from background/canvas clicks even if
+          // event propagation ordering varies between vis-network and the
+          // DOM. The flag is cleared on the next tick.
+          try {
+            (window as any).__archiveNodeClick = true;
+            setTimeout(() => {
+              try {
+                (window as any).__archiveNodeClick = false;
+              } catch (e) {
+                /* ignore */
+              }
+            }, 0);
+          } catch (e) {
+            // ignore
+          }
+          // Prevent the click from bubbling to the document-level listener
+          // (ArchiveSidebar listens on document clicks to close itself). The
+          // vis-network provides the original DOM event at params.event.srcEvent
+          // (or params.event depending on runtime). Stop its propagation so
+          // clicking a node only switches the sidebar content instead of
+          // closing the sidebar.
+          try {
+            const srcEvent = params.event?.srcEvent ?? params.event;
+            if (srcEvent && typeof srcEvent.stopPropagation === 'function') {
+              srcEvent.stopPropagation();
+            }
+            if (srcEvent && typeof srcEvent.preventDefault === 'function') {
+              srcEvent.preventDefault();
+            }
+          } catch (e) {
+            // ignore if shape of params.event differs
+          }
         }
       });
 

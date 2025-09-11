@@ -103,6 +103,42 @@ export default function MarkdownViewer({
     return `<a href="#" data-wiki="${slug}">${slug}</a>`;
   });
 
+  // custom marked renderer to produce cleaner code blocks (language label + escaped content)
+  const escapeHtml = (str: string) =>
+    str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  const renderer = new marked.Renderer();
+  // marked v5 uses a single Code object parameter for renderer.code
+  renderer.code = (codeObj: { lang?: string; text: string; escaped?: boolean }) => {
+    const { lang = '', text = '', escaped = false } = codeObj as any;
+    let langTrim = String(lang || '').trim();
+    let body = String(text || '');
+
+    // If no language provided, check if the first line is a bare language token
+    // e.g. code block where author wrote:
+    // ```
+    // cpp
+    // #include ...
+    // ```
+    // We treat the first line as language and remove it from content.
+    if (!langTrim) {
+      const lines = body.replace(/\r\r?/g, '\n').split('\n');
+      const first = (lines[0] || '').trim();
+      // allow letters, numbers, plus, hash, dash (e.g., c, cpp, c++, c#, ts, js)
+      if (/^[A-Za-z0-9+#\-]+$/.test(first) && lines.length > 1) {
+        langTrim = first;
+        body = lines.slice(1).join('\n');
+      }
+    }
+
+    const langClass = langTrim ? `language-${langTrim}` : 'language-plaintext';
+    const langLabel = langTrim ? `<div class="code-lang">${langTrim}</div>` : '';
+    const content = escaped ? body : escapeHtml(body);
+    return `<div class="code-wrap" data-language="${langTrim}">${langLabel}<pre class="code-block"><code class="${langClass}">${content}</code></pre></div>`;
+  };
+
+  const markedOptions = { renderer, gfm: true, breaks: false, headerIds: false, mangle: false };
+
   const handleClick = React.useCallback(
     (e: React.MouseEvent) => {
       const target = e.target as HTMLElement | null;
@@ -136,7 +172,7 @@ export default function MarkdownViewer({
       <div
         ref={containerRef}
         onClick={handleClick}
-        dangerouslySetInnerHTML={{ __html: marked.parse(processed) }}
+        dangerouslySetInnerHTML={{ __html: marked.parse(processed, markedOptions) }}
       />
     </article>
   );

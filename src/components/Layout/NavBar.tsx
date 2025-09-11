@@ -11,35 +11,28 @@ export default function NavBar() {
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: '1rem',
-    padding: '0.5rem 1rem',
+    // top right bottom left - reduce left padding so Home sits nearer the edge
+    padding: '0.5rem 1rem 0.5rem 0.25rem',
     marginBottom: '1.25rem',
     borderRadius: 10,
     background: 'var(--panel)',
     boxShadow: '0 6px 20px rgba(2,6,23,0.45)',
   };
 
-  // Brand link styles
-  const brandStyle: React.CSSProperties = {
+  // Shared nav item style for Home and Graphs (identical appearance)
+  const navItemStyle: React.CSSProperties = {
     fontWeight: 700,
     color: 'var(--text)',
     textDecoration: 'none',
     padding: '0.6rem 0.9rem',
     borderRadius: 8,
     background: 'rgba(255,255,255,0.02)',
-  };
-
-  // Nav link styles
-  const linkStyle: React.CSSProperties = {
-    color: 'var(--muted-text)',
-    textDecoration: 'none',
-    marginLeft: '0.75rem',
-    padding: '0.4rem 0.7rem',
-    borderRadius: 8,
+    fontSize: '1rem',
   };
 
   // Theme toggle button style
   const buttonStyle: React.CSSProperties = {
-    marginLeft: '0.75rem',
+    marginRight: '0.2rem',
     padding: '0.4rem 0.7rem',
     borderRadius: 8,
     border: 'none',
@@ -50,18 +43,18 @@ export default function NavBar() {
 
   return (
     <nav style={navStyle} aria-label="Main navigation">
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <Link to="/" style={brandStyle} className="brand">
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+        <button onClick={toggle} aria-label="Toggle theme" style={buttonStyle}>
+          {theme === 'dark' ? '🌙' : '☀️'}
+        </button>
+        <Link to="/" style={navItemStyle} className="brand">
           Home
         </Link>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <Link to="/graphs" style={linkStyle}>
+        <Link to="/graphs" style={navItemStyle}>
           Graphs
         </Link>
-        <button onClick={toggle} aria-label="Toggle theme" style={buttonStyle}>
-          {theme === 'dark' ? '🌙' : '☀️'}
-        </button>
       </div>
     </nav>
   );

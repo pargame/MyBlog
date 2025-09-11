@@ -36,7 +36,7 @@ export default function Graphs() {
   return (
     <main>
       <h2>Graphs</h2>
-      <p>여기에 그래프 관련 콘텐츠가 표시됩니다.</p>
+      <p>그래프 아카이브를 선택하세요.</p>
       <GraphGrid folders={folders} />
     </main>
   );
