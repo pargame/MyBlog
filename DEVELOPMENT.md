@@ -1,6 +1,7 @@
 # 개발 노트 (AI 읽기용)
 
 1인 개발 원칙: 이 저장소는 1인 개발 기준으로 운영됩니다. PR/머지 규칙 문서는 적용되지 않습니다.
+이 문서는 최신 변경 기록이 아니라 이 프로젝트 상태에 대한 최신 상태 정보를 제공하는 것이 목적입니다.
 
 ---
 
@@ -80,71 +81,30 @@
 ├─ node_modules/
 ├─ dist/                    # 빌드 산출물(커밋 금지 권장)
 ├─ contents/
-│  ├─ Archives/             # 아카이브 문서(폴더별 마크다운 컬렉션)
-│  │  └─ UnrealEngine/*.md  # (예) 대량 문서가 추가된 서브폴더
-│  │  ├─ Postings/           # 포스팅 마크다운
-│  │  └─ ...
+│  ├─ Postings/*.md          # 포스팅 마크다운
+│  └─ Archives/             # 아카이브 문서(폴더별 마크다운 컬렉션)
+│     └─ UnrealEngine/*.md  # (예) 대량 문서가 추가된 서브폴더
 ├─ src/
 │  ├─ main.tsx
 │  ├─ App.tsx
 │  ├─ ThemeProvider.tsx
 │  ├─ components/
+│  ├─ theme.css  # 전역 테마/스타일
 │  │  ├─ Layout/
 │  │  │  ├─ NavBar.tsx
 │  │  │  ├─ ArchiveSidebar.tsx
-│  │  │  └─ Footer.tsx                # 재사용 가능 푸터(깃허브 아이콘, © 연도, 런타임 조립 이메일)
+│  │  │  └─ Footer.tsx
 │  │  └─ UI/
 │  │     ├─ Card.tsx
 │  │     └─ CardGrid.tsx
-│  ├─ pages/
-│  │  ├─ Postings.tsx
-│  │  ├─ MarkdownViewer.tsx
-│  │  ├─ Graphs.tsx
-│  │  └─ Archive.tsx
-│  ├─ hooks/   (현재 빈 디렉토리; 유틸 훅 보관용)
-│  └─ theme.css  # 전역 테마/스타일
+│  └─ pages/
+│     ├─ Postings.tsx
+│     ├─ MarkdownViewer.tsx
+│     ├─ Graphs.tsx
+│     └─ Archive.tsx
 └─ eslint.config.cjs
 
 ```
-
----
-
-## 사용 기술스택
-
-- 프론트엔드: React + TypeScript (Vite로 번들링)
-- 번들러 / 개발서버: Vite
-- 러닝타임: Node.js (워크플로에서 Node 20.x 권장)
-- 린트/포맷: ESLint, Prettier, @typescript-eslint
-- 배포: GitHub Pages (공식 Pages Actions: upload-pages-artifact / deploy-pages)
-- CI: GitHub Actions (workflow_dispatch 사용)
-- 패키지 매니저: npm (package-lock.json 관리)
-- 기타: gh CLI로 배포 검증
-
----
-
-## 포스팅 작성 템플릿
-
-새 포스팅은 `contents/Postings/` 폴더에 Markdown 파일로 추가합니다. 파일명은 포스팅 주제에 맞게 소문자와 하이픈으로 구성하세요(예: `how-this-blog-deploys.md`).
-
-모든 포스팅은 다음 프론트매터를 포함해야 합니다:
-
-```markdown
----
-title: '블로그 제작 및 배포 요약'
-summary: 'Vite + GitHub Actions로 Pages에 배포하는 방법 요약'
-date: '2025-09-11T04:45:00+00:00'
----
-
-본문 내용을 여기에 작성합니다.
-```
-
-프론트매터 규칙:
-
-- `title` (필수) — 문자열
-- `summary` (필수) — 한 줄 요약
-- `date` (필수) — ISO 8601 형식(시간 포함)
-
-작성 후에는 `git add -A`, `git commit` 그리고 `git push`로 저장소에 반영하세요.
 
 ---
 
@@ -202,7 +162,53 @@ date: '2025-09-11T04:45:00+00:00'
   - 책임: 앱 엔트리포인트
   - 주요 기능: `ThemeProvider` 및 라우터로 `App` 래핑 후 마운트
 
-- `src/hooks/` (디렉토리)
-  - 책임: 재사용 훅 보관(현재 빈 디렉토리)
+> 파일/컴포넌트가 새로 추가되면 이 문서의 "컴포넌트" 섹션에 한 줄 요약을 추가하세요.
 
-파일/컴포넌트가 새로 추가되면 이 문서의 "컴포넌트" 섹션에 한 줄 요약을 추가하세요.
+---
+
+## 사용 기술스택
+
+- 프론트엔드: React + TypeScript (Vite로 번들링)
+- 번들러 / 개발서버: Vite
+- 러닝타임: Node.js (워크플로에서 Node 20.x 권장)
+- 린트/포맷: ESLint, Prettier, @typescript-eslint
+- 배포: GitHub Pages (공식 Pages Actions: upload-pages-artifact / deploy-pages)
+- CI: GitHub Actions (workflow_dispatch 사용)
+- 패키지 매니저: npm (package-lock.json 관리)
+- 기타: gh CLI로 배포 검증
+
+---
+
+## 포스팅 작성 템플릿
+
+새 포스팅은 `contents/Postings/` 폴더에 Markdown 파일로 추가합니다. 파일명은 포스팅 주제에 맞게 소문자와 하이픈으로 구성하세요(예: `how-this-blog-deploys.md`):
+
+```markdown
+---
+title: '블로그 제작 및 배포 요약'
+summary: 'Vite + GitHub Actions로 Pages에 배포하는 방법 요약'
+date: '2025-09-11T04:45:00+09:00'
+---
+
+본문 내용을 여기에 작성합니다.
+```
+
+---
+
+## 아카이브 문서 작성 템플릿
+
+아카이브용 마크다운 문서 템플릿과 작성 가이드입니다. 이 프로젝트의 관례는 다음과 같습니다:
+
+- 프론트매터 `title`은 문서 파일명과 동일하게 유지하세요.
+- `date`는 선택 사항입니다. 사용 시에는 ISO 8601 형식으로 시간대 오프셋을 포함해 주세요(예: `2025-09-12T10:30:00+09:00`):
+
+```markdown
+---
+title: '파일명과 동일해야 합니다'
+date: '2025-09-12T10:30:00+09:00'
+---
+
+본문 내용을 여기에 작성합니다.
+```
+
+---
