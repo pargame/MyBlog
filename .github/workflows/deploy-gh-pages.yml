@@ -9,9 +9,10 @@ permissions:
   id-token: write
 
 jobs:
-  build:
-    name: Build
+  build-and-publish:
+    name: Build and publish to GitHub Pages
     runs-on: ubuntu-latest
+    environment: github-pages
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -34,15 +35,6 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
-
-  publish:
-    name: Publish to gh-pages
-    needs: build
-    runs-on: ubuntu-latest
-    environment: github-pages
-    steps:
-      - name: 'Info: preparing download'
-        run: echo "Deploying artifact uploaded by upload-pages-artifact; actions/deploy-pages will handle download"
 
       - name: 'Deploy artifact to GitHub Pages (actions/deploy-pages)'
         uses: actions/deploy-pages@v1
