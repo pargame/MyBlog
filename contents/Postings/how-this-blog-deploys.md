@@ -1,7 +1,7 @@
 ---
 title: "블로그 제작 및 GitHub Pages 배포: 워크플로 요약"
 summary: "Vite(React + TypeScript)로 빌드하고 GitHub Actions의 공식 Pages 워크플로(actions/configure-pages, upload-pages-artifact, deploy-pages)로 배포한 과정 정리"
-date: "2025-09-11T04:45:00+00:00"
+date: "2025-09-11T05:48:30+00:00"
 ---
 
 ## 개요
