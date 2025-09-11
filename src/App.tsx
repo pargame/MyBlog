@@ -4,6 +4,7 @@ import NavBar from './components/Layout/NavBar';
 import ThemeProvider from './ThemeProvider';
 import Postings from './pages/Postings';
 import Graphs from './pages/Graphs';
+import MarkdownViewer from './pages/MarkdownViewer';
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Postings />} />
             <Route path="/graphs" element={<Graphs />} />
+            <Route path="/posts/:slug" element={<MarkdownViewer />} />
             {/* Redirect any unknown route to home */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
