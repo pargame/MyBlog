@@ -31,9 +31,16 @@ jobs:
         run: echo "Uploading ./dist as artifact 'github-pages'"
 
       - name: Upload dist artifact (github-pages)
-        uses: actions/upload-pages-artifact@v1
+        run: |
+          echo "Packaging ./dist into a single gzip'd tar for Pages"
+          # create a gzip compressed tarball containing the contents of ./dist
+          tar -czf github-pages.tar.gz -C ./dist .
+
+      - name: Upload artifact (github-pages)
+        uses: actions/upload-artifact@v4
         with:
-          path: ./dist
+          name: github-pages
+          path: github-pages.tar.gz
 
   publish:
     name: Publish to gh-pages
