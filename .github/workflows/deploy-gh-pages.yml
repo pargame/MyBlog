@@ -38,5 +38,20 @@ jobs:
     runs-on: ubuntu-latest
     environment: github-pages
     steps:
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v1
+      - name: Download pages artifact
+        # upload-artifact로 업로드한 'github-pages' 아티팩트를 받아 배포에 사용
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          path: ./dist
+
+      - name: Deploy to gh-pages branch (peaceiris)
+        # deploy-pages action의 artifact 요구사항 문제를 우회하기 위해
+        # dist를 gh-pages 브랜치로 직접 푸시합니다.
+        # 주의: GitHub Pages 설정에서 Source를 'gh-pages branch'로 변경해야 합니다.
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          publish_dir: ./dist
+          publish_branch: gh-pages
+          # GITHUB_TOKEN 권한으로 푸시
+          github_token: ${{ secrets.GITHUB_TOKEN }}
