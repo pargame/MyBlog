@@ -1,14 +1,14 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import NavBar from './components/Layout/NavBar';
-import DevTheme from './styles/DevTheme';
+import GlobalTheme from './styles/GlobalTheme';
 import Postings from './pages/Postings';
 import Graphs from './pages/Graphs';
 
 export default function App() {
   return (
     <BrowserRouter>
-      <DevTheme>
+           <GlobalTheme>
         <div className="app">
           <NavBar />
           <Routes>
@@ -16,7 +16,7 @@ export default function App() {
             <Route path="/graphs" element={<Graphs />} />
           </Routes>
         </div>
-      </DevTheme>
+           </GlobalTheme>
     </BrowserRouter>
   );
 }
