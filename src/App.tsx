@@ -4,8 +4,8 @@ import NavBar from './components/Layout/NavBar';
 import ThemeProvider from './ThemeProvider';
 import Postings from './pages/Postings';
 import Graphs from './pages/Graphs';
-import Archive from './pages/Archive';
-import MarkdownViewer from './pages/MarkdownViewer';
+const Archive = React.lazy(() => import('./pages/Archive'));
+const MarkdownViewer = React.lazy(() => import('./pages/MarkdownViewer'));
 
 const RootLayout: React.FC = () => (
   <ThemeProvider>
@@ -24,8 +24,22 @@ const router = createBrowserRouter(
       children: [
         { index: true, element: <Postings /> },
         { path: 'graphs', element: <Graphs /> },
-        { path: 'archives/:folder', element: <Archive /> },
-        { path: 'posts/:slug', element: <MarkdownViewer /> },
+        {
+          path: 'archives/:folder',
+          element: (
+            <React.Suspense fallback={<div>로딩...</div>}>
+              <Archive />
+            </React.Suspense>
+          ),
+        },
+        {
+          path: 'posts/:slug',
+          element: (
+            <React.Suspense fallback={<div>로딩...</div>}>
+              <MarkdownViewer />
+            </React.Suspense>
+          ),
+        },
         { path: '*', element: <Postings /> },
       ],
     },

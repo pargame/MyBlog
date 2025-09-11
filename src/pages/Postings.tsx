@@ -1,20 +1,19 @@
 import React from 'react';
 import CardGrid, { PostCard } from '../components/UI/CardGrid';
 
-// Simple frontmatter parser for markdown files
+// Parse YAML frontmatter from a markdown string.
+// Returns { data: Record<key, value>, content: markdownBody }
 function parseFrontmatter(raw: string) {
-  // allow optional BOM and leading whitespace/newlines before the frontmatter
   const fmMatch = raw.match(/^[\uFEFF\s]*---\s*([\s\S]*?)\s*---\s*/);
   const data: Record<string, string> = {};
   if (!fmMatch) return { data, content: raw };
   const fm = fmMatch[1];
   fm.split(/\r?\n/).forEach((line) => {
-    const m = line.match(/^([A-Za-z0-9_-]+):\s*(?:"([^"]*)"|'([^']*)'|(.+))?$/);
-    if (m) {
-      const key = m[1];
-      const val = m[2] ?? m[3] ?? m[4] ?? '';
-      data[key] = val.trim();
-    }
+    const m = line.match(/^([A-Za-z0-9_-]+):\s*(?:(?:"([^"]*)")|(?:'([^']*)')|(.+))?$/);
+    if (!m) return;
+    const key = m[1];
+    const val = m[2] ?? m[3] ?? m[4] ?? '';
+    data[key] = val.trim();
   });
   const content = raw.slice(fmMatch[0].length).trim();
   return { data, content };
@@ -25,12 +24,11 @@ export default function Postings() {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    // Vite glob to load markdown as raw text (use query/import per Vite deprecation notice)
-    // @ts-ignore
+    // Vite glob: load markdown files as raw strings (query='?raw').
     const modules = import.meta.glob('../../contents/Postings/*.md', {
       query: '?raw',
       import: 'default',
-    });
+    }) as Record<string, () => Promise<string>>;
 
     const load = async () => {
       const entries = Object.entries(modules) as [string, () => Promise<string>][];

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { DataSet, Network } from 'vis-network/standalone';
+// vis-network is loaded at runtime via a lightweight loader to avoid bundling
 
 type Node = { id: string; label: string };
 type Edge = { from: string; to: string };
@@ -14,11 +14,10 @@ export default function Archive() {
     if (!folder) return;
     // load all markdown files under contents/Archives/<folder>
     // Vite requires a static glob string; load all Archives files then filter by folder
-    // @ts-ignore
     const modules = import.meta.glob('../../contents/Archives/*/*.md', {
       query: '?raw',
       import: 'default',
-    });
+    }) as Record<string, () => Promise<string>>;
     const allKeys = Object.keys(modules);
     const keys = allKeys.filter((k) =>
       k.toLowerCase().includes(`/${String(folder).toLowerCase()}/`)
@@ -67,136 +66,162 @@ export default function Archive() {
 
   React.useEffect(() => {
     if (!containerRef.current) return;
-    const data = {
-      nodes: new DataSet<{ id: string; label: string }>(
-        nodes.map((n) => ({ id: n.id, label: n.label }))
-      ),
-      edges: new DataSet<{ id?: string; from: string; to: string }>(
-        edges.map((e) => ({ from: e.from, to: e.to }))
-      ),
-    } as any;
-    const options = {
-      nodes: { shape: 'dot', size: 14 },
-      physics: { stabilization: true },
-      // make edges visually non-reactive to hover/selection by default
-      edges: { arrows: { to: false }, hoverWidth: 0 },
-      interaction: {
-        // reduce zoom sensitivity to 1/4 of default
-        // enable built-in wheel zoom; we force passive listeners during init
-        zoomView: true,
-        zoomSpeed: 0.25,
-        dragView: true,
-        // ensure hover events are enabled
-        hover: true,
-        // disable automatic highlighting/selecting of connected edges
-        hoverConnectedEdges: false,
-        selectConnectedEdges: false,
-        // note: zoomView is disabled above to avoid non-passive wheel listeners
-      },
-    } as any;
-    const network = new Network(containerRef.current, data as any, options);
+    let destroyed = false;
+    let cleanupWheel: (() => void) | null = null;
 
-    // force canvas background in case vis-network injects its own canvas styling
-    const canv = containerRef.current.querySelector('canvas');
-    if (canv) {
-      (canv as HTMLCanvasElement).style.background = '#c8cacf';
-    }
-
-    network.on('click', (params: any) => {
-      console.debug('network click', params);
-      if (params.nodes && params.nodes.length > 0) {
-        const id = params.nodes[0];
-        console.debug('node clicked', id);
-        setActiveSlug(String(id));
-      }
-    });
-
-    // hover: highlight node + connected edges, restore previous selection on blur
-    let _prevSelection: { nodes: string[]; edges: string[] } | null = null;
-    network.on('hoverNode', (params: any) => {
-      console.debug('hoverNode', params);
-      const id = params.node;
-      if (!id) return;
-      try {
-        const sel = network.getSelection();
-        _prevSelection = {
-          nodes: (sel.nodes || []).map(String),
-          edges: (sel.edges || []).map(String),
-        };
-      } catch (e) {
-        _prevSelection = null;
-      }
-      // connected edges
-      const connectedEdges = network.getConnectedEdges(id) || [];
-      // 1-hop neighbor nodes (nodes connected to the hovered node)
-      const neighborNodes = (network.getConnectedNodes(id) || []).map(String);
-      // build selection: hovered node + its neighbors; edges are the connected edges
-      const nodeSelection = Array.from(new Set<string>([String(id), ...neighborNodes]));
-      network.setSelection({ nodes: nodeSelection, edges: connectedEdges });
-    });
-
-    network.on('blurNode', () => {
-      console.debug('blurNode');
-      if (_prevSelection) {
-        network.setSelection(_prevSelection);
-        _prevSelection = null;
+    (async () => {
+      // Use the runtime loader script placed in `public/vendor/vis-loader.js`.
+      // The script exposes `window.__loadVisNetwork()` which imports the
+      // CDN module at runtime. This avoids bundling vis-network while keeping
+      // a simple, lint/TS-friendly call site.
+      let vis: any;
+      if (typeof window !== 'undefined' && typeof window.__loadVisNetwork === 'function') {
+        vis = await window.__loadVisNetwork();
+      } else if (typeof window !== 'undefined') {
+        // If the loader script wasn't included (e.g. unusual build), inject
+        // the public loader module at runtime. We avoid any static import
+        // strings referencing 'vis-network' so bundlers won't include it.
+        await new Promise<void>((resolve, reject) => {
+          try {
+            const script = document.createElement('script');
+            script.type = 'module';
+            script.src = '/vendor/vis-loader.js';
+            script.onload = () => resolve();
+            script.onerror = (e) => reject(e);
+            document.head.appendChild(script);
+          } catch (e) {
+            reject(e);
+          }
+        });
+        if (typeof window.__loadVisNetwork === 'function') {
+          vis = await window.__loadVisNetwork();
+        } else {
+          throw new Error('vis-network loader not available');
+        }
       } else {
-        try {
-          network.unselectAll();
-        } catch (e) {
-          // ignore
-        }
+        throw new Error('No runtime available to load vis-network');
       }
-    });
+      if (destroyed) return;
+      const DataSet = (vis as any).DataSet;
+      const Network = (vis as any).Network;
 
-    // log stabilization lifecycle for diagnosis
-    try {
-      network.on('stabilizationIterationsDone', () => console.debug('stabilization done'));
-    } catch (e) {
-      // some vis versions may not support all events; ignore
-    }
+      const data = {
+        nodes: new DataSet(nodes.map((n) => ({ id: n.id, label: n.label }))),
+        edges: new DataSet(edges.map((e) => ({ from: e.from, to: e.to }))),
+      } as any;
 
-    // Prevent page scrolling when wheel occurs over the graph container.
-    // Use a non-passive listener so we can call preventDefault(). This ensures
-    // the page doesn't scroll while the user is zooming the graph.
-    const containerEl = containerRef.current;
-    const containerWheelHandler = (ev: WheelEvent) => {
-      // only handle when pointer is over the container
-      try {
-        if (!containerEl) return;
-        // Prevent page scroll
-        ev.preventDefault();
-        ev.stopPropagation();
+      const options = {
+        nodes: { shape: 'dot', size: 14 },
+        physics: { stabilization: true },
+        edges: { arrows: { to: false }, hoverWidth: 0 },
+        interaction: {
+          zoomView: true,
+          zoomSpeed: 0.25,
+          dragView: true,
+          hover: true,
+          hoverConnectedEdges: false,
+          selectConnectedEdges: false,
+        },
+      } as any;
 
-        const getScale = (network as any).getScale?.() ?? 1;
-        const delta = ev.deltaY;
-        const baseSpeed = (options.interaction && options.interaction.zoomSpeed) || 0.25;
-        const factor = 1 - (delta / 1000) * baseSpeed;
-        const newScale = Math.max(0.05, Math.min(10, getScale * factor));
-        try {
-          (network as any).moveTo({ scale: newScale, animation: { duration: 120 } });
-        } catch (e) {
-          // ignore
+      const network = new Network(containerRef.current, data as any, options);
+
+      // force canvas background in case vis-network injects its own canvas styling
+      const canv = containerRef.current!.querySelector('canvas');
+      if (canv) (canv as HTMLCanvasElement).style.background = '#c8cacf';
+
+      network.on('click', (params: any) => {
+        if (params.nodes && params.nodes.length > 0) {
+          setActiveSlug(String(params.nodes[0]));
         }
+      });
+
+      let _prevSelection: { nodes: string[]; edges: string[] } | null = null;
+      network.on('hoverNode', (params: any) => {
+        const id = params.node;
+        if (!id) return;
+        try {
+          const sel = network.getSelection();
+          _prevSelection = {
+            nodes: (sel.nodes || []).map(String),
+            edges: (sel.edges || []).map(String),
+          };
+        } catch (e) {
+          _prevSelection = null;
+        }
+        const connectedEdges = network.getConnectedEdges(id) || [];
+        const neighborNodes = (network.getConnectedNodes(id) || []).map(String);
+        const nodeSelection = Array.from(new Set<string>([String(id), ...neighborNodes]));
+        network.setSelection({ nodes: nodeSelection, edges: connectedEdges });
+      });
+
+      network.on('blurNode', () => {
+        if (_prevSelection) {
+          network.setSelection(_prevSelection);
+          _prevSelection = null;
+        } else {
+          try {
+            network.unselectAll();
+          } catch (e) {
+            // ignore
+          }
+        }
+      });
+
+      try {
+        network.on('stabilizationIterationsDone', () => console.debug('stabilization done'));
       } catch (e) {
         // ignore
       }
-    };
-    if (containerEl) {
+
+      // wheel handler to prevent page scroll and perform zoom via network.moveTo
+      const containerEl = containerRef.current!;
+      const containerWheelHandler = (ev: WheelEvent) => {
+        try {
+          if (!containerEl) return;
+          ev.preventDefault();
+          ev.stopPropagation();
+          const getScale = (network as any).getScale?.() ?? 1;
+          const delta = ev.deltaY;
+          const baseSpeed = (options.interaction && options.interaction.zoomSpeed) || 0.25;
+          const factor = 1 - (delta / 1000) * baseSpeed;
+          const newScale = Math.max(0.05, Math.min(10, getScale * factor));
+          try {
+            (network as any).moveTo({ scale: newScale, animation: { duration: 120 } });
+          } catch (e) {
+            // ignore
+          }
+        } catch (e) {
+          // ignore
+        }
+      };
       containerEl.addEventListener('wheel', containerWheelHandler as EventListener, {
         passive: false,
       });
-    }
+      cleanupWheel = () =>
+        containerEl.removeEventListener('wheel', containerWheelHandler as EventListener);
+
+      return () => {
+        try {
+          cleanupWheel?.();
+        } catch (e) {
+          // ignore
+        }
+        try {
+          network.destroy();
+        } catch (e) {
+          // ignore
+        }
+      };
+    })();
 
     return () => {
+      destroyed = true;
       try {
-        if (containerEl) {
-          containerEl.removeEventListener('wheel', containerWheelHandler as EventListener);
-        }
+        // cleanupWheel will be invoked from the async closure's returned cleanup
       } catch (e) {
         // ignore
       }
-      network.destroy();
     };
   }, [nodes, edges]);
 
@@ -220,9 +245,9 @@ export default function Archive() {
         <React.Suspense
           fallback={<div style={{ position: 'fixed', right: 0, top: 0 }}>로딩...</div>}
         >
-          {/* @ts-ignore dynamic import for sidebar */}
           {React.createElement(
-            React.lazy(() => import('../components/Layout/ArchiveSidebar')),
+            // cast to any to avoid TypeScript complaining about lazy generic types
+            React.lazy(() => import('../components/Layout/ArchiveSidebar')) as any,
             {
               folder: folder ?? '',
               slug: activeSlug,

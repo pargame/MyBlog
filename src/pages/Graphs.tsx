@@ -13,11 +13,11 @@ export default function Graphs() {
   const [folders, setFolders] = React.useState<GraphCard[]>([]);
 
   React.useEffect(() => {
-    // @ts-ignore
+    // Vite glob: load archive markdown files as raw strings
     const modules = import.meta.glob('../../contents/Archives/*/*.md', {
       query: '?raw',
       import: 'default',
-    });
+    }) as Record<string, () => Promise<string>>;
     const keys = Object.keys(modules);
     const counts: Record<string, number> = {};
     keys.forEach((k) => {

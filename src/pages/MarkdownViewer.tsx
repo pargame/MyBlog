@@ -2,20 +2,18 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { marked } from 'marked';
 
-// frontmatter parser (same logic as in Postings)
+// Parse YAML frontmatter and return { data, content }
 function parseFrontmatter(raw: string) {
-  // allow optional BOM and any leading whitespace/newlines before the opening ---
   const fmMatch = raw.match(/^[\uFEFF\s]*---\s*([\s\S]*?)\s*---\s*/);
   const data: Record<string, string> = {};
   if (!fmMatch) return { data, content: raw };
   const fm = fmMatch[1];
   fm.split(/\r?\n/).forEach((line) => {
-    const m = line.match(/^([A-Za-z0-9_-]+):\s*(?:"([^"]*)"|'([^']*)'|(.+))?$/);
-    if (m) {
-      const key = m[1];
-      const val = m[2] ?? m[3] ?? m[4] ?? '';
-      data[key] = val.trim();
-    }
+    const m = line.match(/^([A-Za-z0-9_-]+):\s*(?:(?:"([^"]*)")|(?:'([^']*)')|(.+))?$/);
+    if (!m) return;
+    const key = m[1];
+    const val = m[2] ?? m[3] ?? m[4] ?? '';
+    data[key] = val.trim();
   });
   const content = raw.slice(fmMatch[0].length).trim();
   return { data, content };
