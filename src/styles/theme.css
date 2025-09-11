@@ -1,0 +1,69 @@
+:root {
+  --bg: #0f172a;
+  --panel: #0b1220;
+  --muted: #94a3b8;
+  --accent: #7dd3fc;
+  --card: #fff;
+  --radius: 10px;
+  --max-width: 1000px;
+}
+
+.dev-theme {
+  background: linear-gradient(180deg, #f7fafc 0%, #f1f5f9 100%);
+  min-height: 100vh;
+  color: #0b1220;
+  padding: 2rem 1rem;
+}
+
+.dev-theme .app {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  background: var(--card);
+  padding: 2rem;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 30px rgba(2, 6, 23, 0.08);
+}
+
+/* typography */
+h1,
+h2,
+h3 {
+  color: #0b1220;
+  margin-top: 0;
+}
+p {
+  color: #334155;
+  line-height: 1.6;
+}
+
+/* code block */
+pre,
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
+}
+pre {
+  background: #0b1220;
+  color: #e6eef8;
+  padding: 1rem;
+  border-radius: 8px;
+  overflow: auto;
+}
+
+/* links */
+a {
+  color: var(--accent);
+}
+
+/* nav tweaks */
+.site-nav {
+  background: transparent;
+  padding: 0;
+  margin-bottom: 1rem;
+}
+.site-nav .brand {
+  color: #0b1220;
+  font-size: 1.1rem;
+}
+.site-nav .links a {
+  color: #0b1220;
+}
