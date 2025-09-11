@@ -30,17 +30,10 @@ jobs:
       - name: 'Info: prepare to upload artifact'
         run: echo "Uploading ./dist as artifact 'github-pages'"
 
-      - name: Upload dist artifact (github-pages)
-        run: |
-          echo "Packaging ./dist into a single gzip'd tar for Pages"
-          # create a gzip compressed tarball containing the contents of ./dist
-          tar -czf github-pages.tar.gz -C ./dist .
-
-      - name: Upload artifact (github-pages)
-        uses: actions/upload-artifact@v4
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: github-pages
-          path: github-pages.tar.gz
+          path: ./dist
 
   publish:
     name: Publish to gh-pages
@@ -49,17 +42,7 @@ jobs:
     environment: github-pages
     steps:
       - name: 'Info: preparing download'
-        run: echo "Downloading artifact 'github-pages' into ./dist for publishing"
+        run: echo "Deploying artifact uploaded by upload-pages-artifact; actions/deploy-pages will handle download"
 
-      - name: Download pages artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: github-pages
-          path: ./dist
-
-      - name: Deploy to gh-pages branch (peaceiris)
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          publish_dir: ./dist
-          publish_branch: gh-pages
-          allow_empty_commit: false
+      - name: 'Deploy artifact to GitHub Pages (actions/deploy-pages)'
+        uses: actions/deploy-pages@v1
