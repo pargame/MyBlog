@@ -1,4 +1,3 @@
-````markdown
 ---
 title: "Developer theming tips"
 summary: "테마와 CSS 변수로 일관된 UI를 만드는 실용적 팁"
@@ -16,5 +15,3 @@ date: "2025-09-11T05:48:30+00:00"
 ## 코드 하이라이트
 
 Prism이나 Highlight.js를 사용해 코드 블록 하이라이팅을 지원하세요. SSR 환경이면 pre-render된 스타일을 포함시키는 것이 좋습니다.
-
-````

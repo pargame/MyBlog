@@ -4,15 +4,61 @@ type Props = { children: React.ReactNode };
 
 type Theme = 'dark' | 'light';
 
-const stylesDark = `:root { --bg: #0b1220; --panel: #0b1220; --card: #151826; --text: #f8f8f2; --muted: #bfbfce; --muted-text: #9aa6b2; --accent: #6272a4; --accent-2: #ff79c6; --green: #50fa7b; --yellow: #f1fa8c; --radius: 12px; --max-width: 1100px; }`;
-const stylesLight = `:root { --bg: #ffffff; --panel: #f6f7fb; --card: #ffffff; --text: #0b1220; --muted: #4b5563; --muted-text: #6b7280; --accent: #3b82f6; --accent-2: #e11d48; --green: #16a34a; --yellow: #f59e0b; --radius: 12px; --max-width: 1100px; }`;
+const stylesDark = `:root { --bg: #0b1220; --panel: #0b1220; --card: #151826; --text: #f8f8f2; --muted: #bfbfce; --muted-text: #9aa6b2; --accent: #6272a4; --accent-2: #ff79c6; --green: #50fa7b; --yellow: #f1fa8c; --radius: 12px; --max-width: 1100px;
+  /* shadow / glow for dark theme (light/white-ish shadows) */
+  --card-shadow: 0 6px 18px rgba(255,255,255,0.04);
+  --card-shadow-hover: 0 14px 36px rgba(255,255,255,0.06);
+  --card-glow: radial-gradient(40% 40% at 20% 20%, rgba(255,255,255,0.06), transparent 28%), radial-gradient(40% 40% at 80% 80%, rgba(255,255,255,0.04), transparent 28%);
+  --card-glow-blend: screen;
+  --card-glow-opacity: 0.35;
+  --card-glow-opacity-hover: 0.95;
+}`;
+
+const stylesLight = `:root { --bg: #ffffff; --panel: #f6f7fb; --card: #ffffff; --text: #0b1220; --muted: #4b5563; --muted-text: #6b7280; --accent: #3b82f6; --accent-2: #e11d48; --green: #16a34a; --yellow: #f59e0b; --radius: 12px; --max-width: 1100px;
+  /* shadow / glow for light theme (darker shadows) */
+  --card-shadow: 0 6px 18px rgba(2,6,23,0.12);
+  --card-shadow-hover: 0 14px 36px rgba(2,6,23,0.18);
+  --card-glow: radial-gradient(40% 40% at 20% 20%, rgba(99,102,241,0.12), transparent 28%), radial-gradient(40% 40% at 80% 80%, rgba(236,72,153,0.09), transparent 28%);
+  --card-glow-blend: normal;
+  --card-glow-opacity: 0.35;
+  --card-glow-opacity-hover: 0.95;
+}`;
 
 const baseStyles = `
 /* Global reset / base */
 html, body, #root { height: 100%; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin: 0; padding: 0; }
-.dev-theme { background: radial-gradient(circle at 10% 10%, rgba(16, 24, 40, 0.9) 0%, rgba(3, 6, 12, 1) 60%); min-height: 100vh; color: var(--text); padding: 3rem 1.25rem; }
-.dev-theme .app { max-width: var(--max-width); margin: 0 auto; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding: 2rem; border-radius: var(--radius); box-shadow: 0 8px 30px rgba(2,6,23,0.6); }
+.dev-theme { background: var(--bg); min-height: 100vh; color: var(--text); padding: 3rem 1.25rem;
+  /* smooth transitions when theme variables change */
+  transition: background-color 360ms ease, color 360ms ease;
+}
+.dev-theme .app { max-width: var(--max-width); margin: 0 auto; background: var(--panel); padding: 2rem; border-radius: var(--radius); box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+  transition: background-color 360ms ease, box-shadow 360ms ease, color 360ms ease;
+}
+
+/* card and nav should also animate their visual properties */
+.card, article.card {
+  transition: background-color 280ms ease, color 280ms ease, box-shadow 280ms ease, transform 180ms ease;
+}
+nav, .dev-theme nav {
+  transition: background-color 360ms ease, box-shadow 360ms ease, color 360ms ease;
+}
+
+/* Navbar link hover effects (subtle, tasteful) */
+.dev-theme .links a, .dev-theme .brand, .dev-theme nav a {
+  transition: background-color 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+  will-change: background-color, transform, color;
+}
+.dev-theme .links a:hover, .dev-theme nav a:hover {
+  background: rgba(255,255,255,0.03);
+  color: var(--text);
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: var(--card-shadow-hover);
+}
+.dev-theme .brand:hover {
+  background: rgba(255,255,255,0.04);
+  transform: translateY(-1px) scale(1.01);
+}
 `;
 
 const STYLE_ID = 'theme-provider-styles';
@@ -38,7 +84,8 @@ export function useTheme() {
 }
 
 export default function ThemeProvider({ children }: Props) {
-  const [theme, setTheme] = React.useState<Theme>('dark');
+  // Start the app in light mode by default
+  const [theme, setTheme] = React.useState<Theme>('light');
 
   React.useEffect(() => {
     injectTheme(theme);

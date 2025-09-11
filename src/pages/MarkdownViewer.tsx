@@ -4,7 +4,8 @@ import { marked } from 'marked';
 
 // frontmatter parser (same logic as in Postings)
 function parseFrontmatter(raw: string) {
-  const fmMatch = raw.match(/^---\s*([\s\S]*?)\s*---/);
+  // allow optional BOM and any leading whitespace/newlines before the opening ---
+  const fmMatch = raw.match(/^[\uFEFF\s]*---\s*([\s\S]*?)\s*---\s*/);
   const data: Record<string, string> = {};
   if (!fmMatch) return { data, content: raw };
   const fm = fmMatch[1];
@@ -18,6 +19,18 @@ function parseFrontmatter(raw: string) {
   });
   const content = raw.slice(fmMatch[0].length).trim();
   return { data, content };
+}
+
+function formatDate(iso?: string) {
+  if (!iso) return undefined;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  return `${y}-${m}-${day} ${hh}:${mm}`;
 }
 
 export default function MarkdownViewer() {
@@ -51,7 +64,7 @@ export default function MarkdownViewer() {
   return (
     <article>
       {meta?.title && <h1>{meta.title}</h1>}
-      {meta?.date && <div style={{ color: 'var(--muted-text)' }}>{meta.date}</div>}
+      {meta?.date && <div style={{ color: 'var(--muted-text)' }}>{formatDate(meta.date)}</div>}
       <div dangerouslySetInnerHTML={{ __html: marked.parse(raw) }} />
     </article>
   );

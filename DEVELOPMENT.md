@@ -59,7 +59,7 @@
 
 ---
 
-## 폴더 구조
+## 폴더 구조 (실제 로컬 트리 기준)
 
 ```
 /
@@ -80,9 +80,24 @@
 ├─ node_modules/
 ├─ dist/
 ├─ contents/
+│  ├─ Graphs/
+│  │  └─ Archives/..md
+│  └─ Postings/..md
 ├─ src/
 │  ├─ main.tsx
 │  ├─ App.tsx
+│  ├─ ThemeProvider.tsx
+│  ├─ components/
+│  │  ├─ Layout/
+│  │  │  └─ NavBar.tsx
+│  │  └─ UI/
+│  │     ├─ Card.tsx
+│  │     └─ CardGrid.tsx
+│  ├─ pages/
+│  │  ├─ Postings.tsx
+│  │  ├─ MarkdownViewer.tsx
+│  │  └─ Graphs.tsx
+│  ├─ hooks/   (현재 빈 디렉토리; 유틸 훅 보관용)
 │  └─ styles/
 │     └─ styles.css
 └─ eslint.config.cjs
@@ -127,3 +142,45 @@ date: '2025-09-11T04:45:00+00:00'
 - `date` (필수) — ISO 8601 형식(시간 포함)
 
 작성 후에는 `git add -A`, `git commit` 그리고 `git push`로 저장소에 반영하세요.
+
+---
+
+## 컴포넌트 (간단 책임 및 기능)
+
+- `src/components/Layout/NavBar.tsx`
+  - 책임: 앱 최상단 네비게이션 표시 및 라우팅 진입점 제공
+  - 주요 기능: 로고/브랜드 링크(Home), 페이지 링크(예: Graphs), 테마 토글. 호버/포커스 스타일 및 접근성 속성 제공.
+
+- `src/components/UI/Card.tsx`
+  - 책임: 포스팅 요약을 일관된 카드 UI로 표현
+  - 주요 기능: title/summary/date를 렌더링, 링크로 상세 페이지 연결, 호버 시 상승/글로우 효과, 테마 변수에 따른 그림자/글로우 색 반전.
+
+- `src/components/UI/CardGrid.tsx`
+  - 책임: 여러 `Card` 컴포넌트의 레이아웃 관리
+  - 주요 기능: 플렉스 기반 그리드 배치, 포스트 배열을 받아 `Card`로 매핑, `aria-live`로 동적 변경 알림.
+
+- `src/ThemeProvider.tsx`
+  - 책임: 전역 테마 상태 관리 및 CSS 변수 주입
+  - 주요 기능: 라이트/다크 토글, 테마별 CSS 변수(색상·그림자·글로우 등) 생성, 트랜지션 규칙 적용.
+
+- `src/pages/Postings.tsx`
+  - 책임: 홈(포스팅 목록) 페이지 렌더링
+  - 주요 기능: `contents/Postings`에서 마크다운 메타데이터를 읽어 정렬(최신순)하고 `CardGrid`로 렌더링.
+
+- `src/pages/MarkdownViewer.tsx`
+  - 책임: 개별 포스트 본문 표시
+  - 주요 기능: 마크다운 파싱/렌더링(HTML), 전체 날짜(시:분) 표기, 본문 스타일 적용.
+
+- `src/pages/Graphs.tsx`
+  - 책임: 데모/시각화 페이지
+  - 주요 기능: 필요에 따라 그래프/차트 컴포넌트 포함(현재는 플레이스홀더 목적).
+
+- `src/main.tsx`
+  - 책임: React 앱 엔트리포인트
+  - 주요 기능: `ThemeProvider` 및 라우터 래핑 후 `App` 마운트.
+
+- `src/hooks/` (디렉토리)
+  - 책임: 커스텀 훅 및 재사용 가능한 상태/유틸 함수 보관
+  - 현재 상태: 빈 디렉토리(필요 시 훅 추가)
+
+추가 메모: 새로운 컴포넌트를 만들면 이 섹션에 파일 경로와 간단한 책임/기능을 한 줄로 추가해 주세요.

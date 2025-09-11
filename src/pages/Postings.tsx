@@ -3,7 +3,8 @@ import CardGrid, { PostCard } from '../components/UI/CardGrid';
 
 // Simple frontmatter parser for markdown files
 function parseFrontmatter(raw: string) {
-  const fmMatch = raw.match(/^---\s*([\s\S]*?)\s*---/);
+  // allow optional BOM and leading whitespace/newlines before the frontmatter
+  const fmMatch = raw.match(/^[\uFEFF\s]*---\s*([\s\S]*?)\s*---\s*/);
   const data: Record<string, string> = {};
   if (!fmMatch) return { data, content: raw };
   const fm = fmMatch[1];
@@ -52,7 +53,18 @@ export default function Postings() {
         })
       );
 
-      loaded.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      const parseTime = (s?: string) => {
+        if (!s) return 0;
+        const t = Date.parse(s);
+        return Number.isNaN(t) ? 0 : t;
+      };
+
+      loaded.sort((a, b) => {
+        const ta = parseTime(a.date);
+        const tb = parseTime(b.date);
+        if (tb !== ta) return tb - ta; // newest first
+        return (a.title || '').localeCompare(b.title || '');
+      });
       setPosts(loaded);
       setLoading(false);
     };

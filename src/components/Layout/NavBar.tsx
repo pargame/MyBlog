@@ -13,10 +13,7 @@ export default function NavBar() {
     padding: '0.5rem 1rem',
     marginBottom: '1.25rem',
     borderRadius: 10,
-    background:
-      theme === 'dark'
-        ? 'linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))'
-        : 'rgba(255,255,255,0.8)',
+    background: 'var(--panel)',
     boxShadow: '0 6px 20px rgba(2,6,23,0.45)',
   };
 
@@ -51,15 +48,13 @@ export default function NavBar() {
     <nav style={navStyle} aria-label="Main navigation">
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
         <Link to="/" style={brandStyle} className="brand">
-          MyBlog
+          Home
         </Link>
-        <div style={{ display: 'flex', alignItems: 'center' }} className="links">
-          <Link to="/graphs" style={linkStyle}>
-            Graphs
-          </Link>
-        </div>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <Link to="/graphs" style={linkStyle}>
+          Graphs
+        </Link>
         <button onClick={toggle} aria-label="Toggle theme" style={buttonStyle}>
           {theme === 'dark' ? '🌙' : '☀️'}
         </button>

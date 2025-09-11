@@ -10,8 +10,8 @@ export default function App() {
   return (
     <BrowserRouter>
       <ThemeProvider>
+        <NavBar />
         <div className="app">
-          <NavBar />
           <Routes>
             <Route path="/" element={<Postings />} />
             <Route path="/graphs" element={<Graphs />} />
