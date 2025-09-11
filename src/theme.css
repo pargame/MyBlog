@@ -139,29 +139,6 @@
     color: var(--accent-2);
   }
 
-  /* Make article/aside/card links use theme-aware bright color and remove underline
-     - Apply to visited states too
-     - Use high specificity and !important to override other anchor rules
-     - Keep hover/focus color changes but do NOT add underline */
-  .dev-theme article a,
-  .dev-theme article a:visited,
-  .dev-theme aside a,
-  .dev-theme aside a:visited,
-  .dev-theme .card a,
-  .dev-theme .card a:visited {
-    color: var(--link-color) !important;
-    text-decoration: none !important;
-    text-underline-offset: 0;
-  }
-
-  .dev-theme article a:hover,
-  .dev-theme article a:focus,
-  .dev-theme aside a:hover,
-  .dev-theme .card a:hover {
-    color: var(--link-hover) !important;
-    text-decoration: none !important;
-  }
-
   /* nav tweaks */
   .site-nav {
     background: rgba(0, 0, 0, 0.18);
@@ -220,25 +197,4 @@ a {
 }
 .site-nav .links a {
   color: #0b1220;
-}
-
-/* Global, highest-priority override for links inside .dev-theme
-   This forces no underline and the bright link color for all anchors
-   including user-agent pseudo-classes. */
-.dev-theme a,
-.dev-theme a:visited,
-.dev-theme a:-webkit-any-link,
-.dev-theme a[href] {
-  color: var(--link-color) !important;
-  text-decoration: none !important;
-  text-decoration-color: transparent !important;
-  -webkit-text-decoration-color: transparent !important;
-  text-underline-offset: 0 !important;
-  text-decoration-skip-ink: none !important;
-}
-.dev-theme a:hover,
-.dev-theme a:focus,
-.dev-theme a:-webkit-any-link:hover {
-  color: var(--link-hover) !important;
-  text-decoration: none !important;
 }

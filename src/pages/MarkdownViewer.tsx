@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { marked } from 'marked';
+import { useTheme } from '../ThemeProvider';
 
 // Parse YAML frontmatter and return { data, content }
 function parseFrontmatter(raw: string) {
@@ -96,6 +97,7 @@ export default function MarkdownViewer({
 
   // keep ref and its listener hooks stable (must be declared before conditional returns)
   const containerRef = React.useRef<HTMLDivElement | null>(null);
+  const { theme } = useTheme();
 
   // replace wiki links [[slug]] with anchor tags that carry data-wiki
   const processed = (raw || '').replace(/\[\[([^\]]+)\]\]/g, (_m, s) => {
@@ -169,8 +171,11 @@ export default function MarkdownViewer({
     <article>
       {meta?.title && <h1>{meta.title}</h1>}
       {meta?.date && <div style={{ color: 'var(--muted-text)' }}>{formatDate(meta.date)}</div>}
+      {/* scoped styles for markdown links: in dark mode use bright sky-blue and remove underline */}
+      <style>{`.markdown-content a { color: ${theme === 'dark' ? '#7ecbff' : 'var(--accent)'}; text-decoration: none; }`}</style>
       <div
         ref={containerRef}
+        className="markdown-content"
         onClick={handleClick}
         dangerouslySetInnerHTML={{ __html: marked.parse(processed, markedOptions) }}
       />

@@ -5,9 +5,6 @@ type Props = { children: React.ReactNode };
 type Theme = 'dark' | 'light';
 
 const stylesDark = `:root { --bg: #0b1220; --panel: #0b1220; --card: #151826; --text: #f8f8f2; --muted: #bfbfce; --muted-text: #9aa6b2; --accent: #6272a4; --accent-2: #ff79c6; --green: #50fa7b; --yellow: #f1fa8c; --radius: 12px; --max-width: 1100px;
-  /* link color for content (brighter sky blue for dark theme) */
-  --link-color: #e6fbff;
-  --link-hover: #ffffff;
   /* shadow / glow for dark theme (light/white-ish shadows) */
   --card-shadow: 0 6px 18px rgba(255,255,255,0.04);
   --card-shadow-hover: 0 14px 36px rgba(255,255,255,0.06);
@@ -18,9 +15,6 @@ const stylesDark = `:root { --bg: #0b1220; --panel: #0b1220; --card: #151826; --
 }`;
 
 const stylesLight = `:root { --bg: #ffffff; --panel: #f6f7fb; --card: #ffffff; --text: #0b1220; --muted: #4b5563; --muted-text: #6b7280; --accent: #3b82f6; --accent-2: #e11d48; --green: #16a34a; --yellow: #f59e0b; --radius: 12px; --max-width: 1100px;
-  /* link color for content (use accent for light theme) */
-  --link-color: var(--accent);
-  --link-hover: #0b1220;
   /* shadow / glow for light theme (darker shadows) */
   --card-shadow: 0 6px 18px rgba(2,6,23,0.12);
   --card-shadow-hover: 0 14px 36px rgba(2,6,23,0.18);

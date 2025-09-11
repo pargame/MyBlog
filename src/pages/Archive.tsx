@@ -93,7 +93,8 @@ export default function Archive() {
           try {
             const script = document.createElement('script');
             script.type = 'module';
-            script.src = '/vendor/vis-loader.js';
+            // use Vite base url so the file in public/ is resolved correctly in dev and prod
+            script.src = `${import.meta.env.BASE_URL}vendor/vis-loader.js`;
             script.onload = () => resolve();
             script.onerror = (e) => reject(e);
             document.head.appendChild(script);
