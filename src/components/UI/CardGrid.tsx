@@ -6,7 +6,7 @@ export type PostCard = { id: string; title: string; summary?: string; date?: str
 type Props = { posts: PostCard[] };
 
 // GraphCard: for folder-based graph listings (e.g. contents/Archives/Algorithm)
-export type GraphCard = { id: string; name: string; to?: string };
+export type GraphCard = { id: string; name: string; to?: string; count?: number };
 
 type GraphProps = { folders: GraphCard[] };
 
@@ -59,7 +59,12 @@ export function GraphGrid({ folders }: GraphProps) {
     <section style={gridStyle} aria-live="polite">
       {folders.map((f) => (
         <Card key={f.id} to={f.to}>
-          <h3 style={{ margin: 0, fontSize: '1.05rem' }}>{f.name}</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <h3 style={{ margin: 0, fontSize: '1.05rem' }}>{f.name}</h3>
+            {typeof f.count === 'number' && (
+              <div style={{ color: 'var(--muted-text)', fontSize: '0.9rem' }}>{f.count} 문서</div>
+            )}
+          </div>
         </Card>
       ))}
     </section>

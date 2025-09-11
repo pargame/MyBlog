@@ -33,13 +33,40 @@ function formatDate(iso?: string) {
   return `${y}-${m}-${day} ${hh}:${mm}`;
 }
 
-export default function MarkdownViewer() {
-  const { slug } = useParams<{ slug: string }>();
+type Props = { slugProp?: string; base?: 'postings' | 'archives'; folder?: string };
+
+export default function MarkdownViewer({ slugProp, base = 'postings', folder }: Props) {
+  const params = useParams<{ slug: string }>();
+  const slug = slugProp ?? params.slug;
   const [raw, setRaw] = React.useState<string | null>(null);
   const [meta, setMeta] = React.useState<Record<string, string> | null>(null);
 
   React.useEffect(() => {
     if (!slug) return;
+    if (base === 'archives' && folder) {
+      // @ts-ignore
+      const modules = import.meta.glob('../../contents/Archives/*/*.md', {
+        query: '?raw',
+        import: 'default',
+      });
+      const keys = Object.keys(modules);
+      const matchPath = keys.find((p) =>
+        p.toLowerCase().includes(`/${folder.toLowerCase()}/${slug.toLowerCase()}.md`)
+      );
+      if (!matchPath) {
+        setRaw('');
+        return;
+      }
+      (modules as Record<string, () => Promise<any>>)[matchPath]().then((r) => {
+        const rawStr = typeof r === 'string' ? r : (r?.default ?? '');
+        const { data, content } = parseFrontmatter(rawStr);
+        setMeta(data);
+        setRaw(content);
+      });
+      return;
+    }
+
+    // default: postings
     // @ts-ignore
     const modules = import.meta.glob('../../contents/Postings/*.md', {
       query: '?raw',
@@ -51,8 +78,8 @@ export default function MarkdownViewer() {
       return;
     }
     (modules as Record<string, () => Promise<any>>)[matchPath]().then((r) => {
-      const raw = typeof r === 'string' ? r : (r?.default ?? '');
-      const { data, content } = parseFrontmatter(raw);
+      const rawStr = typeof r === 'string' ? r : (r?.default ?? '');
+      const { data, content } = parseFrontmatter(rawStr);
       setMeta(data);
       setRaw(content);
     });

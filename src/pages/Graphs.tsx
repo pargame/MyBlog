@@ -19,12 +19,16 @@ export default function Graphs() {
       import: 'default',
     });
     const keys = Object.keys(modules);
-    const set = new Set<string>();
-    keys.forEach((k) => set.add(folderFromPath(k)));
-    const arr: GraphCard[] = Array.from(set).map((name) => ({
+    const counts: Record<string, number> = {};
+    keys.forEach((k) => {
+      const folder = folderFromPath(k);
+      counts[folder] = (counts[folder] || 0) + 1;
+    });
+    const arr: GraphCard[] = Object.keys(counts).map((name) => ({
       id: name.toLowerCase(),
       name,
-      to: `/graphs/${name.toLowerCase()}`,
+      to: `/archives/${name.toLowerCase()}`,
+      count: counts[name],
     }));
     setFolders(arr);
   }, []);

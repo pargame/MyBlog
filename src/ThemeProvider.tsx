@@ -33,7 +33,7 @@ body { font-family: 'SFMono-Regular', Menlo, Monaco, 'Roboto Mono', 'Segoe UI Mo
   /* smooth transitions when theme variables change */
   transition: background-color 360ms ease, color 360ms ease;
 }
-.dev-theme .app { max-width: var(--max-width); margin: 0 auto; background: var(--panel); padding: 2rem; border-radius: var(--radius); box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+.dev-theme .app { width: 100%; box-sizing: border-box; background: var(--panel); padding: 2rem; border-radius: var(--radius); box-shadow: 0 8px 30px rgba(2,6,23,0.6);
   transition: background-color 360ms ease, box-shadow 360ms ease, color 360ms ease;
 }
 
