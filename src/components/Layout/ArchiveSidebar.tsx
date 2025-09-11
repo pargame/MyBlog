@@ -41,6 +41,51 @@ export default function ArchiveSidebar({ folder, slug: initialSlug, onClose }: P
     };
   }, []);
 
+  // Intercept touch events on mobile so panning the sidebar doesn't scroll the
+  // underlying page. We implement a touch-based scroll handler similar to the
+  // wheel handler: track the initial touch Y and adjust aside.scrollTop while
+  // preventing default behavior on touchmove.
+  React.useEffect(() => {
+    const el = asideRef.current;
+    if (!el) return;
+
+    let touchStartY = 0;
+    let startScrollTop = 0;
+
+    const onTouchStart = (ev: TouchEvent) => {
+      if (!ev.touches || ev.touches.length === 0) return;
+      touchStartY = ev.touches[0].clientY;
+      startScrollTop = el.scrollTop;
+    };
+
+    const onTouchMove = (ev: TouchEvent) => {
+      if (!ev.touches || ev.touches.length === 0) return;
+      const currentY = ev.touches[0].clientY;
+      const delta = touchStartY - currentY;
+      const next = Math.max(0, Math.min(el.scrollHeight - el.clientHeight, startScrollTop + delta));
+      el.scrollTop = next;
+      // Prevent the touch from scrolling the body underneath.
+      ev.preventDefault();
+      ev.stopPropagation();
+    };
+
+    const onTouchEnd = () => {
+      touchStartY = 0;
+      startScrollTop = 0;
+    };
+
+    // touchmove must be non-passive to allow preventDefault
+    el.addEventListener('touchstart', onTouchStart, { passive: true });
+    el.addEventListener('touchmove', onTouchMove as EventListener, { passive: false });
+    el.addEventListener('touchend', onTouchEnd);
+
+    return () => {
+      el.removeEventListener('touchstart', onTouchStart as EventListener);
+      el.removeEventListener('touchmove', onTouchMove as EventListener);
+      el.removeEventListener('touchend', onTouchEnd as EventListener);
+    };
+  }, []);
+
   // Close when clicking outside; uses a document listener to avoid a backdrop
   React.useEffect(() => {
     const el = asideRef.current;
