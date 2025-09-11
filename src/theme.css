@@ -139,34 +139,27 @@
     color: var(--accent-2);
   }
 
-  /* Make article (MarkdownViewer) links use theme-aware link color */
-  /* Stronger rule for Markdown content links: include visited/hover and
-     use a bright sky-blue for dark mode. Use !important to ensure this
-     wins over other generic anchor rules. */
+  /* Make article/aside/card links use theme-aware bright color and remove underline
+     - Apply to visited states too
+     - Use high specificity and !important to override other anchor rules
+     - Keep hover/focus color changes but do NOT add underline */
   .dev-theme article a,
-  .dev-theme article a:visited {
-    color: var(--link-color) !important;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-  .dev-theme article a:hover,
-  .dev-theme article a:focus {
-    color: var(--link-hover) !important;
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
-  }
-
-  /* Apply same bright link color to sidebar and card content areas */
+  .dev-theme article a:visited,
   .dev-theme aside a,
   .dev-theme aside a:visited,
   .dev-theme .card a,
   .dev-theme .card a:visited {
     color: var(--link-color) !important;
-    text-decoration: underline;
+    text-decoration: none !important;
+    text-underline-offset: 0;
   }
+
+  .dev-theme article a:hover,
+  .dev-theme article a:focus,
   .dev-theme aside a:hover,
   .dev-theme .card a:hover {
     color: var(--link-hover) !important;
+    text-decoration: none !important;
   }
 
   /* nav tweaks */
