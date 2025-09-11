@@ -40,22 +40,35 @@
 
 ---
 
+
 ## 폴더 구조
 
 ```
 /
-├─ .github/workflows/deploy-gh-pages.yml
+├─ .github/
+│  └─ workflows/
+│     └─ deploy-gh-pages.yml
+├─ .gitattributes
+├─ .gitignore
+├─ .eslintrc.json
+├─ .prettierrc
+├─ README.md
+├─ DEVELOPMENT.md
 ├─ package.json
+├─ package-lock.json
 ├─ tsconfig.json
 ├─ vite.config.ts
 ├─ index.html
+├─ node_modules/
+├─ dist/
+├─ contents/
 ├─ src/
 │  ├─ main.tsx
 │  ├─ App.tsx
-	│  └─ styles.css
-├─ contents/
-├─ sources/
-└─ DEVELOPMENT.md
+│  └─ styles/
+│     └─ styles.css
+└─ eslint.config.cjs
+
 ```
 
 ---

@@ -1,7 +1,43 @@
+
+# 노드 모듈 및 빌드 결과
 node_modules/
 dist/
+build/
+
+# Vite 캐시
+.vite/
+
+# 환경 변수 (로컬 전용 파일 제외)
 .env
+.env.local
+.env.*.local
+
+# 편집기 및 운영체제 파일
 .DS_Store
-/.vite
 .idea/
-/.vscode/
+.vscode/
+*.swp
+*~
+
+# 캐시 및 로그
+.cache/
+coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 번들러/플랫폼 관련 캐시
+.parcel-cache/
+.rollup.cache
+.turbo/
+.next/
+.nuxt/
+.vercel/
+.expo/
+
+# TypeScript 빌드 정보
+*.tsbuildinfo
+
+# 기타 일시 파일
+*.local

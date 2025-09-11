@@ -1,2 +1,28 @@
-# Auto detect text files and perform LF normalization
+
+# Git 속성: 텍스트 자동 감지 및 LF 정규화
+# 설명: 텍스트 파일은 LF로 정규화하고, 자주 사용하는 형식은 명시적으로 EOL을 설정합니다.
 * text=auto
+
+# 명시적 EOL 설정 (Cross-platform에서 일관된 개행 유지)
+*.md text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+*.sh text eol=lf
+
+# 바이너리 파일은 텍스트 변환을 하지 않음
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.zip binary
+
+# 배포용 아카이브에서 제외할 로컬/빌드 산출물
+node_modules/** export-ignore
+dist/** export-ignore
+build/** export-ignore
+.env export-ignore
+.env.*.local export-ignore
