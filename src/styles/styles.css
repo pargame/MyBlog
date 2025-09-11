@@ -176,10 +176,14 @@ a:hover {
 .sidebar-enter {
   transform: translateX(0%);
   opacity: 1;
-  transition: transform 260ms ease, opacity 200ms ease;
+  transition:
+    transform 260ms ease,
+    opacity 200ms ease;
 }
 .sidebar-exit {
   transform: translateX(110%);
   opacity: 0;
-  transition: transform 260ms ease, opacity 200ms ease;
+  transition:
+    transform 260ms ease,
+    opacity 200ms ease;
 }

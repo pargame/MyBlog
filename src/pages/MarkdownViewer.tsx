@@ -111,6 +111,11 @@ export default function MarkdownViewer({
       const a = target?.closest('[data-wiki]') as HTMLElement | null;
       if (a) {
         e.preventDefault();
+        // Prevent the click from bubbling to document-level listeners (such as
+        // the sidebar's outside-click handler). This ensures clicking a wiki
+        // link inside the sidebar only navigates the sidebar content instead
+        // of closing it.
+        e.stopPropagation();
         const slug = a.getAttribute('data-wiki') || '';
         if (!slug) return;
         if (typeof onWikiLinkClick === 'function') {

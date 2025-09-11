@@ -64,7 +64,6 @@ export default function Archive() {
 
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const [activeSlug, setActiveSlug] = React.useState<string | null>(null);
-  const [sidebarClosing, setSidebarClosing] = React.useState(false);
 
   React.useEffect(() => {
     if (!containerRef.current) return;
@@ -83,6 +82,8 @@ export default function Archive() {
       edges: { arrows: { to: false }, hoverWidth: 0 },
       interaction: {
         // reduce zoom sensitivity to 1/4 of default
+        // enable built-in wheel zoom; we force passive listeners during init
+        zoomView: true,
         zoomSpeed: 0.25,
         dragView: true,
         // ensure hover events are enabled
@@ -90,7 +91,7 @@ export default function Archive() {
         // disable automatic highlighting/selecting of connected edges
         hoverConnectedEdges: false,
         selectConnectedEdges: false,
-        zoomView: true,
+        // note: zoomView is disabled above to avoid non-passive wheel listeners
       },
     } as any;
     const network = new Network(containerRef.current, data as any, options);
@@ -155,7 +156,46 @@ export default function Archive() {
       // some vis versions may not support all events; ignore
     }
 
+    // Prevent page scrolling when wheel occurs over the graph container.
+    // Use a non-passive listener so we can call preventDefault(). This ensures
+    // the page doesn't scroll while the user is zooming the graph.
+    const containerEl = containerRef.current;
+    const containerWheelHandler = (ev: WheelEvent) => {
+      // only handle when pointer is over the container
+      try {
+        if (!containerEl) return;
+        // Prevent page scroll
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        const getScale = (network as any).getScale?.() ?? 1;
+        const delta = ev.deltaY;
+        const baseSpeed = (options.interaction && options.interaction.zoomSpeed) || 0.25;
+        const factor = 1 - (delta / 1000) * baseSpeed;
+        const newScale = Math.max(0.05, Math.min(10, getScale * factor));
+        try {
+          (network as any).moveTo({ scale: newScale, animation: { duration: 120 } });
+        } catch (e) {
+          // ignore
+        }
+      } catch (e) {
+        // ignore
+      }
+    };
+    if (containerEl) {
+      containerEl.addEventListener('wheel', containerWheelHandler as EventListener, {
+        passive: false,
+      });
+    }
+
     return () => {
+      try {
+        if (containerEl) {
+          containerEl.removeEventListener('wheel', containerWheelHandler as EventListener);
+        }
+      } catch (e) {
+        // ignore
+      }
       network.destroy();
     };
   }, [nodes, edges]);
@@ -177,28 +217,21 @@ export default function Archive() {
         ref={containerRef}
       />
       {activeSlug && (
-        <>
-          {/* backdrop: clicking anywhere outside the sidebar closes it */}
-          <div
-            onClick={() => setSidebarClosing(true)}
-            style={{ position: 'fixed', inset: 0, zIndex: 70, background: 'transparent' }}
-          />
-          <React.Suspense
-            fallback={<div style={{ position: 'fixed', right: 0, top: 0 }}>로딩...</div>}
-          >
-            {/* @ts-ignore dynamic import for sidebar */}
-            {React.createElement(
-              React.lazy(() => import('../components/Layout/ArchiveSidebar')),
-              {
-                folder: folder ?? '',
-                slug: activeSlug,
-                onClose: () => {
-                  setActiveSlug(null);
-                },
-              }
-            )}
-          </React.Suspense>
-        </>
+        <React.Suspense
+          fallback={<div style={{ position: 'fixed', right: 0, top: 0 }}>로딩...</div>}
+        >
+          {/* @ts-ignore dynamic import for sidebar */}
+          {React.createElement(
+            React.lazy(() => import('../components/Layout/ArchiveSidebar')),
+            {
+              folder: folder ?? '',
+              slug: activeSlug,
+              onClose: () => {
+                setActiveSlug(null);
+              },
+            }
+          )}
+        </React.Suspense>
       )}
     </main>
   );

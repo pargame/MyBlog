@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import NavBar from './components/Layout/NavBar';
 import ThemeProvider from './ThemeProvider';
 import Postings from './pages/Postings';
@@ -7,22 +7,43 @@ import Graphs from './pages/Graphs';
 import Archive from './pages/Archive';
 import MarkdownViewer from './pages/MarkdownViewer';
 
+const RootLayout: React.FC = () => (
+  <ThemeProvider>
+    <NavBar />
+    <div className="app">
+      <Outlet />
+    </div>
+  </ThemeProvider>
+);
+
+const router = createBrowserRouter(
+  [
+    {
+      path: '/',
+      element: <RootLayout />,
+      children: [
+        { index: true, element: <Postings /> },
+        { path: 'graphs', element: <Graphs /> },
+        { path: 'archives/:folder', element: <Archive /> },
+        { path: 'posts/:slug', element: <MarkdownViewer /> },
+        { path: '*', element: <Postings /> },
+      ],
+    },
+  ],
+  {
+    future: {
+      v7_startTransition: true,
+      v7_relativeSplatPath: true,
+    },
+  } as any
+);
+
 export default function App() {
   return (
-    <BrowserRouter>
-      <ThemeProvider>
-        <NavBar />
-        <div className="app">
-          <Routes>
-            <Route path="/" element={<Postings />} />
-            <Route path="/graphs" element={<Graphs />} />
-            <Route path="/archives/:folder" element={<Archive />} />
-            <Route path="/posts/:slug" element={<MarkdownViewer />} />
-            {/* Redirect any unknown route to home */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </div>
-      </ThemeProvider>
-    </BrowserRouter>
+    <RouterProvider
+      router={router}
+      // Also opt-in to rendering future flags to avoid console deprecation warnings
+      future={{ v7_startTransition: true }}
+    />
   );
 }
