@@ -205,25 +205,30 @@ export default function MarkdownViewer({
   overflow: hidden;
   box-sizing: border-box;
   /* make wrapper clearly distinct from page background */
-  background: ${theme === 'dark' ? '#07111a' : '#edf6fb'};
+  background: ${theme === 'dark' ? '#071826' : '#edf6fb'};
   color: ${theme === 'dark' ? '#dbeeff' : '#0b1220'};
-  padding: 0.5rem; /* ensure inner pre has spacing and wrapper bg is visible */
-  border: 1px solid ${theme === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(11,18,32,0.04)'};
+  padding: 0.6rem; /* ensure inner pre has spacing and wrapper bg is visible */
+  border: 1px solid ${theme === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(11,18,32,0.04)'};
+  position: relative; /* for label overlap positioning */
+  box-shadow: ${theme === 'dark' ? '0 6px 18px rgba(0,0,0,0.6)' : '0 6px 18px rgba(2,6,23,0.06)'};
 }
 .markdown-content .code-lang {
   padding: 6px 10px;
   font-size: 0.75rem;
   font-weight: 600;
   color: ${theme === 'dark' ? '#cdeeff' : '#08306b'};
-  background: ${theme === 'dark' ? '#042331' : '#e8f3ff'};
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
+  background: ${theme === 'dark' ? '#02242f' : '#e8f3ff'};
+  border-radius: 6px;
   display: inline-block;
-  margin-left: 0.25rem;
+  position: absolute;
+  top: 0; /* align near top of wrapper */
+  left: 0.6rem;
+  transform: translateY(-50%);
+  z-index: 3;
 }
 .markdown-content pre.code-block {
   margin: 0;
-  padding: 12px;
+  padding: 1.25rem 12px 12px 12px; /* extra top padding so label doesn't overlap content */
   background: transparent; /* outer wrapper provides background */
   color: inherit;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Helvetica Neue", monospace;
