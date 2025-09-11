@@ -125,7 +125,7 @@
 │  ├─ main.tsx
 │  ├─ App.tsx
 │  ├─ ThemeProvider.tsx
-+│  ├─ components/
+│  ├─ components/
 │  │  ├─ Layout/
 │  │  │  ├─ NavBar.tsx
 │  │  │  ├─ ArchiveSidebar.tsx
@@ -243,23 +243,5 @@ date: '2025-09-11T04:45:00+00:00'
   - 책임: 재사용 훅 보관(현재 빈 디렉토리)
 
 추가 메모: 새로운 컴포넌트를 만들면 이 섹션에 파일 경로와 책임/기능을 한 줄 요약으로 추가하세요.
-
----
-
-## 최근 변경(요약)
-
-- MarkdownViewer: 코드블록 들여쓰기/탭/논리적 줄바꿈 및 다크모드 링크/배경 개선
-- Archive/Graphs: vis-network 로더를 동적 주입으로 변경(정적 script 제거)
-- Sidebar: 모바일 터치/팬 처리 개선, 바디 배경 스크롤 잠금
-- Postings: 상세페이지 하단 '돌아가기' 버튼 추가
-- Footer: `src/components/Layout/Footer.tsx` 추가 — © YEAR Pargame, GitHub 아이콘(아이콘만), 'Contact' 레이블, 런타임 조립 이메일
-
-## 개발 체크리스트 (권장)
-
-1. 변경 전 로컬에서 `npm run check` 실행 (lint/format/typecheck/build)
-2. `git add -A` 후 커밋 메시지를 명확히 작성
-3. `git push` 후 필요 시 `npm run deploy`로 배포
-
----
 
 파일/컴포넌트가 새로 추가되면 이 문서의 "컴포넌트" 섹션에 한 줄 요약을 추가하세요.
