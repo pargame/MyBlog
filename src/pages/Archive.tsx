@@ -64,6 +64,7 @@ export default function Archive() {
 
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const [activeSlug, setActiveSlug] = React.useState<string | null>(null);
+  const [sidebarClosing, setSidebarClosing] = React.useState(false);
 
   React.useEffect(() => {
     if (!containerRef.current) return;
@@ -179,7 +180,7 @@ export default function Archive() {
         <>
           {/* backdrop: clicking anywhere outside the sidebar closes it */}
           <div
-            onClick={() => setActiveSlug(null)}
+            onClick={() => setSidebarClosing(true)}
             style={{ position: 'fixed', inset: 0, zIndex: 70, background: 'transparent' }}
           />
           <React.Suspense
@@ -188,7 +189,13 @@ export default function Archive() {
             {/* @ts-ignore dynamic import for sidebar */}
             {React.createElement(
               React.lazy(() => import('../components/Layout/ArchiveSidebar')),
-              { folder: folder ?? '', slug: activeSlug, onClose: () => setActiveSlug(null) }
+              {
+                folder: folder ?? '',
+                slug: activeSlug,
+                onClose: () => {
+                  setActiveSlug(null);
+                },
+              }
             )}
           </React.Suspense>
         </>

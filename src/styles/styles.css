@@ -171,3 +171,15 @@ a:hover {
     display: none;
   }
 }
+
+/* Sidebar transition helpers */
+.sidebar-enter {
+  transform: translateX(0%);
+  opacity: 1;
+  transition: transform 260ms ease, opacity 200ms ease;
+}
+.sidebar-exit {
+  transform: translateX(110%);
+  opacity: 0;
+  transition: transform 260ms ease, opacity 200ms ease;
+}
