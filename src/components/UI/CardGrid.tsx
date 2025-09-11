@@ -5,7 +5,7 @@ export type PostCard = { id: string; title: string; summary?: string; date?: str
 
 type Props = { posts: PostCard[] };
 
-// GraphCard: for folder-based graph listings (e.g. contents/Archives/Algorithm)
+// GraphCard: folder listing for archive graphs
 export type GraphCard = { id: string; name: string; to?: string; count?: number };
 
 type GraphProps = { folders: GraphCard[] };
@@ -46,7 +46,7 @@ export default function CardGrid({ posts }: Props) {
   );
 }
 
-// Simple grid to render folder cards (Graph sections)
+// Grid to render folder cards
 export function GraphGrid({ folders }: GraphProps) {
   const gridStyle: React.CSSProperties = {
     display: 'flex',

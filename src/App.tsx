@@ -7,6 +7,7 @@ import Graphs from './pages/Graphs';
 const Archive = React.lazy(() => import('./pages/Archive'));
 const MarkdownViewer = React.lazy(() => import('./pages/MarkdownViewer'));
 
+// App routes with lazy-loaded pages
 const RootLayout: React.FC = () => (
   <ThemeProvider>
     <NavBar />
@@ -56,7 +57,7 @@ export default function App() {
   return (
     <RouterProvider
       router={router}
-      // Also opt-in to rendering future flags to avoid console deprecation warnings
+      // Enable future flags to avoid deprecation warnings
       future={{ v7_startTransition: true }}
     />
   );

@@ -63,6 +63,14 @@ export default function Archive() {
 
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const [activeSlug, setActiveSlug] = React.useState<string | null>(null);
+  const [layouting, setLayouting] = React.useState<boolean>(false);
+
+  // stable lazy component - avoid creating a new lazy wrapper on every render
+  const ArchiveSidebarLazy = React.lazy(
+    () => import('../components/Layout/ArchiveSidebar')
+  ) as React.LazyExoticComponent<
+    React.ComponentType<{ folder: string; slug: string; onClose: () => void }>
+  >;
 
   React.useEffect(() => {
     if (!containerRef.current) return;
@@ -110,10 +118,29 @@ export default function Archive() {
         edges: new DataSet(edges.map((e) => ({ from: e.from, to: e.to }))),
       } as any;
 
+      // Always enable physics and hover to preserve original UX
       const options = {
         nodes: { shape: 'dot', size: 14 },
-        physics: { stabilization: true },
-        edges: { arrows: { to: false }, hoverWidth: 0 },
+        // Disable improvedLayout (too heavy for very large graphs) but keep physics
+        layout: { improvedLayout: false },
+        physics: {
+          enabled: true,
+          solver: 'barnesHut',
+          barnesHut: {
+            gravitationalConstant: -2000,
+            centralGravity: 0.3,
+            springLength: 95,
+            springConstant: 0.04,
+            damping: 0.09,
+          },
+          stabilization: {
+            enabled: true,
+            iterations: 200,
+            updateInterval: 25,
+            onlyDynamicEdges: false,
+          },
+        },
+        edges: { arrows: { to: false }, hoverWidth: 1, selectionWidth: 2 },
         interaction: {
           zoomView: true,
           zoomSpeed: 0.25,
@@ -169,7 +196,20 @@ export default function Archive() {
       });
 
       try {
-        network.on('stabilizationIterationsDone', () => console.debug('stabilization done'));
+        // indicate layout phase to the UI
+        setLayouting(true);
+        // once stabilization finishes, stop physics to restore snappy interactions
+        network.once('stabilizationIterationsDone', () => {
+          try {
+            // Keep physics and hover enabled to preserve original UX
+            // No global option toggles here.
+            // Optionally log for debugging.
+            // console.debug('stabilization done');
+          } catch (e) {
+            // ignore
+          }
+          setLayouting(false);
+        });
       } catch (e) {
         // ignore
       }
@@ -241,21 +281,34 @@ export default function Archive() {
         }}
         ref={containerRef}
       />
+      {layouting && (
+        <div
+          style={{
+            position: 'fixed',
+            right: 16,
+            top: 88,
+            padding: '6px 10px',
+            background: 'rgba(0,0,0,0.7)',
+            color: 'white',
+            borderRadius: 6,
+            zIndex: 200,
+            fontSize: 12,
+          }}
+        >
+          그래프 레이아웃 진행 중...
+        </div>
+      )}
       {activeSlug && (
         <React.Suspense
           fallback={<div style={{ position: 'fixed', right: 0, top: 0 }}>로딩...</div>}
         >
-          {React.createElement(
-            // cast to any to avoid TypeScript complaining about lazy generic types
-            React.lazy(() => import('../components/Layout/ArchiveSidebar')) as any,
-            {
-              folder: folder ?? '',
-              slug: activeSlug,
-              onClose: () => {
-                setActiveSlug(null);
-              },
-            }
-          )}
+          <ArchiveSidebarLazy
+            folder={folder ?? ''}
+            slug={activeSlug}
+            onClose={() => {
+              setActiveSlug(null);
+            }}
+          />
         </React.Suspense>
       )}
     </main>

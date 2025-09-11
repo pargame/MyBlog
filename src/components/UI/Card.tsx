@@ -5,7 +5,7 @@ type Props = {
   to?: string;
   children?: React.ReactNode;
 };
-// Card is now a presentational wrapper — content is provided by caller via children
+// Presentational Card wrapper — content supplied via children
 
 export default function Card({ children, to = '/' }: Props) {
   const [hover, setHover] = React.useState(false);
@@ -39,10 +39,8 @@ export default function Card({ children, to = '/' }: Props) {
   React.useEffect(() => {
     if (typeof window === 'undefined') return;
     const s = getComputedStyle(document.documentElement);
-    const blend = s.getPropertyValue('--card-glow-blend').trim() || undefined;
-    const op = parseFloat(s.getPropertyValue('--card-glow-opacity')) || undefined;
-    setGlowBlend(blend);
-    setGlowOpacity(op);
+    setGlowBlend(s.getPropertyValue('--card-glow-blend').trim() || undefined);
+    setGlowOpacity(parseFloat(s.getPropertyValue('--card-glow-opacity')) || undefined);
   }, []);
 
   return (
@@ -52,7 +50,7 @@ export default function Card({ children, to = '/' }: Props) {
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
       >
-        {/* glow layer */}
+        {/* glow layer (visual only) */}
         <div
           aria-hidden
           style={{

@@ -14,30 +14,23 @@ export default function ArchiveSidebar({ folder, slug: initialSlug, onClose }: P
   React.useEffect(() => setLocalSlug(initialSlug), [initialSlug]);
   if (!localSlug) return null;
 
-  // visible state handles enter/exit CSS transitions
+  // Controls CSS enter/exit transitions
   const [visible, setVisible] = React.useState(true);
-  React.useEffect(() => setVisible(!false), []);
+  React.useEffect(() => setVisible(true), []);
 
-  // Sidebar ref so we can intercept wheel events and keep scrolling inside
+  // Sidebar ref: intercept wheel events to keep scrolling inside
   const asideRef = React.useRef<HTMLElement | null>(null);
   React.useEffect(() => {
     const el = asideRef.current;
     if (!el) return;
 
     const onWheel = (ev: WheelEvent) => {
-      try {
-        // Always consume wheel events when pointer is over the sidebar so
-        // the page doesn't scroll. We then manually scroll the aside element
-        // by the wheel delta.
-        ev.preventDefault();
-        ev.stopPropagation();
-        const delta = ev.deltaY;
-        // apply scrolling and clamp
-        const next = Math.max(0, Math.min(el.scrollHeight - el.clientHeight, el.scrollTop + delta));
-        el.scrollTop = next;
-      } catch (e) {
-        // ignore
-      }
+      // Prevent page scroll and scroll the aside element instead
+      ev.preventDefault();
+      ev.stopPropagation();
+      const delta = ev.deltaY;
+      const next = Math.max(0, Math.min(el.scrollHeight - el.clientHeight, el.scrollTop + delta));
+      el.scrollTop = next;
     };
 
     el.addEventListener('wheel', onWheel as EventListener, { passive: false });
@@ -46,25 +39,16 @@ export default function ArchiveSidebar({ folder, slug: initialSlug, onClose }: P
     };
   }, []);
 
-  // Close the sidebar when clicking outside of it. We attach a document
-  // listener so the sidebar can manage its own outside-click behavior and
-  // we don't need a full-screen backdrop that would block wheel events on
-  // the underlying canvas.
+  // Close when clicking outside; uses a document listener to avoid a backdrop
   React.useEffect(() => {
     const el = asideRef.current;
     if (!el) return;
     const onDocClick = (ev: MouseEvent) => {
-      try {
-        // If the click target is inside the aside, ignore. Otherwise start the
-        // exit transition and let onTransitionEnd call onClose.
-        const target = ev.target as Node | null;
-        if (!target) return;
-        if (el.contains(target)) return;
-        // trigger exit animation
-        setVisible(false);
-      } catch (e) {
-        // ignore
-      }
+      const target = ev.target as Node | null;
+      if (!target) return;
+      if (el.contains(target)) return;
+      // start exit transition; onTransitionEnd will call onClose
+      setVisible(false);
     };
     document.addEventListener('click', onDocClick);
     return () => document.removeEventListener('click', onDocClick);

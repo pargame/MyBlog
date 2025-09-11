@@ -25,19 +25,18 @@ const stylesLight = `:root { --bg: #ffffff; --panel: #f6f7fb; --card: #ffffff; -
 }`;
 
 const baseStyles = `
-/* Global reset / base */
+/* Global reset */
 html, body, #root { height: 100%; }
-/* 기본 글꼴을 코딩에 적합한 고정폭 폰트로 설정 */
+/* Use a monospace stack for consistent layout */
 body { font-family: 'SFMono-Regular', Menlo, Monaco, 'Roboto Mono', 'Segoe UI Mono', 'Courier New', monospace; margin: 0; padding: 0; }
 .dev-theme { background: var(--bg); min-height: 100vh; color: var(--text); padding: 3rem 1.25rem;
-  /* smooth transitions when theme variables change */
   transition: background-color 360ms ease, color 360ms ease;
 }
 .dev-theme .app { width: 100%; box-sizing: border-box; background: var(--panel); padding: 2rem; border-radius: var(--radius); box-shadow: 0 8px 30px rgba(2,6,23,0.6);
   transition: background-color 360ms ease, box-shadow 360ms ease, color 360ms ease;
 }
 
-/* card and nav should also animate their visual properties */
+/* Animate cards and navigation */
 .card, article.card {
   transition: background-color 280ms ease, color 280ms ease, box-shadow 280ms ease, transform 180ms ease;
 }
@@ -45,7 +44,7 @@ nav, .dev-theme nav {
   transition: background-color 360ms ease, box-shadow 360ms ease, color 360ms ease;
 }
 
-/* Navbar link hover effects (subtle, tasteful) */
+/* Navbar link hover */
 .dev-theme .links a, .dev-theme .brand, .dev-theme nav a {
   transition: background-color 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
   will-change: background-color, transform, color;

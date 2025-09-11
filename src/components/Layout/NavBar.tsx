@@ -5,6 +5,7 @@ import { useTheme } from '../../ThemeProvider';
 export default function NavBar() {
   const { theme, toggle } = useTheme();
 
+  // Main navigation bar styles
   const navStyle: React.CSSProperties = {
     display: 'flex',
     alignItems: 'center',
@@ -17,6 +18,7 @@ export default function NavBar() {
     boxShadow: '0 6px 20px rgba(2,6,23,0.45)',
   };
 
+  // Brand link styles
   const brandStyle: React.CSSProperties = {
     fontWeight: 700,
     color: 'var(--text)',
@@ -26,6 +28,7 @@ export default function NavBar() {
     background: 'rgba(255,255,255,0.02)',
   };
 
+  // Nav link styles
   const linkStyle: React.CSSProperties = {
     color: 'var(--muted-text)',
     textDecoration: 'none',
@@ -34,6 +37,7 @@ export default function NavBar() {
     borderRadius: 8,
   };
 
+  // Theme toggle button style
   const buttonStyle: React.CSSProperties = {
     marginLeft: '0.75rem',
     padding: '0.4rem 0.7rem',
