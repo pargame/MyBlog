@@ -4,64 +4,130 @@
     --panel: #0f1724;
     --muted: #94a3b8;
     --accent: #60a5fa;
-    --accent-2: #7dd3fc;
-    --card: #071023;
-    --text: #e6eef8;
-    --muted-text: #9aa6b2;
-    --radius: 10px;
-    --max-width: 1100px;
-  }
+    :root {
+      /* Dracula-inspired palette */
+      --bg: #0b1220; /* page background */
+      --panel: #0b1220;
+      --card: #151826; /* slightly lighter panel */
+      --text: #f8f8f2;
+      --muted: #bfbfce;
+      --accent: #6272a4; /* purple-ish */
+      --accent-2: #ff79c6; /* pink */
+      --green: #50fa7b;
+      --yellow: #f1fa8c;
+      --radius: 12px;
+      --max-width: 1100px;
+    }
 
-  .dev-theme {
-    background: radial-gradient(circle at 10% 10%, #071428 0%, #05060a 60%);
-    min-height: 100vh;
-    color: var(--text);
-    padding: 2.5rem 1rem;
-  }
+    .dev-theme {
+      background: radial-gradient(
+        circle at 10% 10%,
+        rgba(16, 24, 40, 0.9) 0%,
+        rgba(3, 6, 12, 1) 60%
+      );
+      min-height: 100vh;
+      color: var(--text);
+      padding: 3rem 1.25rem;
+    }
 
-  .dev-theme .app {
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: 2.25rem;
-    border-radius: var(--radius);
-    box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
-    background: rgba(255, 255, 255, 0.01) !important;
-    border: none !important;
-    /* 더 어두운 배경을 유지하되 흰 테두리는 제거 */
-    /* 은은한 그림자로 카드 느낌 유지 */
-    box-shadow: 0 14px 40px rgba(2, 6, 23, 0.55);
-  }
+    .dev-theme .app {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+      padding: 2rem;
+      border-radius: var(--radius);
+      box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
+    }
 
-  /* typography */
-  h1,
-  h2,
-  h3 {
-    color: var(--text);
-    margin-top: 0;
-  }
-  p {
-    color: var(--muted-text);
-    line-height: 1.7;
-  }
+    /* Typography */
+    h1,
+    h2,
+    h3 {
+      color: var(--text);
+      margin: 0 0 0.6rem 0;
+    }
+    p,
+    li {
+      color: var(--muted);
+      line-height: 1.7;
+    }
 
-  /* code block */
-  pre,
-  code {
-    font-family:
-      ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
-  }
-  pre {
-    background: #071227;
-    color: #dbeafe;
-    padding: 1rem;
-    border-radius: 8px;
-    overflow: auto;
-    border: 1px solid rgba(255, 255, 255, 0.03);
-  }
-  code {
-    background: rgba(255, 255, 255, 0.02);
-    padding: 0.15rem 0.35rem;
-    border-radius: 4px;
+    /* Navigation */
+    .site-nav {
+      background: transparent;
+      padding: 0.5rem 0;
+      margin-bottom: 1.25rem;
+    }
+    .site-nav .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .site-nav .brand {
+      color: var(--text);
+      font-weight: 700;
+      font-size: 1.05rem;
+      padding: 0.6rem 0.9rem;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 8px;
+    }
+    .site-nav .links a {
+      color: var(--muted);
+      text-decoration: none;
+      padding: 0.6rem 0.9rem;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.01);
+    }
+    .site-nav .links a:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    /* Content area */
+    main {
+      padding-top: 1rem;
+    }
+
+    /* Code */
+    pre,
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace;
+    }
+    pre {
+      background: #0b1220;
+      color: #f8f8f2;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow: auto;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+    code {
+      background: rgba(255, 255, 255, 0.02);
+      padding: 0.12rem 0.3rem;
+      border-radius: 4px;
+    }
+
+    /* Cards, small UI */
+    .card {
+      background: var(--card);
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(2, 6, 23, 0.5);
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .dev-theme {
+        padding: 1.2rem;
+      }
+      .dev-theme .app {
+        padding: 1rem;
+      }
+      .site-nav .links {
+        display: none;
+      }
+    }
   }
 
   /* links */
