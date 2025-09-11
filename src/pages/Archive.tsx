@@ -36,11 +36,20 @@ export default function Archive() {
       .then((vals) => {
         const linkRegex = /\[\[([^\]]+)\]\]/g;
         const newEdges: Edge[] = [];
+        // use a Set of sorted pair keys to ensure at most one edge between two nodes
+        const pairSeen = new Set<string>();
         vals.forEach((content: string, idx: number) => {
           const src = fileNodes[idx].id;
           let m: RegExpExecArray | null;
           while ((m = linkRegex.exec(content))) {
             const target = m[1];
+            if (!target) continue;
+            if (target === src) continue; // skip self-links
+            // normalized key for undirected dedupe
+            const key = [String(src), String(target)].sort().join('::');
+            if (pairSeen.has(key)) continue;
+            pairSeen.add(key);
+            // preserve the first-seen direction
             newEdges.push({ from: src, to: target });
           }
         });
@@ -69,16 +78,81 @@ export default function Archive() {
     const options = {
       nodes: { shape: 'dot', size: 14 },
       physics: { stabilization: true },
-      edges: { arrows: { to: false } },
+      // make edges visually non-reactive to hover/selection by default
+      edges: { arrows: { to: false }, hoverWidth: 0 },
+      interaction: {
+        // reduce zoom sensitivity to 1/4 of default
+        zoomSpeed: 0.25,
+        dragView: true,
+        // ensure hover events are enabled
+        hover: true,
+        // disable automatic highlighting/selecting of connected edges
+        hoverConnectedEdges: false,
+        selectConnectedEdges: false,
+        zoomView: true,
+      },
     } as any;
     const network = new Network(containerRef.current, data as any, options);
 
+    // force canvas background in case vis-network injects its own canvas styling
+    const canv = containerRef.current.querySelector('canvas');
+    if (canv) {
+      (canv as HTMLCanvasElement).style.background = '#c8cacf';
+    }
+
     network.on('click', (params: any) => {
+      console.debug('network click', params);
       if (params.nodes && params.nodes.length > 0) {
         const id = params.nodes[0];
+        console.debug('node clicked', id);
         setActiveSlug(String(id));
       }
     });
+
+    // hover: highlight node + connected edges, restore previous selection on blur
+    let _prevSelection: { nodes: string[]; edges: string[] } | null = null;
+    network.on('hoverNode', (params: any) => {
+      console.debug('hoverNode', params);
+      const id = params.node;
+      if (!id) return;
+      try {
+        const sel = network.getSelection();
+        _prevSelection = {
+          nodes: (sel.nodes || []).map(String),
+          edges: (sel.edges || []).map(String),
+        };
+      } catch (e) {
+        _prevSelection = null;
+      }
+      // connected edges
+      const connectedEdges = network.getConnectedEdges(id) || [];
+      // 1-hop neighbor nodes (nodes connected to the hovered node)
+      const neighborNodes = (network.getConnectedNodes(id) || []).map(String);
+      // build selection: hovered node + its neighbors; edges are the connected edges
+      const nodeSelection = Array.from(new Set<string>([String(id), ...neighborNodes]));
+      network.setSelection({ nodes: nodeSelection, edges: connectedEdges });
+    });
+
+    network.on('blurNode', () => {
+      console.debug('blurNode');
+      if (_prevSelection) {
+        network.setSelection(_prevSelection);
+        _prevSelection = null;
+      } else {
+        try {
+          network.unselectAll();
+        } catch (e) {
+          // ignore
+        }
+      }
+    });
+
+    // log stabilization lifecycle for diagnosis
+    try {
+      network.on('stabilizationIterationsDone', () => console.debug('stabilization done'));
+    } catch (e) {
+      // some vis versions may not support all events; ignore
+    }
 
     return () => {
       network.destroy();
@@ -97,20 +171,27 @@ export default function Archive() {
           height: 600,
           border: '1px solid rgba(0,0,0,0.06)',
           borderRadius: 8,
-          background: '#e6e8eb',
+          background: '#d0d2d5',
         }}
         ref={containerRef}
       />
       {activeSlug && (
-        <React.Suspense
-          fallback={<div style={{ position: 'fixed', right: 0, top: 0 }}>로딩...</div>}
-        >
-          {/* @ts-ignore dynamic import for sidebar */}
-          {React.createElement(
-            React.lazy(() => import('../components/Layout/ArchiveSidebar')),
-            { folder: folder ?? '', slug: activeSlug, onClose: () => setActiveSlug(null) }
-          )}
-        </React.Suspense>
+        <>
+          {/* backdrop: clicking anywhere outside the sidebar closes it */}
+          <div
+            onClick={() => setActiveSlug(null)}
+            style={{ position: 'fixed', inset: 0, zIndex: 70, background: 'transparent' }}
+          />
+          <React.Suspense
+            fallback={<div style={{ position: 'fixed', right: 0, top: 0 }}>로딩...</div>}
+          >
+            {/* @ts-ignore dynamic import for sidebar */}
+            {React.createElement(
+              React.lazy(() => import('../components/Layout/ArchiveSidebar')),
+              { folder: folder ?? '', slug: activeSlug, onClose: () => setActiveSlug(null) }
+            )}
+          </React.Suspense>
+        </>
       )}
     </main>
   );

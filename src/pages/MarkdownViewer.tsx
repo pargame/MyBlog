@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { marked } from 'marked';
 
 // frontmatter parser (same logic as in Postings)
@@ -33,13 +33,24 @@ function formatDate(iso?: string) {
   return `${y}-${m}-${day} ${hh}:${mm}`;
 }
 
-type Props = { slugProp?: string; base?: 'postings' | 'archives'; folder?: string };
+type Props = {
+  slugProp?: string;
+  base?: 'postings' | 'archives';
+  folder?: string;
+  onWikiLinkClick?: (slug: string) => void;
+};
 
-export default function MarkdownViewer({ slugProp, base = 'postings', folder }: Props) {
+export default function MarkdownViewer({
+  slugProp,
+  base = 'postings',
+  folder,
+  onWikiLinkClick,
+}: Props) {
   const params = useParams<{ slug: string }>();
   const slug = slugProp ?? params.slug;
   const [raw, setRaw] = React.useState<string | null>(null);
   const [meta, setMeta] = React.useState<Record<string, string> | null>(null);
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     if (!slug) return;
@@ -85,6 +96,33 @@ export default function MarkdownViewer({ slugProp, base = 'postings', folder }: 
     });
   }, [slug]);
 
+  // keep ref and its listener hooks stable (must be declared before conditional returns)
+  const containerRef = React.useRef<HTMLDivElement | null>(null);
+
+  // replace wiki links [[slug]] with anchor tags that carry data-wiki
+  const processed = (raw || '').replace(/\[\[([^\]]+)\]\]/g, (_m, s) => {
+    const slug = String(s).trim();
+    return `<a href="#" data-wiki="${slug}">${slug}</a>`;
+  });
+
+  const handleClick = React.useCallback(
+    (e: React.MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      const a = target?.closest('[data-wiki]') as HTMLElement | null;
+      if (a) {
+        e.preventDefault();
+        const slug = a.getAttribute('data-wiki') || '';
+        if (!slug) return;
+        if (typeof onWikiLinkClick === 'function') {
+          onWikiLinkClick(slug);
+        } else {
+          navigate(`/posts/${slug}`);
+        }
+      }
+    },
+    [onWikiLinkClick, navigate]
+  );
+
   if (raw === null) return <p>로딩 중...</p>;
   if (raw === '') return <p>포스트를 찾을 수 없습니다.</p>;
 
@@ -92,7 +130,11 @@ export default function MarkdownViewer({ slugProp, base = 'postings', folder }: 
     <article>
       {meta?.title && <h1>{meta.title}</h1>}
       {meta?.date && <div style={{ color: 'var(--muted-text)' }}>{formatDate(meta.date)}</div>}
-      <div dangerouslySetInnerHTML={{ __html: marked.parse(raw) }} />
+      <div
+        ref={containerRef}
+        onClick={handleClick}
+        dangerouslySetInnerHTML={{ __html: marked.parse(processed) }}
+      />
     </article>
   );
 }

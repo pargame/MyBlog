@@ -7,8 +7,10 @@ type Props = {
   onClose: () => void;
 };
 
-export default function ArchiveSidebar({ folder, slug, onClose }: Props) {
-  if (!slug) return null;
+export default function ArchiveSidebar({ folder, slug: initialSlug, onClose }: Props) {
+  const [localSlug, setLocalSlug] = React.useState<string | null>(initialSlug);
+  React.useEffect(() => setLocalSlug(initialSlug), [initialSlug]);
+  if (!localSlug) return null;
   return (
     <aside
       role="dialog"
@@ -40,7 +42,12 @@ export default function ArchiveSidebar({ folder, slug, onClose }: Props) {
         </button>
       </div>
       {/* reuse MarkdownViewer to render the document; pass base=archives and folder */}
-      <MarkdownViewer slugProp={slug ?? undefined} base="archives" folder={folder} />
+      <MarkdownViewer
+        slugProp={localSlug ?? undefined}
+        base="archives"
+        folder={folder}
+        onWikiLinkClick={(s) => setLocalSlug(s)}
+      />
     </aside>
   );
 }
