@@ -4,7 +4,7 @@ on:
   workflow_dispatch: {}
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -51,5 +51,15 @@ jobs:
       - name: 'Info: preparing download'
         run: echo "Downloading artifact 'github-pages' into ./dist for publishing"
 
-      - name: 'Deploy artifact to GitHub Pages (actions/deploy-pages)'
-        uses: actions/deploy-pages@v1
+      - name: Download pages artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          path: ./dist
+
+      - name: Deploy to gh-pages branch (peaceiris)
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          publish_dir: ./dist
+          publish_branch: gh-pages
+          allow_empty_commit: false
