@@ -1,0 +1,189 @@
+import React from 'react';
+
+type Props = { children: React.ReactNode };
+
+// Inlined global styles previously in styles.css
+const styles = `
+:root {
+  /* Dracula-inspired palette */
+  --bg: #0b1220; /* page background */
+  --panel: #0b1220;
+  --card: #151826; /* slightly lighter panel */
+  --text: #f8f8f2;
+  --muted: #bfbfce;
+  --muted-text: #9aa6b2;
+  --accent: #6272a4; /* purple-ish */
+  --accent-2: #ff79c6; /* pink */
+  --green: #50fa7b;
+  --yellow: #f1fa8c;
+  --radius: 12px;
+  --max-width: 1100px;
+}
+
+/* Global reset / base */
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Theme wrapper */
+.dev-theme {
+  background: radial-gradient(circle at 10% 10%, rgba(16, 24, 40, 0.9) 0%, rgba(3, 6, 12, 1) 60%);
+  min-height: 100vh;
+  color: var(--text);
+  padding: 3rem 1.25rem;
+}
+
+.dev-theme .app {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+  padding: 2rem;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
+}
+
+/* Typography */
+h1,
+h2,
+h3 {
+  color: var(--text);
+  margin: 0 0 0.6rem 0;
+}
+p,
+li {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* Navigation */
+.site-nav {
+  background: transparent;
+  padding: 0.5rem 0;
+  margin-bottom: 1.25rem;
+}
+.site-nav .nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.site-nav .brand {
+  color: var(--text);
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding: 0.6rem 0.9rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+}
+.site-nav .links a {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.01);
+}
+.site-nav .links a:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Content area */
+main {
+  padding-top: 1rem;
+}
+
+/* Code */
+pre,
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace;
+}
+pre {
+  background: #0b1220;
+  color: #f8f8f2;
+  padding: 1rem;
+  border-radius: 8px;
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+code {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 0.12rem 0.3rem;
+  border-radius: 4px;
+}
+
+/* Cards, small UI */
+.card {
+  background: var(--card);
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.5);
+}
+
+/* Links */
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--accent-2);
+}
+
+/* Nav tweaks fallback */
+.site-nav {
+  background: rgba(0, 0, 0, 0.18);
+  padding: 0.5rem 1rem;
+  margin-bottom: 1.25rem;
+  border-radius: 8px;
+}
+.site-nav .brand {
+  color: var(--text);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+.site-nav .links a {
+  color: var(--muted-text);
+  margin-left: 0.75rem;
+}
+.site-nav .links a:hover {
+  color: var(--text);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .dev-theme {
+    padding: 1.2rem;
+  }
+  .dev-theme .app {
+    padding: 1rem;
+  }
+  .site-nav .links {
+    display: none;
+  }
+}
+`;
+
+function injectStyleOnce() {
+  if (typeof document === 'undefined') return; // SSR guard
+  if (document.getElementById('global-theme-styles')) return;
+  const el = document.createElement('style');
+  el.id = 'global-theme-styles';
+  el.innerHTML = styles;
+  document.head.appendChild(el);
+}
+
+export default function GlobalTheme({ children }: Props) {
+  React.useEffect(() => {
+    injectStyleOnce();
+  }, []);
+
+  return <div className="dev-theme">{children}</div>;
+}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import NavBar from './components/Layout/NavBar';
-import DevTheme from './components/UI/DevTheme';
+import DevTheme from './styles/DevTheme';
 import Postings from './pages/Postings';
 import Graphs from './pages/Graphs';
 
