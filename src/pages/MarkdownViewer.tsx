@@ -199,23 +199,29 @@ export default function MarkdownViewer({
       {/* scoped styles for markdown: links and code block backgrounds for dark/light themes */}
       <style>{`
 .markdown-content a { color: ${theme === 'dark' ? '#7ecbff' : 'var(--accent)'}; text-decoration: none; }
-.markdown-content .code-wrap { margin: 1em 0; border-radius: 8px; overflow: visible; box-sizing: border-box; padding: 0.25rem 0.25rem; }
-.markdown-content .code-lang { padding: 6px 10px; font-size: 0.75rem; font-weight: 600; color: ${theme === 'dark' ? '#cdeeff' : '#08306b'}; background: ${theme === 'dark' ? '#042331' : '#e8f3ff'}; border-top-left-radius: 6px; border-top-right-radius: 6px; }
-.markdown-content .code-block {
-          margin: 0;
-          padding: 12px;
-          background: ${theme === 'dark' ? '#07111a' : '#f6f8fa'};
-          color: ${theme === 'dark' ? '#dbeeff' : '#0b1220'};
-          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Helvetica Neue", monospace;
-          font-size: 0.85rem;
-          line-height: 1.5;
-          /* wrap long lines so content is always visible inside the sidebar */
-          white-space: pre-wrap;
-          overflow-wrap: anywhere;
-          word-break: break-word;
-          overflow: visible;
-        }
-.markdown-content pre.code-block { margin: 0; }
+.markdown-content .code-wrap {
+  margin: 1em 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-sizing: border-box;
+  /* background now belongs to the outer wrapper so the label and body match */
+  background: ${theme === 'dark' ? '#07111a' : '#f6f8fa'};
+  color: ${theme === 'dark' ? '#dbeeff' : '#0b1220'};
+}
+.markdown-content .code-lang { padding: 6px 10px; font-size: 0.75rem; font-weight: 600; color: ${theme === 'dark' ? '#cdeeff' : '#08306b'}; background: ${theme === 'dark' ? '#042331' : '#e8f3ff'}; border-top-left-radius: 6px; border-top-right-radius: 6px; display: inline-block; }
+.markdown-content pre.code-block {
+  margin: 0;
+  padding: 12px;
+  background: transparent; /* outer wrapper provides background */
+  color: inherit;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Helvetica Neue", monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  /* wrap long lines so content is always visible inside the sidebar */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
 .markdown-content code { background: transparent; color: inherit; }
 `}</style>
       <div
