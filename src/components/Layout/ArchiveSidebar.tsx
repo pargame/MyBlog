@@ -1,5 +1,6 @@
 import React from 'react';
 import MarkdownViewer from '../../pages/MarkdownViewer';
+import { useTheme } from '../../ThemeProvider';
 
 type Props = {
   folder: string;
@@ -10,6 +11,7 @@ type Props = {
 };
 
 export default function ArchiveSidebar({ folder, slug: initialSlug, onClose }: Props) {
+  const { theme } = useTheme();
   const [localSlug, setLocalSlug] = React.useState<string | null>(initialSlug);
   React.useEffect(() => setLocalSlug(initialSlug), [initialSlug]);
   if (!localSlug) return null;
@@ -46,6 +48,16 @@ export default function ArchiveSidebar({ folder, slug: initialSlug, onClose }: P
     const onDocClick = (ev: MouseEvent) => {
       const target = ev.target as HTMLElement | null;
       if (!target) return;
+      // If click was on an element that should be ignored (like the theme toggle), don't close
+      try {
+        let cur: HTMLElement | null = target;
+        while (cur) {
+          if (cur.getAttribute && cur.getAttribute('data-ignore-sidebar-close') === 'true') return;
+          cur = cur.parentElement;
+        }
+      } catch (e) {
+        // ignore
+      }
       // If click was inside the aside, ignore
       if (el.contains(target)) return;
       // If a vis-network node was clicked very recently, don't close the
@@ -90,7 +102,7 @@ export default function ArchiveSidebar({ folder, slug: initialSlug, onClose }: P
         top: 0,
         right: 0,
         height: '100vh',
-        width: 520,
+        width: '50vw',
         maxWidth: '100%',
         background: 'var(--panel)',
         boxShadow: 'rgba(2,6,23,0.4) 0px 12px 40px',
@@ -111,7 +123,27 @@ export default function ArchiveSidebar({ folder, slug: initialSlug, onClose }: P
             setVisible(false);
           }}
           aria-label="닫기"
-          style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}
+          style={{
+            border: 'none',
+            background: 'transparent',
+            cursor: 'pointer',
+            color: theme === 'dark' ? 'rgba(255,255,255,0.92)' : 'var(--muted-text)',
+            fontSize: 18,
+            lineHeight: '18px',
+            padding: 6,
+            borderRadius: 8,
+            transition: 'background 150ms ease, transform 120ms ease',
+          }}
+          onMouseEnter={(e) => {
+            const btn = e.currentTarget as HTMLButtonElement;
+            btn.style.background = theme === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)';
+            btn.style.transform = 'translateY(-1px)';
+          }}
+          onMouseLeave={(e) => {
+            const btn = e.currentTarget as HTMLButtonElement;
+            btn.style.background = 'transparent';
+            btn.style.transform = 'none';
+          }}
         >
           ✕
         </button>

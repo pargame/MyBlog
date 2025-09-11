@@ -44,7 +44,12 @@ export default function NavBar() {
   return (
     <nav style={navStyle} aria-label="Main navigation">
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-        <button onClick={toggle} aria-label="Toggle theme" style={buttonStyle}>
+        <button
+          onClick={toggle}
+          aria-label="Toggle theme"
+          style={buttonStyle}
+          data-ignore-sidebar-close="true"
+        >
           {theme === 'dark' ? '🌙' : '☀️'}
         </button>
         <Link to="/" style={navItemStyle} className="brand">
