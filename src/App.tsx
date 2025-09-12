@@ -17,6 +17,15 @@ const RootLayout: React.FC = () => (
   </ThemeProvider>
 );
 
+// Normalize Vite BASE_URL and pass it as the router basename so that
+// Normalize Vite BASE_URL and pass it as the router basename so routes
+// are resolved relative to the deployed subpath (e.g. '/MyBlog').
+// This allows all Link components to use router-relative paths like
+// '/graphs' while the router handles the base prefix exactly once.
+const viteBase = (import.meta.env.BASE_URL as string) || '/';
+const basename =
+  viteBase === '/' ? undefined : viteBase.endsWith('/') ? viteBase.slice(0, -1) : viteBase;
+
 const router = createBrowserRouter(
   [
     {
@@ -46,6 +55,7 @@ const router = createBrowserRouter(
     },
   ],
   {
+    basename,
     future: {
       v7_startTransition: true,
       v7_relativeSplatPath: true,

@@ -16,32 +16,80 @@ export default function Footer() {
   }, [emailChars]);
 
   return (
-    <footer
-      style={{
-        marginTop: 28,
-        padding: '18px 20px',
-        borderTop: '1px solid var(--muted-border)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 12,
-        color: 'var(--muted-text)',
-        fontSize: '0.95rem',
-        background: 'transparent',
-      }}
-    >
+    <footer className="site-footer">
+      <style>{`
+        .site-footer {
+          margin-top: 28px;
+          padding: 18px 20px;
+          border-top: 1px solid var(--muted-border);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          color: var(--muted-text);
+          font-size: 0.95rem;
+          background: transparent;
+          flex-wrap: wrap; /* allow wrapping when narrow */
+        }
+        .site-footer .left {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          flex: 0 1 auto;
+        }
+        .site-footer .right {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          flex: 0 1 auto;
+          justify-content: flex-end;
+          flex-wrap: wrap; /* allow items to wrap to new line */
+        }
+        .site-footer .right .item {
+          white-space: nowrap; /* keep each item on one line */
+        }
+        .site-footer .right .email {
+          text-decoration: underline dotted;
+        }
+
+        /* First breakpoint: drop email to next line (align right) */
+        @media (max-width: 560px) {
+          .site-footer .right .email {
+            flex-basis: 100%;
+            width: 100%;
+            order: 2; /* ensure it sits after contact on visual order */
+            text-align: right;
+            display: block;
+          }
+        }
+
+        /* Second breakpoint: also drop GitHub under the contact; email remains above GitHub */
+        @media (max-width: 440px) {
+          .site-footer .right .github {
+            flex-basis: 100%;
+            width: 100%;
+            order: 3;
+            text-align: right;
+            display: block;
+          }
+          .site-footer .right .email { order: 2; }
+        }
+      `}</style>
       {/* Standard footer left: © YEAR Pargame */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div className="left">
         <div style={{ fontWeight: 600 }}>© {new Date().getFullYear()} Pargame</div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-        <span style={{ color: 'var(--muted-text)', fontSize: '0.95rem' }}>Contact</span>
+      <div className="right">
+        <span className="item contact" style={{ color: 'var(--muted-text)', fontSize: '0.95rem' }}>
+          Contact
+        </span>
         <a
           href="https://github.com/pargame"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Pargame on GitHub"
+          className="item github"
           style={{ color: 'var(--muted-text)', display: 'inline-flex', alignItems: 'center' }}
         >
           <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden>
@@ -51,13 +99,14 @@ export default function Footer() {
 
         <button
           ref={emailRef}
+          className="item email"
           style={{
             background: 'transparent',
             border: 'none',
             color: 'var(--muted-text)',
             cursor: 'pointer',
             fontSize: '0.95rem',
-            textDecoration: 'underline dotted',
+            // visual underline handled by CSS class; keep fallback
           }}
           aria-label="Send email"
           title="Send email"

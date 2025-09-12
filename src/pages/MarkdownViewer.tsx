@@ -267,6 +267,16 @@ export default function MarkdownViewer({
   border-radius: 6px;
 }
 .markdown-content code { background: transparent; color: inherit; }
+.markdown-content blockquote {
+  margin: 0.6em 0;
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  background: ${theme === 'dark' ? 'rgba(255,255,255,0.02)' : '#f3f8ff'};
+  border-left: 4px solid ${theme === 'dark' ? 'rgba(126,203,255,0.18)' : 'rgba(96,165,250,0.7)'};
+  color: ${theme === 'dark' ? '#cfeeff' : '#08306b'};
+  padding-left: 0.9rem;
+}
+.markdown-content blockquote p { margin: 0; }
 `}</style>
       <div
         ref={containerRef}

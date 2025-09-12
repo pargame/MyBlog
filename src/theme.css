@@ -9,9 +9,12 @@
       --bg: #0b1220; /* page background */
       --panel: #0b1220;
       --card: #151826; /* slightly lighter panel */
-      --text: #f8f8f2;
-      --muted: #bfbfce;
-      --accent: #6272a4; /* purple-ish */
+      /* make primary text slightly softer (gray-blue) to reduce glare in dark mode */
+      --text: #cbd7e6; /* soft gray-blue */
+      /* muted paragraph color: darker, less saturated */
+      --muted: #9fb0c8; /* desaturated blue-gray */
+      --muted-text: #98a8bf; /* used by some selectors for muted links */
+      --accent: #6272a4; /* purple-ish (kept) */
       --accent-2: #ff79c6; /* pink */
       --green: #50fa7b;
       --yellow: #f1fa8c;
@@ -96,7 +99,7 @@
     }
     pre {
       background: #0b1220;
-      color: #f8f8f2;
+      color: var(--text);
       padding: 1rem;
       border-radius: 8px;
       overflow: auto;
@@ -174,7 +177,7 @@
 }
 pre {
   background: #0b1220;
-  color: #e6eef8;
+  color: var(--text);
   padding: 1rem;
   border-radius: 8px;
   overflow: auto;

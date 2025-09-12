@@ -5,6 +5,10 @@ import { useTheme } from '../../ThemeProvider';
 export default function NavBar() {
   const { theme, toggle } = useTheme();
 
+  // Router-relative links are used (e.g. '/graphs'). The router's basename
+  // is set from Vite's BASE_URL in App.tsx so the base prefix is applied
+  // exactly once at runtime. Avoid manually prefixing BASE_URL here.
+
   // Main navigation bar styles
   const navStyle: React.CSSProperties = {
     display: 'flex',
@@ -52,12 +56,12 @@ export default function NavBar() {
         >
           {theme === 'dark' ? '🌙' : '☀️'}
         </button>
-        <Link to="/" style={navItemStyle} className="brand">
+        <Link to={'/'} style={navItemStyle} className="brand">
           Home
         </Link>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <Link to="/graphs" style={navItemStyle}>
+        <Link to={'/graphs'} style={navItemStyle}>
           Graphs
         </Link>
       </div>
