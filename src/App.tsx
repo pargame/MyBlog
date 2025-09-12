@@ -4,6 +4,7 @@ import NavBar from './components/Layout/NavBar';
 import ThemeProvider from './ThemeProvider';
 import Postings from './pages/Postings';
 import Graphs from './pages/Graphs';
+import About from './pages/About';
 const Archive = React.lazy(() => import('./pages/Archive'));
 const MarkdownViewer = React.lazy(() => import('./pages/MarkdownViewer'));
 
@@ -33,6 +34,7 @@ const router = createBrowserRouter(
       element: <RootLayout />,
       children: [
         { index: true, element: <Postings /> },
+        { path: 'about', element: <About /> },
         { path: 'graphs', element: <Graphs /> },
         {
           path: 'archives/:folder',

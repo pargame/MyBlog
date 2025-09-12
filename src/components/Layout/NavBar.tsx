@@ -61,6 +61,9 @@ export default function NavBar() {
         </Link>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <Link to={'/about'} style={navItemStyle}>
+          About
+        </Link>
         <Link to={'/graphs'} style={navItemStyle}>
           Graphs
         </Link>

@@ -77,7 +77,6 @@ export default function Postings() {
   return (
     <main>
       <h2>Postings</h2>
-      <p>최근 포스팅</p>
       {loading ? <p>로딩 중...</p> : <CardGrid posts={posts} />}
       <Footer />
     </main>
