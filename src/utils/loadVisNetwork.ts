@@ -1,43 +1,43 @@
-// Runtime loader for vis-network via CDN.
-// This avoids bundling vis-network into the app while keeping a typed
-// surface compatible with `src/types/vis-network.d.ts`.
-import type { DataSet as VisDataSet, Network as VisNetwork } from 'vis-network/standalone';
+// Lightweight runtime loader for vis-network. The Archive page imports this
+// module dynamically to avoid bundling vis-network into the main chunk.
+//
+// Behavior:
+// - If a cached module exists on window.__visModule, return it.
+// - If the global `vis` is already present (e.g. loaded via public/vendor/vis-loader.js),
+//   adapt it into the shape expected by the app.
+// - Otherwise, inject a script tag that loads the UMD standalone build from a CDN.
 
-type VisModule = { DataSet: typeof VisDataSet; Network: typeof VisNetwork };
-
-export async function loadVisNetwork(): Promise<typeof import('vis-network/standalone')> {
+export async function loadVisNetwork() {
   if (typeof window === 'undefined') {
     throw new Error('loadVisNetwork can only be used in the browser');
   }
-  const w = window as Window & {
-    vis?: VisModule;
-    __visModule?: VisModule;
-    __loadVisNetwork?: () => Promise<typeof import('vis-network/standalone')>;
-  };
-  if (w.__visModule) return w.__visModule as typeof import('vis-network/standalone');
+  type VisModuleShape = { DataSet: unknown; Network: unknown };
+  interface WinWithVis {
+    __visModule?: VisModuleShape;
+    vis?: { DataSet?: unknown; Network?: unknown };
+  }
+  const win = window as unknown as WinWithVis;
+  if (win.__visModule) return win.__visModule;
 
-  // If a global `vis` is already present (maybe loaded by other script), use it
-  if (w.vis && w.vis.DataSet && w.vis.Network) {
-    const mod: VisModule = { DataSet: w.vis.DataSet, Network: w.vis.Network };
-    w.__visModule = mod;
-    return mod as unknown as typeof import('vis-network/standalone');
+  // If a global `vis` (UMD) is already available, adapt and cache it
+  if (win.vis && win.vis.DataSet && win.vis.Network) {
+    const m = { DataSet: win.vis.DataSet, Network: win.vis.Network };
+    win.__visModule = m;
+    return m;
   }
 
-  // Create script tag to load the UMD standalone bundle from jsDelivr.
-  // Pin to the version used by the project to keep reproducible behavior.
-  const CDN = 'https://cdn.jsdelivr.net/npm/vis-network@10.0.1/standalone/umd/vis-network.min.js';
-
+  // Fallback: load the standalone UMD bundle from CDN
+  const cdn = 'https://cdn.jsdelivr.net/npm/vis-network@10.0.1/standalone/umd/vis-network.min.js';
   return new Promise((resolve, reject) => {
-    const existing = document.querySelector(`script[src="${CDN}"]`) as HTMLScriptElement | null;
+    const existing = document.querySelector(`script[src="${cdn}"]`);
     if (existing) {
-      // If the script already exists but module not yet available, wait for it.
       existing.addEventListener('load', () => {
-        if (w.vis && w.vis.DataSet && w.vis.Network) {
-          const mod: VisModule = { DataSet: w.vis.DataSet, Network: w.vis.Network };
-          w.__visModule = mod;
-          resolve(mod as unknown as typeof import('vis-network/standalone'));
+        if (win.vis && win.vis.DataSet && win.vis.Network) {
+          const m = { DataSet: win.vis.DataSet, Network: win.vis.Network };
+          win.__visModule = m;
+          resolve(m);
         } else {
-          reject(new Error('vis-network loaded but global not found'));
+          reject(new Error('vis-network loaded but global `vis` not found'));
         }
       });
       existing.addEventListener('error', () =>
@@ -47,26 +47,18 @@ export async function loadVisNetwork(): Promise<typeof import('vis-network/stand
     }
 
     const script = document.createElement('script');
-    script.src = CDN;
+    script.src = cdn;
     script.async = true;
     script.onload = () => {
-      if (w.vis && w.vis.DataSet && w.vis.Network) {
-        const mod: VisModule = { DataSet: w.vis.DataSet, Network: w.vis.Network };
-        w.__visModule = mod;
-        resolve(mod as unknown as typeof import('vis-network/standalone'));
+      if (win.vis && win.vis.DataSet && win.vis.Network) {
+        const m = { DataSet: win.vis.DataSet, Network: win.vis.Network };
+        win.__visModule = m;
+        resolve(m);
       } else {
-        reject(new Error('vis-network loaded but global not found'));
+        reject(new Error('vis-network loaded but global `vis` not found'));
       }
     };
     script.onerror = () => reject(new Error('Failed to load vis-network from CDN'));
     document.head.appendChild(script);
   });
-}
-
-// provide a convenient global loader hook used elsewhere in the codebase
-if (typeof window !== 'undefined') {
-  const win = window as Window & {
-    __loadVisNetwork?: () => Promise<typeof import('vis-network/standalone')>;
-  };
-  if (!win.__loadVisNetwork) win.__loadVisNetwork = loadVisNetwork;
 }

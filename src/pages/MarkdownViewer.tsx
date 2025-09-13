@@ -91,7 +91,7 @@ export default function MarkdownViewer({
       setMeta(data);
       setRaw(content);
     });
-  }, [slug]);
+  }, [slug, base, folder]);
 
   // keep ref and its listener hooks stable (must be declared before conditional returns)
   const containerRef = React.useRef<HTMLDivElement | null>(null);

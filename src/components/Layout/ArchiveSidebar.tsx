@@ -14,7 +14,6 @@ export default function ArchiveSidebar({ folder, slug: initialSlug, onClose }: P
   const { theme } = useTheme();
   const [localSlug, setLocalSlug] = React.useState<string | null>(initialSlug);
   React.useEffect(() => setLocalSlug(initialSlug), [initialSlug]);
-  if (!localSlug) return null;
 
   // Controls CSS enter/exit transitions
   const [visible, setVisible] = React.useState(true);
@@ -131,6 +130,8 @@ export default function ArchiveSidebar({ folder, slug: initialSlug, onClose }: P
     document.addEventListener('click', onDocClick);
     return () => document.removeEventListener('click', onDocClick);
   }, []);
+
+  if (!localSlug) return null;
 
   return (
     <aside

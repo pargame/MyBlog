@@ -15,6 +15,7 @@ module.exports = [
     plugins: {
       '@typescript-eslint': require('@typescript-eslint/eslint-plugin'),
       react: require('eslint-plugin-react')
+      , 'react-hooks': require('eslint-plugin-react-hooks')
     },
     settings: {
       react: { version: 'detect' }
@@ -23,9 +24,11 @@ module.exports = [
     rules: (function () {
       const tsConfig = require('@typescript-eslint/eslint-plugin').configs.recommended || {};
       const reactConfig = require('eslint-plugin-react').configs.recommended || {};
+      const reactHooksConfig = require('eslint-plugin-react-hooks').configs.recommended || {};
       const tsRules = tsConfig.rules || {};
       const reactRules = reactConfig.rules || {};
-      return Object.assign({}, tsRules, reactRules, {
+      const reactHooksRules = reactHooksConfig.rules || {};
+      return Object.assign({}, tsRules, reactRules, reactHooksRules, {
         // Project-specific overrides
         'react/react-in-jsx-scope': 'off',
         'react/prop-types': 'off'
