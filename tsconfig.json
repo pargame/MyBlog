@@ -16,5 +16,6 @@
     "jsx": "react-jsx",
     "types": ["vite/client"]
   },
-  "include": ["src/**/*", "types/**/*"]
+  "include": ["src/**/*", "types/**/*", "src/types/**/*"],
+  "typeRoots": ["src/types", "node_modules/@types"]
 }

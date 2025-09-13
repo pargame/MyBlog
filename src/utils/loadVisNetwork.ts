@@ -1,19 +1,26 @@
 // Runtime loader for vis-network via CDN.
 // This avoids bundling vis-network into the app while keeping a typed
 // surface compatible with `src/types/vis-network.d.ts`.
+import type { DataSet as VisDataSet, Network as VisNetwork } from 'vis-network/standalone';
+
+type VisModule = { DataSet: typeof VisDataSet; Network: typeof VisNetwork };
+
 export async function loadVisNetwork(): Promise<typeof import('vis-network/standalone')> {
   if (typeof window === 'undefined') {
     throw new Error('loadVisNetwork can only be used in the browser');
   }
-
-  const w = window as Window & { vis?: any; __visModule?: any; __loadVisNetwork?: any };
-  if (w.__visModule) return w.__visModule;
+  const w = window as Window & {
+    vis?: VisModule;
+    __visModule?: VisModule;
+    __loadVisNetwork?: () => Promise<typeof import('vis-network/standalone')>;
+  };
+  if (w.__visModule) return w.__visModule as typeof import('vis-network/standalone');
 
   // If a global `vis` is already present (maybe loaded by other script), use it
   if (w.vis && w.vis.DataSet && w.vis.Network) {
-    const mod = { DataSet: w.vis.DataSet, Network: w.vis.Network } as unknown as typeof import('vis-network/standalone');
+    const mod: VisModule = { DataSet: w.vis.DataSet, Network: w.vis.Network };
     w.__visModule = mod;
-    return mod;
+    return mod as unknown as typeof import('vis-network/standalone');
   }
 
   // Create script tag to load the UMD standalone bundle from jsDelivr.
@@ -26,14 +33,16 @@ export async function loadVisNetwork(): Promise<typeof import('vis-network/stand
       // If the script already exists but module not yet available, wait for it.
       existing.addEventListener('load', () => {
         if (w.vis && w.vis.DataSet && w.vis.Network) {
-          const mod = { DataSet: w.vis.DataSet, Network: w.vis.Network } as unknown as typeof import('vis-network/standalone');
+          const mod: VisModule = { DataSet: w.vis.DataSet, Network: w.vis.Network };
           w.__visModule = mod;
-          resolve(mod);
+          resolve(mod as unknown as typeof import('vis-network/standalone'));
         } else {
           reject(new Error('vis-network loaded but global not found'));
         }
       });
-      existing.addEventListener('error', () => reject(new Error('Failed to load vis-network (existing script)')));
+      existing.addEventListener('error', () =>
+        reject(new Error('Failed to load vis-network (existing script)'))
+      );
       return;
     }
 
@@ -42,9 +51,9 @@ export async function loadVisNetwork(): Promise<typeof import('vis-network/stand
     script.async = true;
     script.onload = () => {
       if (w.vis && w.vis.DataSet && w.vis.Network) {
-        const mod = { DataSet: w.vis.DataSet, Network: w.vis.Network } as unknown as typeof import('vis-network/standalone');
+        const mod: VisModule = { DataSet: w.vis.DataSet, Network: w.vis.Network };
         w.__visModule = mod;
-        resolve(mod);
+        resolve(mod as unknown as typeof import('vis-network/standalone'));
       } else {
         reject(new Error('vis-network loaded but global not found'));
       }
@@ -56,6 +65,8 @@ export async function loadVisNetwork(): Promise<typeof import('vis-network/stand
 
 // provide a convenient global loader hook used elsewhere in the codebase
 if (typeof window !== 'undefined') {
-  const win = window as Window & { __loadVisNetwork?: () => Promise<typeof import('vis-network/standalone')> };
+  const win = window as Window & {
+    __loadVisNetwork?: () => Promise<typeof import('vis-network/standalone')>;
+  };
   if (!win.__loadVisNetwork) win.__loadVisNetwork = loadVisNetwork;
 }

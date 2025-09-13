@@ -9,9 +9,9 @@
   },
   "scripts": {
     "dev": "vite",
-    "lint": "npx eslint \"src/**/*.{ts,tsx,js,jsx}\"",
-    "format": "npx prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md,css}\"",
-  "check": "npx eslint \"src/**/*.{ts,tsx,js,jsx}\" --fix && npx prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md,css}\" && npm audit --omit dev --audit-level=moderate && npx vite build",
+    "lint": "eslint \"src/**/*.{ts,tsx,js,jsx}\"",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md,css}\"",
+    "check": "eslint \"src/**/*.{ts,tsx,js,jsx}\" --fix && prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md,css}\" && npm audit --omit dev --audit-level=moderate && vite build",
     "build": "vite build",
     "deploy": "if command -v gh >/dev/null 2>&1; then gh workflow run deploy.yml --repo pargame/MyBlog --ref main && echo 'Dispatched deploy.yml via gh'; elif [ -n \"$GH_TOKEN\" ]; then curl -sSf -X POST -H \"Accept: application/vnd.github+json\" -H \"Authorization: token $GH_TOKEN\" https://api.github.com/repos/pargame/MyBlog/actions/workflows/deploy.yml/dispatches -d '{\"ref\":\"main\"}' && echo 'Dispatched deploy.yml via GH_TOKEN'; else echo 'gh CLI not available and GH_TOKEN not set. Install gh or set GH_TOKEN.'; exit 1; fi"
   },
@@ -22,13 +22,14 @@
     ]
   },
   "engines": {
-  "node": ">=22.19.0"
+    "node": ">=20.0.0"
   },
+  "homepage": "https://pargame.github.io/MyBlog/",
   "dependencies": {
     "marked": "^16.2.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-  "react-router-dom": "^7.9.1"
+    "react-router-dom": "^7.9.1"
   },
   "devDependencies": {
     "@types/react": "^19.1.13",

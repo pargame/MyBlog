@@ -92,7 +92,9 @@ export default function Archive() {
         vis = await loader.loadVisNetwork();
       } catch (e) {
         // As a fallback, try any global loader that might be provided on window.
-        const win = window as Window & { __loadVisNetwork?: () => Promise<typeof import('vis-network/standalone')> };
+        const win = window as Window & {
+          __loadVisNetwork?: () => Promise<typeof import('vis-network/standalone')>;
+        };
         if (typeof win.__loadVisNetwork === 'function') {
           vis = await win.__loadVisNetwork();
         } else {

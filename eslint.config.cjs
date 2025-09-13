@@ -40,6 +40,3 @@ module.exports = [
     }
   }
 ];
-
-// deleted in favor of legacy .eslintrc.json; kept temporarily for audit
-
