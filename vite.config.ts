@@ -14,11 +14,12 @@ export default defineConfig({
       output: {
         manualChunks(id: string) {
           if (!id) return undefined;
-          // Create smaller, semantically grouped vendor chunks to avoid
-          // shipping an unnecessarily large single vendor file on first load.
-          // keep react-router-dom bundled with other vendor chunks (avoid empty chunk)
-          if (id.includes('node_modules/react-dom')) return 'vendor.react-dom';
-          if (id.includes('node_modules/react')) return 'vendor.react';
+          // Avoid splitting React and related routing libraries into separate chunks.
+          // Splitting them can create circular initialization issues where one chunk
+          // references the other before it's initialized (see runtime `memo` undefined).
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router') || id.includes('node_modules/react-router-dom')) {
+            return 'vendor.react';
+          }
           if (id.includes('node_modules/marked')) return 'vendor.marked';
           if (id.includes('node_modules/vis-network')) return 'vendor.vis-network';
           // Fallback: other node_modules grouped into vendor
