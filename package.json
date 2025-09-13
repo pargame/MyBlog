@@ -28,8 +28,7 @@
     "marked": "^16.2.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.9.1",
-    "vis-network": "^10.0.1"
+  "react-router-dom": "^7.9.1"
   },
   "devDependencies": {
     "@types/react": "^19.1.13",

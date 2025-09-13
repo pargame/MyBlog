@@ -83,18 +83,18 @@ export default function Archive() {
     let cleanupWheel: (() => void) | null = null;
 
     (async () => {
-      // Prefer dynamic ESM import of vis-network so Vite can code-split it
-      // and produce a proper chunk. This avoids relying on an external
-      // runtime loader script and keeps the chunking predictable.
+      // Use a lightweight runtime CDN loader instead of bundling vis-network.
+      // This keeps the bundle size small and lets the library be cached
+      // independently by the browser.
       let vis = undefined as typeof import('vis-network/standalone') | undefined;
       try {
-        const mod = await import('vis-network/standalone');
-        vis = mod as typeof import('vis-network/standalone');
+        const loader = await import('../utils/loadVisNetwork');
+        vis = await loader.loadVisNetwork();
       } catch (e) {
-        // As a graceful fallback, if the repo provides a runtime loader
-        // on window, use it. Otherwise rethrow the import error.
-        if (typeof window !== 'undefined' && typeof (window as any).__loadVisNetwork === 'function') {
-          vis = await (window as any).__loadVisNetwork();
+        // As a fallback, try any global loader that might be provided on window.
+        const win = window as Window & { __loadVisNetwork?: () => Promise<typeof import('vis-network/standalone')> };
+        if (typeof win.__loadVisNetwork === 'function') {
+          vis = await win.__loadVisNetwork();
         } else {
           throw e;
         }
