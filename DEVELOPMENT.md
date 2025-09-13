@@ -15,6 +15,7 @@ AI 온보딩 작업 지침 문서입니다. AI는 모든 작업에서 이 지침
 
 1. PR 금지
 2. 요청 없을 떄 임의 커밋·푸시 금지
+3. 개발서버 실행 금지
 
 * 허용 명령:
 
@@ -57,6 +58,30 @@ AI 온보딩 작업 지침 문서입니다. AI는 모든 작업에서 이 지침
 
 - 로컬에서 `npm run check` 통과는 커밋/배포의 전제조건입니다.
 
+---
+
+## Pynode (간이 WebIDE) 관련 개발 노트
+
+최근 `src/pages/Pynode.tsx`에 Pyodide 기반의 간이 웹 IDE가 추가/개선되었습니다. 이 컴포넌트는 브라우저 워커에서 Pyodide를 구동해 Python 코드를 실행하고, 터미널(화면)으로 stdout/stderr를 전달하며 `input()` 상호작용을 지원합니다. 아래 내용은 해당 컴포넌트 작업 시 반드시 숙지해야 할 주요 사항입니다.
+
+- 주요 파일: `src/pages/Pynode.tsx`
+- 동작 요약:
+  - 워커(Worker)를 Blob으로 생성해 내부에서 `pyodide.js`를 importScripts로 로드합니다.
+  - Python 실행은 워커 내부에서 StringIO로 stdout/stderr를 캡처해 한 번에 메인으로 전달하는 방식을 사용해 호환성/안정성을 높였습니다.
+  - `request-input` / `input-value` 메시지 프로토콜로 `input()` 상호작용을 처리합니다. 메인 쪽은 인-터미널 입력 박스를 표시해 사용자가 값을 제출하면 워커에 전달합니다.
+  - 디버그 로그/임시 출력은 제거되어 터미널에는 원래 프로그램의 stdout/stderr만 표시됩니다. (예: 이전에 보이던 `[process ...] exited` 같은 보조 로그는 제거됨)
+
+- 개발/디버깅 팁:
+  - 워커 스크립트는 템플릿 리터럴/인코딩 문제로 SyntaxError가 발생할 수 있으니 `workerScript` 정의부를 수정할 때는 `String.raw`와 `TextEncoder` 사용 규칙을 지켜주세요.
+  - 메시지 중복 출력은 메시지 핸들러 중복 등록이나 stdout 스트리밍/버퍼링 동시 사용으로 발생할 수 있으니, 핸들러는 중앙화하고 중복 리스너가 등록되지 않도록 주의하세요.
+  - `npm run check`(lint/format/audit/build) 통과를 항상 확인한 후 커밋하세요.
+
+- 문서화:
+  - 주요 에러 사례와 원인/해결 방법은 `ERRORCASES.md`에 정리해 두었습니다. Pynode 관련 문제는 우선 그 문서를 확인하세요.
+
+---
+
+
 ## 폴더 구조 (실제 로컬 트리 기준)
 
 ```
@@ -98,7 +123,8 @@ AI 온보딩 작업 지침 문서입니다. AI는 모든 작업에서 이 지침
 │     ├─ Postings.tsx
 │     ├─ MarkdownViewer.tsx
 │     ├─ Graphs.tsx
-│     └─ Archive.tsx
+│     ├─ Archive.tsx
+│     └─ Pynode.tsx    # Pyodide 기반 간이 WebIDE (터미널 + input 지원)
 └─ eslint.config.cjs
 
 ```
@@ -154,6 +180,11 @@ AI 온보딩 작업 지침 문서입니다. AI는 모든 작업에서 이 지침
 - `src/pages/Graphs.tsx`
   - 책임: 시각화 데모/테스트 페이지
   - 주요 기능: 그래프/차트 컴포넌트 포함(플레이스홀더)
+
+- `src/pages/Pynode.tsx`
+  - 책임: Pyodide 기반 간이 WebIDE (브라우저 워커에서 Pyodide 실행)
+  - 주요 기능: Monaco 편집기, 워커 기반 Pyodide 실행, 터미널(stdout/stderr) 출력, `input()` 상호작용 처리
+  - 주의사항: 워커 스크립트 인코딩(String.raw + TextEncoder), 메시지 핸들러 중앙화, StringIO 기반 stdout 캡처 권장
 
 - `src/main.tsx`
   - 책임: 앱 엔트리포인트
