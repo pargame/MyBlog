@@ -83,37 +83,21 @@ export default function Archive() {
     let cleanupWheel: (() => void) | null = null;
 
     (async () => {
-      // Use the runtime loader script placed in `public/vendor/vis-loader.js`.
-      // The script exposes `window.__loadVisNetwork()` which imports the
-      // CDN module at runtime. This avoids bundling vis-network while keeping
-      // a simple, lint/TS-friendly call site.
+      // Prefer dynamic ESM import of vis-network so Vite can code-split it
+      // and produce a proper chunk. This avoids relying on an external
+      // runtime loader script and keeps the chunking predictable.
       let vis = undefined as typeof import('vis-network/standalone') | undefined;
-      if (typeof window !== 'undefined' && typeof window.__loadVisNetwork === 'function') {
-        vis = await window.__loadVisNetwork();
-      } else if (typeof window !== 'undefined') {
-        // If the loader script wasn't included (e.g. unusual build), inject
-        // the public loader module at runtime. We avoid any static import
-        // strings referencing 'vis-network' so bundlers won't include it.
-        await new Promise<void>((resolve, reject) => {
-          try {
-            const script = document.createElement('script');
-            script.type = 'module';
-            // use Vite base url so the file in public/ is resolved correctly in dev and prod
-            script.src = `${import.meta.env.BASE_URL}vendor/vis-loader.js`;
-            script.onload = () => resolve();
-            script.onerror = (_err) => reject(_err);
-            document.head.appendChild(script);
-          } catch (e) {
-            reject(e);
-          }
-        });
-        if (typeof window.__loadVisNetwork === 'function') {
-          vis = await window.__loadVisNetwork();
+      try {
+        const mod = await import('vis-network/standalone');
+        vis = mod as typeof import('vis-network/standalone');
+      } catch (e) {
+        // As a graceful fallback, if the repo provides a runtime loader
+        // on window, use it. Otherwise rethrow the import error.
+        if (typeof window !== 'undefined' && typeof (window as any).__loadVisNetwork === 'function') {
+          vis = await (window as any).__loadVisNetwork();
         } else {
-          throw new Error('vis-network loader not available');
+          throw e;
         }
-      } else {
-        throw new Error('No runtime available to load vis-network');
       }
       if (destroyed) return;
       const DataSet = vis!.DataSet;
