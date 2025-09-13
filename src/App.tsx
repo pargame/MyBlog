@@ -7,6 +7,7 @@ import Graphs from './pages/Graphs';
 import About from './pages/About';
 const Archive = React.lazy(() => import('./pages/Archive'));
 const MarkdownViewer = React.lazy(() => import('./pages/MarkdownViewer'));
+const Pynode = React.lazy(() => import('./pages/Pynode'));
 
 // App routes with lazy-loaded pages
 const RootLayout: React.FC = () => (
@@ -49,6 +50,14 @@ const router = createBrowserRouter(
           element: (
             <React.Suspense fallback={<div>로딩...</div>}>
               <MarkdownViewer />
+            </React.Suspense>
+          ),
+        },
+        {
+          path: 'pynode',
+          element: (
+            <React.Suspense fallback={<div>로딩...</div>}>
+              <Pynode />
             </React.Suspense>
           ),
         },

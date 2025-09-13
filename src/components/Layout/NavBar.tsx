@@ -67,6 +67,9 @@ export default function NavBar() {
         <Link to={'/graphs'} style={navItemStyle}>
           Graphs
         </Link>
+        <Link to={'/pynode'} style={navItemStyle}>
+          Pynode
+        </Link>
       </div>
     </nav>
   );
