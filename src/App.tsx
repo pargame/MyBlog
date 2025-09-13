@@ -71,7 +71,7 @@ const router = createBrowserRouter(
       v7_startTransition: true,
       v7_relativeSplatPath: true,
     },
-  } as any
+  } as unknown as Record<string, unknown>
 );
 
 export default function App() {

@@ -54,11 +54,10 @@ export default function MarkdownViewer({
   React.useEffect(() => {
     if (!slug) return;
     if (base === 'archives' && folder) {
-      // @ts-ignore
       const modules = import.meta.glob('../../contents/Archives/*/*.md', {
         query: '?raw',
         import: 'default',
-      });
+      }) as Record<string, () => Promise<string>>;
       const keys = Object.keys(modules);
       const matchPath = keys.find((p) =>
         p.toLowerCase().includes(`/${folder.toLowerCase()}/${slug.toLowerCase()}.md`)
@@ -67,8 +66,8 @@ export default function MarkdownViewer({
         setRaw('');
         return;
       }
-      (modules as Record<string, () => Promise<any>>)[matchPath]().then((r) => {
-        const rawStr = typeof r === 'string' ? r : (r?.default ?? '');
+      modules[matchPath]().then((r) => {
+        const rawStr = String(r);
         const { data, content } = parseFrontmatter(rawStr);
         setMeta(data);
         setRaw(content);
@@ -77,18 +76,17 @@ export default function MarkdownViewer({
     }
 
     // default: postings
-    // @ts-ignore
     const modules = import.meta.glob('../../contents/Postings/*.md', {
       query: '?raw',
       import: 'default',
-    });
+    }) as Record<string, () => Promise<string>>;
     const matchPath = Object.keys(modules).find((p) => p.includes(`/${slug}.md`));
     if (!matchPath) {
       setRaw('');
       return;
     }
-    (modules as Record<string, () => Promise<any>>)[matchPath]().then((r) => {
-      const rawStr = typeof r === 'string' ? r : (r?.default ?? '');
+    modules[matchPath]().then((r) => {
+      const rawStr = String(r);
       const { data, content } = parseFrontmatter(rawStr);
       setMeta(data);
       setRaw(content);
@@ -112,7 +110,11 @@ export default function MarkdownViewer({
   const renderer = new marked.Renderer();
   // marked v5 uses a single Code object parameter for renderer.code
   renderer.code = (codeObj: { lang?: string; text: string; escaped?: boolean }) => {
-    const { lang = '', text = '', escaped = false } = codeObj as any;
+    const {
+      lang = '',
+      text = '',
+      escaped = false,
+    } = codeObj as { lang?: string; text: string; escaped?: boolean };
     let langTrim = String(lang || '').trim();
     let body = String(text || '');
 

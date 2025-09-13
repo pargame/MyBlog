@@ -101,7 +101,7 @@ export default function ArchiveSidebar({ folder, slug: initialSlug, onClose }: P
           if (cur.getAttribute && cur.getAttribute('data-ignore-sidebar-close') === 'true') return;
           cur = cur.parentElement;
         }
-      } catch (e) {
+      } catch {
         // ignore
       }
       // If click was inside the aside, ignore
@@ -112,8 +112,9 @@ export default function ArchiveSidebar({ folder, slug: initialSlug, onClose }: P
       // event ordering differences where the network's stopPropagation may
       // not prevent the document listener from firing.
       try {
-        if ((window as any).__archiveNodeClick) return;
-      } catch (e) {
+        if ((window as unknown as Window & { __archiveNodeClick?: boolean }).__archiveNodeClick)
+          return;
+      } catch {
         // ignore
       }
       // Previously clicks anywhere in the graph container were ignored which
@@ -137,9 +138,9 @@ export default function ArchiveSidebar({ folder, slug: initialSlug, onClose }: P
       role="dialog"
       aria-label="문서 미리보기"
       className={visible ? 'sidebar-enter' : 'sidebar-exit'}
-      onTransitionEnd={(e) => {
+      onTransitionEnd={(_e) => {
         // when exit transition ends, call onClose to unmount
-        if ((e.target as HTMLElement).classList.contains('sidebar-exit')) {
+        if ((_e.target as unknown as HTMLElement).classList.contains('sidebar-exit')) {
           onClose();
         }
       }}
@@ -201,7 +202,7 @@ export default function ArchiveSidebar({ folder, slug: initialSlug, onClose }: P
           maxHeight: 'calc(100vh - 72px)',
           overflow: 'auto',
           // hide native scrollbars across browsers while preserving scroll behavior
-          scrollbarWidth: 'none' as any,
+          scrollbarWidth: 'none' as React.CSSProperties['scrollbarWidth'],
           msOverflowStyle: 'none',
           WebkitOverflowScrolling: 'touch',
         }}

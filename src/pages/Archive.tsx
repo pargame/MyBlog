@@ -1,9 +1,14 @@
 import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 // vis-network is loaded at runtime via a lightweight loader to avoid bundling
 
 type Node = { id: string; label: string };
 type Edge = { from: string; to: string };
+
+// Minimal runtime-facing types for the dynamically-loaded vis-network bundle.
+// These keep typing strict without depending on the library's ambient types.
+// The project includes a declaration for 'vis-network/standalone' in
+// src/types/vis-network.d.ts; we rely on that ambient module at runtime.
 
 export default function Archive() {
   const { folder } = useParams<{ folder: string }>();
@@ -82,7 +87,7 @@ export default function Archive() {
       // The script exposes `window.__loadVisNetwork()` which imports the
       // CDN module at runtime. This avoids bundling vis-network while keeping
       // a simple, lint/TS-friendly call site.
-      let vis: any;
+      let vis = undefined as typeof import('vis-network/standalone') | undefined;
       if (typeof window !== 'undefined' && typeof window.__loadVisNetwork === 'function') {
         vis = await window.__loadVisNetwork();
       } else if (typeof window !== 'undefined') {
@@ -96,7 +101,7 @@ export default function Archive() {
             // use Vite base url so the file in public/ is resolved correctly in dev and prod
             script.src = `${import.meta.env.BASE_URL}vendor/vis-loader.js`;
             script.onload = () => resolve();
-            script.onerror = (e) => reject(e);
+            script.onerror = (_err) => reject(_err);
             document.head.appendChild(script);
           } catch (e) {
             reject(e);
@@ -111,13 +116,13 @@ export default function Archive() {
         throw new Error('No runtime available to load vis-network');
       }
       if (destroyed) return;
-      const DataSet = (vis as any).DataSet;
-      const Network = (vis as any).Network;
+      const DataSet = vis!.DataSet;
+      const Network = vis!.Network;
 
       const data = {
         nodes: new DataSet(nodes.map((n) => ({ id: n.id, label: n.label }))),
-        edges: new DataSet(edges.map((e) => ({ from: e.from, to: e.to }))),
-      } as any;
+        edges: new DataSet(edges.map((edge) => ({ from: edge.from, to: edge.to }))),
+      };
 
       // Always enable physics and hover to preserve original UX
       const options = {
@@ -150,32 +155,33 @@ export default function Archive() {
           hoverConnectedEdges: false,
           selectConnectedEdges: false,
         },
-      } as any;
+      };
 
-      const network = new Network(containerRef.current, data as any, options);
+      const network = new Network(containerRef.current!, data, options);
 
       // force canvas background in case vis-network injects its own canvas styling
       const canv = containerRef.current!.querySelector('canvas');
       if (canv) (canv as HTMLCanvasElement).style.background = '#c8cacf';
 
-      network.on('click', (params: any) => {
-        if (params.nodes && params.nodes.length > 0) {
-          setActiveSlug(String(params.nodes[0]));
+      network.on('click', (params?: { nodes?: Array<string | number>; event?: unknown }) => {
+        const nodesParam = params?.nodes;
+        if (nodesParam && nodesParam.length > 0) {
+          setActiveSlug(String(nodesParam[0]));
           // Mark that a vis-network node was clicked. This helps other
           // document-level listeners (like ArchiveSidebar's click handler)
           // distinguish node clicks from background/canvas clicks even if
           // event propagation ordering varies between vis-network and the
           // DOM. The flag is cleared on the next tick.
           try {
-            (window as any).__archiveNodeClick = true;
+            (window as Window & { __archiveNodeClick?: boolean }).__archiveNodeClick = true;
             setTimeout(() => {
               try {
-                (window as any).__archiveNodeClick = false;
-              } catch (e) {
-                /* ignore */
+                (window as Window & { __archiveNodeClick?: boolean }).__archiveNodeClick = false;
+              } catch {
+                // ignore
               }
             }, 0);
-          } catch (e) {
+          } catch {
             // ignore
           }
           // Prevent the click from bubbling to the document-level listener
@@ -185,22 +191,36 @@ export default function Archive() {
           // clicking a node only switches the sidebar content instead of
           // closing the sidebar.
           try {
-            const srcEvent = params.event?.srcEvent ?? params.event;
+            let srcEvent:
+              | (Event & { stopPropagation?: () => void; preventDefault?: () => void })
+              | undefined;
+            const evt = params?.event as unknown;
+            if (evt && typeof evt === 'object' && 'srcEvent' in (evt as Record<string, unknown>)) {
+              const maybe = evt as { srcEvent?: Event };
+              srcEvent = maybe.srcEvent as
+                | (Event & { stopPropagation?: () => void; preventDefault?: () => void })
+                | undefined;
+            } else if (evt instanceof Event) {
+              srcEvent = evt as Event & {
+                stopPropagation?: () => void;
+                preventDefault?: () => void;
+              };
+            }
             if (srcEvent && typeof srcEvent.stopPropagation === 'function') {
               srcEvent.stopPropagation();
             }
             if (srcEvent && typeof srcEvent.preventDefault === 'function') {
               srcEvent.preventDefault();
             }
-          } catch (e) {
+          } catch {
             // ignore if shape of params.event differs
           }
         }
       });
 
       let _prevSelection: { nodes: string[]; edges: string[] } | null = null;
-      network.on('hoverNode', (params: any) => {
-        const id = params.node;
+      network.on('hoverNode', (params?: { node?: string | number }) => {
+        const id = params?.node;
         if (!id) return;
         try {
           const sel = network.getSelection();
@@ -208,7 +228,7 @@ export default function Archive() {
             nodes: (sel.nodes || []).map(String),
             edges: (sel.edges || []).map(String),
           };
-        } catch (e) {
+        } catch {
           _prevSelection = null;
         }
         const connectedEdges = network.getConnectedEdges(id) || [];
@@ -223,29 +243,31 @@ export default function Archive() {
           _prevSelection = null;
         } else {
           try {
-            network.unselectAll();
-          } catch (e) {
+            network.unselectAll?.();
+          } catch {
             // ignore
           }
         }
       });
-
       try {
         // indicate layout phase to the UI
         setLayouting(true);
         // once stabilization finishes, stop physics to restore snappy interactions
-        network.once('stabilizationIterationsDone', () => {
-          try {
-            // Keep physics and hover enabled to preserve original UX
-            // No global option toggles here.
-            // Optionally log for debugging.
-            // console.debug('stabilization done');
-          } catch (e) {
-            // ignore
-          }
-          setLayouting(false);
-        });
-      } catch (e) {
+        if (typeof network.once === 'function') {
+          network.once('stabilizationIterationsDone', () => setLayouting(false));
+        } else {
+          const handler = () => setLayouting(false);
+          network.on('stabilizationIterationsDone', handler);
+          // remove it after first call
+          setTimeout(() => {
+            try {
+              network.off('stabilizationIterationsDone', handler);
+            } catch {
+              // ignore
+            }
+          }, 0);
+        }
+      } catch {
         // ignore
       }
 
@@ -256,17 +278,19 @@ export default function Archive() {
           if (!containerEl) return;
           ev.preventDefault();
           ev.stopPropagation();
-          const getScale = (network as any).getScale?.() ?? 1;
+          const getScale = network.getScale?.() ?? 1;
           const delta = ev.deltaY;
-          const baseSpeed = (options.interaction && options.interaction.zoomSpeed) || 0.25;
+          // options has a runtime shape; safely read interaction.zoomSpeed if present
+          const baseSpeed =
+            (options as { interaction?: { zoomSpeed?: number } }).interaction?.zoomSpeed ?? 0.25;
           const factor = 1 - (delta / 1000) * baseSpeed;
           const newScale = Math.max(0.05, Math.min(10, getScale * factor));
           try {
-            (network as any).moveTo({ scale: newScale, animation: { duration: 120 } });
-          } catch (e) {
+            network.moveTo?.({ scale: newScale, animation: { duration: 120 } });
+          } catch {
             // ignore
           }
-        } catch (e) {
+        } catch {
           // ignore
         }
       };
@@ -279,12 +303,12 @@ export default function Archive() {
       return () => {
         try {
           cleanupWheel?.();
-        } catch (e) {
+        } catch {
           // ignore
         }
         try {
           network.destroy();
-        } catch (e) {
+        } catch {
           // ignore
         }
       };
@@ -294,7 +318,7 @@ export default function Archive() {
       destroyed = true;
       try {
         // cleanupWheel will be invoked from the async closure's returned cleanup
-      } catch (e) {
+      } catch {
         // ignore
       }
     };

@@ -28,13 +28,7 @@ export default function Card({ children, to = '/' }: Props) {
     textDecoration: 'none',
   };
 
-  const titleStyle: React.CSSProperties = { margin: 0, fontSize: '1.05rem' };
-  const summaryStyle: React.CSSProperties = { margin: 0, color: 'var(--muted)' };
-  const dateStyle: React.CSSProperties = {
-    marginTop: 'auto',
-    color: 'var(--muted-text)',
-    fontSize: '0.85rem',
-  };
+  // presentational styles are defined inline where needed; removed unused variables
 
   React.useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -72,7 +66,7 @@ export default function Card({ children, to = '/' }: Props) {
                 )
               : (glowOpacity ?? 0.35),
             transform: hover ? 'scale(1.03)' : 'none',
-            mixBlendMode: (glowBlend as any) || 'screen',
+            mixBlendMode: (glowBlend as unknown as React.CSSProperties['mixBlendMode']) || 'screen',
             background: 'var(--card-glow)',
           }}
         />

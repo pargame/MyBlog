@@ -29,15 +29,15 @@ export default function Postings() {
     const modules = import.meta.glob('../../contents/Postings/*.md', {
       query: '?raw',
       import: 'default',
-    }) as Record<string, () => Promise<string>>;
+    }) as Record<string, () => Promise<string | { default: string }>>;
 
     const load = async () => {
       const entries = Object.entries(modules) as [string, () => Promise<string>][];
       const loaded = await Promise.all(
         entries.map(async ([path, resolver]) => {
           // resolver may return the raw string directly or a module with default
-          const res = await (resolver as any)();
-          const raw = typeof res === 'string' ? res : (res?.default ?? '');
+          const res = await resolver();
+          const raw = typeof res === 'string' ? res : String(res?.default ?? '');
           const { data } = parseFrontmatter(raw);
           const filename = path.split('/').pop() || path;
           const slug = filename.replace(/\.mdx?$|\.md$/i, '');
@@ -68,8 +68,8 @@ export default function Postings() {
       setLoading(false);
     };
 
-    load().catch((e) => {
-      console.error('failed to load posts', e);
+    load().catch((_err) => {
+      console.error('failed to load posts', _err);
       setLoading(false);
     });
   }, []);

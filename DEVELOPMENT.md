@@ -60,6 +60,23 @@
 
 ---
 
+### `npm run check` 상세 동작
+
+- 목적: 로컬에서 린트/포맷/취약점/빌드를 한 번에 검사해 배포 전 문제를 사전 차단합니다.
+  기본 단계(구성 상의 이유로 내부 순서는 환경에 따라 달라질 수 있음):
+  1. eslint 자동수정: `eslint --fix`
+  2. prettier 적용: `prettier --write`
+  3. npm audit: `npm audit --omit dev --audit-level=moderate`
+  4. 빌드: `vite build` (생성된 결과를 통해 런타임 타당성 검사)
+
+- 로컬에서 `npm run check` 통과는 커밋/배포의 전제조건입니다.
+
+### Dependabot / 자동업데이트
+
+- 기본 구성: `.github/dependabot.yml`에서 주기(weekly)로 의존성 업데이트 PR을 생성합니다.
+- PR 포맷: 각 PR에는 변경된 패키지, 릴리즈 노트 및 잠재적 breaking changes 요약을 포함해야 합니다.
+- PR 검증: Dependabot PR은 반드시 `npm run check`를 통과해야 병합 가능합니다. 실패 시 수동 개입(버전 조정, 코드 수정)이 필요합니다.
+
 ## 폴더 구조 (실제 로컬 트리 기준)
 
 ```

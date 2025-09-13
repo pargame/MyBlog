@@ -22,7 +22,7 @@ export default function About() {
       </div>
 
       <div className="content-section">
-        <h2>Pargame's Stacks</h2>
+        <h2>Pargame&apos;s Stacks</h2>
         <div className="post-preview">
           <div className="about-content">
             <ul>

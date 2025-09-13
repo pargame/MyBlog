@@ -16,8 +16,30 @@ module.exports = [
       '@typescript-eslint': require('@typescript-eslint/eslint-plugin'),
       react: require('eslint-plugin-react')
     },
+    settings: {
+      react: { version: 'detect' }
+    },
+    // Merge recommended rule sets from plugins by extracting their rules only
+    rules: (function () {
+      const tsConfig = require('@typescript-eslint/eslint-plugin').configs.recommended || {};
+      const reactConfig = require('eslint-plugin-react').configs.recommended || {};
+      const tsRules = tsConfig.rules || {};
+      const reactRules = reactConfig.rules || {};
+      return Object.assign({}, tsRules, reactRules, {
+        // Project-specific overrides
+        'react/react-in-jsx-scope': 'off',
+        'react/prop-types': 'off'
+      });
+    })()
+  },
+  // Allow explicit any in declaration files only
+  {
+    files: ['**/*.d.ts'],
     rules: {
-      // keep minimal to avoid introducing new rule failures during upgrade
+      '@typescript-eslint/no-explicit-any': 'off'
     }
   }
-]
+];
+
+// deleted in favor of legacy .eslintrc.json; kept temporarily for audit
+
