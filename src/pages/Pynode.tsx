@@ -14,7 +14,7 @@ type WorkerMessageExtended =
   | WorkerMessage
   | { type: 'request-input'; runId: string; inputId: string; prompt?: string };
 
-const DEFAULT_CODE = `# 파이썬 샘플\nprint("Hello from Pyodide")\n# 여러 줄 입력 예시 사용\n# a = int(input())\n# print(a * 2)\n`;
+const DEFAULT_CODE = `# 파이썬 코드를 입력하세요\nname=input()\nprint("Hello from Pyodide",name)\n# 여러 줄 입력 예시 사용\n# a = int(input())\n# print(a * 2)\n`;
 
 const workerScript = String.raw`
 // worker script parsed
@@ -116,9 +116,10 @@ self.addEventListener('message', async (ev) => {
       const rid = JSON.stringify(String(runId ?? ''));
       const setup = 'import sys, io\nRUN_ID = ' + rid + '\n' + 'sys.stdin = io.StringIO(' + escaped + ')\n';
 
-    // instead of per-write streaming, capture stdout/stderr into a buffer and
-    // forward it once after the run. This is more robust across Pyodide versions.
-    const indented = code.split('\n').map((l) => '    ' + l).join('\n');
+    // run code in an isolated globals dict so per-run variables don't persist
+    // between runs. Use JSON.stringify of the source so newlines and quotes
+    // are safely escaped when injected into the runner wrapper.
+    const sourceLiteral = JSON.stringify(String(code ?? ''));
     const wrapped =
       setup +
       '\n' +
@@ -129,11 +130,13 @@ self.addEventListener('message', async (ev) => {
       'sys.stdout = buf\n' +
       'sys.stderr = buf\n' +
       'try:\n' +
-      indented +
-      '\nfinally:\n' +
+      "    _globals = {'__name__': '__main__', 'RUN_ID': RUN_ID}\n" +
+      "    code_str = " + sourceLiteral + "\n" +
+      "    exec(compile(code_str, '<run>', 'exec'), _globals)\n" +
+      'finally:\n' +
       '    sys.stdout = oldout\n' +
       '    sys.stderr = olderr\n' +
-      'out = buf.getvalue()\n' +
+      "out = buf.getvalue()\n" +
       'try:\n' +
       '    from js import __forward as __post\n' +
       '    __post(RUN_ID, out)\n' +
