@@ -125,3 +125,21 @@ print('hello', name)
 
 문제가 더 있거나 특정 케이스(예: 대용량 출력, 바이너리 데이터 처리, Pyodide 업데이트 관련 호환성)를 문서화/재현해두고 싶으면 알려주세요. 상세한 재현 시나리오나 추가 로그 형식으로 `ERRORCASES.md`를 확장해 드리겠습니다.
 
+## 8) 배포 시 React 내부 심볼(`memo`) 관련 런타임 TypeError (배포 후 콘솔 에러)
+- 증상: 배포된 사이트에서 콘솔에 다음과 같은 에러가 발생했습니다:
+	- Uncaught TypeError: Cannot read properties of undefined (reading 'memo')
+	- 에러 스택이 vendor-*.js 내에서 발생하며, 특정 구형(이전) vendor 청크 파일명을 참조하는 경우가 관찰됨 (예: vendor-D_UkMwUS.js)
+- 근본 원인:
+	- Vite의 `manualChunks` 커스텀 설정이 React/ReactDOM(및 라우터 등)을 서로 다른 청크로 분리하면서 생긴 문제입니다.
+	- 결과적으로 번들간 초기화/의존성 순서가 어긋나거나 동일 모듈이 중복 번들로 생성되어, 한 번들에서 React의 내부 심볼(`memo` 등)을 참조할 때 해당 심볼이 아직 정의되지 않아 `undefined`가 됨.
+	- 또한 배포 후 브라우저(또는 CDN)가 여전히 이전 빌드의 `index.html`이나 청크명을 캐시하고 있으면, 오래된 청크를 요청해 불일치가 발생할 수 있습니다.
+- 해결 방법 요약:
+	- 가장 안정적인 해결책은 `vite.config.ts`의 `manualChunks`를 단순화해 모든 `node_modules`를 하나의 `vendor` 청크로 묶는 것입니다(또는 최소한 `react`/`react-dom`/`react-router-dom`을 같은 청크로 묶음).
+	- 빌드 후 `dist/assets`를 확인하여 vendor 청크 구성이 의도대로 되었는지 확인합니다.
+	- 배포 후 `index.html`이 올바른(최신) vendor 파일명을 가리키는지 `curl`로 점검합니다. 브라우저에서 오래된 파일명을 계속 요청하면 캐시 무효화(하드 리로드, 시크릿 창) 또는 빈 커밋으로 재배포를 시도합니다.
+	- 단기 완화책: `public/assets`에 과거 파일명과 동일한 이름의 작은 shim 파일을 두어(단순히 최신 번들을 import/forward) 과거 URL 요청을 처리할 수 있습니다.
+- 검증:
+	- 로컬: `npx vite build` 후 `dist/assets`에 `vendor-*.js`가 단일 또는 의도한 분할로 존재하는지 확인.
+	- 서버: `curl https://<your-pages>/index.html`로 Pages가 최신 `index.html`을 반환하는지 확인.
+	- 브라우저: 캐시를 비운 뒤 페이지를 열어 콘솔 에러가 사라지는지 확인.
+
