@@ -186,17 +186,19 @@ vendor 번들: ~650KB+ (Vite 경고 발생)
 
 # 최적화 후 (현재)
 dist/assets/
-├── vendor-kuhtQkJ6.js        289.36 kB │ gzip: 91.78 kB  # 55%+ 감소!
-├── index-C3VKQ02j.js         37.16 kB │ gzip: 9.20 kB
-├── MarkdownViewer-CvrMawJd.js 29.54 kB │ gzip: 6.76 kB
-├── Archive-m4EgbZgB.js       27.19 kB │ gzip: 5.74 kB
-├── build-bundle-optimization-v0jVf_aZ.js 9.61 kB │ gzip: 4.21 kB
+├── vendor.react-BbKqx65r.js  260 kB  # 60%+ 감소!
+├── index-D-mPlp8R.js         40 kB   # 앱 코어 로직
+├── MarkdownViewer-C4e3tbt4.js 29 kB  # 마크다운 뷰어
+├── Archive-DiONHDum.js       27 kB   # 아카이브 페이지
+├── vendor.marked-B24FpoFr.js  38 kB   # 마크다운 파서
+├── vendor.misc-BuhBA2cf.js    6.8 kB  # 기타 라이브러리
 └── (그 외 마크다운 청크들: 각 0.2-6KB)
 ```
 
-- **vendor 번들**: 650KB+ → 289KB (55%+ 감소, gzip 92KB)
-- **메인 번들**: 37KB (gzip 9KB) - 앱 코어 로직
-- **페이지별 청크**: Archive 27KB, MarkdownViewer 30KB 등으로 분리
+- **vendor.react 번들**: 650KB+ → 260KB (60%+ 감소!)
+- **메인 번들**: 40KB - 앱 코어 로직
+- **페이지별 청크**: Archive 27KB, MarkdownViewer 29KB로 분리
+- **vendor.marked**: 38KB - 마크다운 파서만 별도 분리
 - **vis-network**: 런타임 로딩으로 번들에 포함되지 않음
 
 이렇게 최적화하여 초기 로딩 시간을 크게 개선했습니다!

@@ -41,14 +41,14 @@ CI에서 빌드가 실패하기 시작했어요. 원인은 두 가지였습니�
 
 해결책은 간단했어요:
 ```yaml
-- name: Use Node.js
+- name: Use Node.js (LTS)
   uses: actions/setup-node@v5
   with:
-    node-version: '20.19.0'  # 명시적 버전 지정
+    node-version: 'lts/*'  # LTS 버전 사용
     cache: 'npm'
 ```
 
-이렇게 Node 버전을 명시적으로 지정하니 빌드가 안정적으로 성공하기 시작했어요.
+처음에는 `'20.19.0'`처럼 명시적인 버전을 사용했는데, 나중에 LTS(장기 지원 버전)로 바꿨어요. 이렇게 하면 Node.js가 업데이트되어도 자동으로 안정적인 최신 버전을 사용할 수 있거든요.
 
 ## 공식 Pages 워크플로로 전환
 
@@ -58,12 +58,12 @@ CI에서 빌드가 실패하기 시작했어요. 원인은 두 가지였습니�
 name: Deploy to GitHub Pages (official)
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch: {}  # 수동으로만 실행
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: read    # 코드 읽기 권한
+  pages: write      # GitHub Pages에 쓰기 권한
+  id-token: write   # 배포 인증을 위한 토큰
 
 jobs:
   build:
@@ -72,17 +72,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Use Node.js
+      - name: Use Node.js (LTS)
         uses: actions/setup-node@v5
         with:
-          node-version: '20.19.0'
+          node-version: 'lts/*'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
-        run: npm run build
+      - name: Build (run checks + build)
+        run: npm run check  # ESLint, Prettier, 빌드를 한번에
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
@@ -90,17 +90,21 @@ jobs:
           path: ./dist
 
   deploy:
-    needs: build
+    needs: build  # build 작업이 끝나야 시작됨
     runs-on: ubuntu-latest
     steps:
       - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4.0.5
 ```
 
 이 방식의 장점은:
-- GitHub Pages UI와 완벽하게 통합됨
-- 배포 상태를 실시간으로 확인할 수 있음
-- 보안 토큰 관리가 더 안전함
+- **GitHub Pages UI와 완벽하게 통합**됨 - 배포 상태를 실시간으로 확인 가능
+- **보안 토큰 관리가 더 안전**함 - `id-token: write` 권한으로 안전하게 배포
+- **빌드와 배포 분리** - build와 deploy 작업을 명확히 나눠서 문제 추적이 쉬움
+- **`npm run check` 활용** - 코드 품질 검사(ESLint, Prettier)와 빌드를 한번에 실행
 
 ## 액션 버전 업그레이드와 최적화
 
@@ -111,13 +115,29 @@ jobs:
   uses: actions/upload-pages-artifact@v4  # v2에서 v4로 업그레이드
   with:
     path: ./dist
+
+- name: Configure Pages
+  uses: actions/configure-pages@v5  # Pages 설정
+
+- name: Deploy to GitHub Pages
+  uses: actions/deploy-pages@v4.0.5  # 실제 배포
 ```
 
-또한 `actions/deploy-pages`도 최신 버전으로 유지하면서 안정성을 확보했어요.
+`configure-pages` 액션도 추가해서 GitHub Pages 설정을 명시적으로 했고, `deploy-pages`도 최신 안정 버전으로 유지했어요.
 
 ## 최종 결과
 
-이러한 시행착오 끝에 성공적인 배포 워크플로를 구축할 수 있었어요. 실제 성공한 run ID는 `17634011939`였습니다. 이제는 `workflow_dispatch`로 수동 트리거만 하면 자동으로 빌드되고 배포됩니다.
+이러한 시행착오 끝에 안정적인 배포 워크플로를 구축할 수 있었어요. 이제는:
+
+1. **로컬에서 `npm run deploy` 실행** - `gh` CLI나 API로 워크플로 트리거
+2. **GitHub Actions가 자동으로**:
+   - 코드 품질 검사 (ESLint, Prettier)
+   - 프로젝트 빌드 (Vite)
+   - 보안 감사 (npm audit)
+   - GitHub Pages에 배포
+3. **배포 완료** - 몇 분 후면 사이트에 반영됨
+
+실제 성공한 run ID는 `17634011939`였고, 이후로도 안정적으로 배포가 되고 있습니다.
 
 ## 배운 점과 팁
 
@@ -134,11 +154,5 @@ GitHub Pages 배포를 위해서는:
 - SPA 라우팅을 위해 404.html을 설정하는 것도 고려해보세요
 
 이 과정이 다른 분들의 GitHub Pages 배포에 도움이 되었으면 좋겠어요! 🚀
-
-## 관련 링크
-
-- [GitHub Pages 공식 문서](https://docs.github.com/en/pages)
-- [Vite 배포 가이드](https://vitejs.dev/guide/static-deploy.html)
-- [peaceiris/actions-gh-pages](https://github.com/peaceiris/actions-gh-pages)
 
 감사합니다! 😊
