@@ -5,6 +5,7 @@ import ThemeProvider from './ThemeProvider';
 import Postings from './pages/Postings';
 import Graphs from './pages/Graphs';
 import About from './pages/About';
+import Portfolio from './pages/Portfolio';
 const Archive = React.lazy(() => import('./pages/Archive'));
 const MarkdownViewer = React.lazy(() => import('./pages/MarkdownViewer'));
 const Pynode = React.lazy(() => import('./pages/Pynode'));
@@ -36,6 +37,7 @@ const router = createBrowserRouter(
       children: [
         { index: true, element: <Postings /> },
         { path: 'about', element: <About /> },
+        { path: 'portfolio', element: <Portfolio /> },
         { path: 'graphs', element: <Graphs /> },
         {
           path: 'archives/:folder',

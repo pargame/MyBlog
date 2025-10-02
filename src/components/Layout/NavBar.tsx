@@ -72,6 +72,9 @@ export default function NavBar() {
         <Link to={'/about'} style={navItemStyle}>
           About
         </Link>
+        <Link to={'/portfolio'} style={navItemStyle}>
+          Portfolio
+        </Link>
         <Link to={'/graphs'} style={navItemStyle}>
           Graphs
         </Link>
