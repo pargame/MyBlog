@@ -15,6 +15,9 @@ export default function Archive() {
   const [nodes, setNodes] = React.useState<Node[]>([]);
   const [edges, setEdges] = React.useState<Edge[]>([]);
 
+  // Memoize regex to avoid recreation on every render
+  const linkRegex = React.useMemo(() => /\[\[([^\]]+)\]\]/g, []);
+
   React.useEffect(() => {
     if (!folder) return;
     // load all markdown files under contents/Archives/<folder>
@@ -24,9 +27,8 @@ export default function Archive() {
       import: 'default',
     }) as Record<string, () => Promise<string>>;
     const allKeys = Object.keys(modules);
-    const keys = allKeys.filter((k) =>
-      k.toLowerCase().includes(`/${String(folder).toLowerCase()}/`)
-    );
+    const folderLower = String(folder).toLowerCase();
+    const keys = allKeys.filter((k) => k.toLowerCase().includes(`/${folderLower}/`));
 
     // Create nodes for each file and edges by simple content-link heuristic: [[slug]] occurrences
     const fileNodes: Node[] = keys.map((k) => {
@@ -36,27 +38,35 @@ export default function Archive() {
     });
 
     const loaders = keys.map((k) => (modules as Record<string, () => Promise<string>>)[k]);
+
     Promise.all(loaders.map((fn) => fn()))
       .then((vals) => {
-        const linkRegex = /\[\[([^\]]+)\]\]/g;
         const newEdges: Edge[] = [];
         // use a Set of sorted pair keys to ensure at most one edge between two nodes
         const pairSeen = new Set<string>();
-        vals.forEach((content: string, idx: number) => {
+
+        for (let idx = 0; idx < vals.length; idx++) {
+          const content = vals[idx];
           const src = fileNodes[idx].id;
+
+          // Reset regex lastIndex for reuse
+          linkRegex.lastIndex = 0;
           let m: RegExpExecArray | null;
+
           while ((m = linkRegex.exec(content))) {
             const target = m[1];
-            if (!target) continue;
-            if (target === src) continue; // skip self-links
+            if (!target || target === src) continue; // skip self-links
+
             // normalized key for undirected dedupe
             const key = [String(src), String(target)].sort().join('::');
             if (pairSeen.has(key)) continue;
             pairSeen.add(key);
+
             // preserve the first-seen direction
             newEdges.push({ from: src, to: target });
           }
-        });
+        }
+
         setNodes(fileNodes);
         setEdges(newEdges);
       })
@@ -64,11 +74,14 @@ export default function Archive() {
         setNodes(fileNodes);
         setEdges([]);
       });
-  }, [folder]);
+  }, [folder, linkRegex]);
 
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const [activeSlug, setActiveSlug] = React.useState<string | null>(null);
   const [layouting, setLayouting] = React.useState<boolean>(false);
+
+  // Store previous selection to restore on blur
+  const prevSelectionRef = React.useRef<{ nodes: string[]; edges: string[] } | null>(null);
 
   // stable lazy component - avoid creating a new lazy wrapper on every render
   const ArchiveSidebarLazy = React.lazy(
@@ -76,6 +89,89 @@ export default function Archive() {
   ) as React.LazyExoticComponent<
     React.ComponentType<{ folder: string; slug: string; onClose: () => void }>
   >;
+
+  // Memoize vis-network options to prevent recreation
+  const networkOptions = React.useMemo(
+    () => ({
+      nodes: { shape: 'dot' as const, size: 14 },
+      layout: { improvedLayout: false },
+      physics: {
+        enabled: true,
+        solver: 'barnesHut' as const,
+        barnesHut: {
+          gravitationalConstant: -2000,
+          centralGravity: 0.3,
+          springLength: 95,
+          springConstant: 0.04,
+          damping: 0.09,
+        },
+        stabilization: {
+          enabled: true,
+          iterations: 200,
+          updateInterval: 25,
+          onlyDynamicEdges: false,
+        },
+      },
+      edges: { arrows: { to: false }, hoverWidth: 1, selectionWidth: 2 },
+      interaction: {
+        zoomView: true,
+        zoomSpeed: 0.25,
+        dragView: true,
+        hover: true,
+        hoverConnectedEdges: false,
+        selectConnectedEdges: false,
+      },
+    }),
+    []
+  );
+
+  // Memoize event handlers to prevent recreation on every render
+  const handleNodeClick = React.useCallback(
+    (params?: { nodes?: Array<string | number>; event?: unknown }) => {
+      const nodesParam = params?.nodes;
+      if (nodesParam && nodesParam.length > 0) {
+        setActiveSlug(String(nodesParam[0]));
+        try {
+          (window as Window & { __archiveNodeClick?: boolean }).__archiveNodeClick = true;
+          setTimeout(() => {
+            try {
+              (window as Window & { __archiveNodeClick?: boolean }).__archiveNodeClick = false;
+            } catch {
+              // ignore
+            }
+          }, 0);
+        } catch {
+          // ignore
+        }
+        try {
+          let srcEvent:
+            | (Event & { stopPropagation?: () => void; preventDefault?: () => void })
+            | undefined;
+          const evt = params?.event as unknown;
+          if (evt && typeof evt === 'object' && 'srcEvent' in (evt as Record<string, unknown>)) {
+            const maybe = evt as { srcEvent?: Event };
+            srcEvent = maybe.srcEvent as
+              | (Event & { stopPropagation?: () => void; preventDefault?: () => void })
+              | undefined;
+          } else if (evt instanceof Event) {
+            srcEvent = evt as Event & {
+              stopPropagation?: () => void;
+              preventDefault?: () => void;
+            };
+          }
+          if (srcEvent && typeof srcEvent.stopPropagation === 'function') {
+            srcEvent.stopPropagation();
+          }
+          if (srcEvent && typeof srcEvent.preventDefault === 'function') {
+            srcEvent.preventDefault();
+          }
+        } catch {
+          // ignore if shape of params.event differs
+        }
+      }
+    },
+    []
+  );
 
   React.useEffect(() => {
     if (!containerRef.current) return;
@@ -110,112 +206,27 @@ export default function Archive() {
         edges: new DataSet(edges.map((edge) => ({ from: edge.from, to: edge.to }))),
       };
 
-      // Always enable physics and hover to preserve original UX
-      const options = {
-        nodes: { shape: 'dot', size: 14 },
-        // Disable improvedLayout (too heavy for very large graphs) but keep physics
-        layout: { improvedLayout: false },
-        physics: {
-          enabled: true,
-          solver: 'barnesHut',
-          barnesHut: {
-            gravitationalConstant: -2000,
-            centralGravity: 0.3,
-            springLength: 95,
-            springConstant: 0.04,
-            damping: 0.09,
-          },
-          stabilization: {
-            enabled: true,
-            iterations: 200,
-            updateInterval: 25,
-            onlyDynamicEdges: false,
-          },
-        },
-        edges: { arrows: { to: false }, hoverWidth: 1, selectionWidth: 2 },
-        interaction: {
-          zoomView: true,
-          zoomSpeed: 0.25,
-          dragView: true,
-          hover: true,
-          hoverConnectedEdges: false,
-          selectConnectedEdges: false,
-        },
-      };
-
-      const network = new Network(containerRef.current!, data, options);
+      const network = new Network(containerRef.current!, data, networkOptions);
 
       // force canvas background in case vis-network injects its own canvas styling
       const canv = containerRef.current!.querySelector('canvas');
       if (canv) (canv as HTMLCanvasElement).style.background = '#c8cacf';
 
-      network.on('click', (params?: { nodes?: Array<string | number>; event?: unknown }) => {
-        const nodesParam = params?.nodes;
-        if (nodesParam && nodesParam.length > 0) {
-          setActiveSlug(String(nodesParam[0]));
-          // Mark that a vis-network node was clicked. This helps other
-          // document-level listeners (like ArchiveSidebar's click handler)
-          // distinguish node clicks from background/canvas clicks even if
-          // event propagation ordering varies between vis-network and the
-          // DOM. The flag is cleared on the next tick.
-          try {
-            (window as Window & { __archiveNodeClick?: boolean }).__archiveNodeClick = true;
-            setTimeout(() => {
-              try {
-                (window as Window & { __archiveNodeClick?: boolean }).__archiveNodeClick = false;
-              } catch {
-                // ignore
-              }
-            }, 0);
-          } catch {
-            // ignore
-          }
-          // Prevent the click from bubbling to the document-level listener
-          // (ArchiveSidebar listens on document clicks to close itself). The
-          // vis-network provides the original DOM event at params.event.srcEvent
-          // (or params.event depending on runtime). Stop its propagation so
-          // clicking a node only switches the sidebar content instead of
-          // closing the sidebar.
-          try {
-            let srcEvent:
-              | (Event & { stopPropagation?: () => void; preventDefault?: () => void })
-              | undefined;
-            const evt = params?.event as unknown;
-            if (evt && typeof evt === 'object' && 'srcEvent' in (evt as Record<string, unknown>)) {
-              const maybe = evt as { srcEvent?: Event };
-              srcEvent = maybe.srcEvent as
-                | (Event & { stopPropagation?: () => void; preventDefault?: () => void })
-                | undefined;
-            } else if (evt instanceof Event) {
-              srcEvent = evt as Event & {
-                stopPropagation?: () => void;
-                preventDefault?: () => void;
-              };
-            }
-            if (srcEvent && typeof srcEvent.stopPropagation === 'function') {
-              srcEvent.stopPropagation();
-            }
-            if (srcEvent && typeof srcEvent.preventDefault === 'function') {
-              srcEvent.preventDefault();
-            }
-          } catch {
-            // ignore if shape of params.event differs
-          }
-        }
-      });
+      // Use the memoized click handler
+      network.on('click', handleNodeClick);
 
-      let _prevSelection: { nodes: string[]; edges: string[] } | null = null;
+      // Hover handlers: store selection in ref to avoid closure issues
       network.on('hoverNode', (params?: { node?: string | number }) => {
         const id = params?.node;
         if (!id) return;
         try {
           const sel = network.getSelection();
-          _prevSelection = {
+          prevSelectionRef.current = {
             nodes: (sel.nodes || []).map(String),
             edges: (sel.edges || []).map(String),
           };
         } catch {
-          _prevSelection = null;
+          prevSelectionRef.current = null;
         }
         const connectedEdges = network.getConnectedEdges(id) || [];
         const neighborNodes = (network.getConnectedNodes(id) || []).map(String);
@@ -224,9 +235,9 @@ export default function Archive() {
       });
 
       network.on('blurNode', () => {
-        if (_prevSelection) {
-          network.setSelection(_prevSelection);
-          _prevSelection = null;
+        if (prevSelectionRef.current) {
+          network.setSelection(prevSelectionRef.current);
+          prevSelectionRef.current = null;
         } else {
           try {
             network.unselectAll?.();
@@ -259,6 +270,7 @@ export default function Archive() {
 
       // wheel handler to prevent page scroll and perform zoom via network.moveTo
       const containerEl = containerRef.current!;
+      const baseSpeed = networkOptions.interaction.zoomSpeed;
       const containerWheelHandler = (ev: WheelEvent) => {
         try {
           if (!containerEl) return;
@@ -266,9 +278,6 @@ export default function Archive() {
           ev.stopPropagation();
           const getScale = network.getScale?.() ?? 1;
           const delta = ev.deltaY;
-          // options has a runtime shape; safely read interaction.zoomSpeed if present
-          const baseSpeed =
-            (options as { interaction?: { zoomSpeed?: number } }).interaction?.zoomSpeed ?? 0.25;
           const factor = 1 - (delta / 1000) * baseSpeed;
           const newScale = Math.max(0.05, Math.min(10, getScale * factor));
           try {
@@ -308,7 +317,7 @@ export default function Archive() {
         // ignore
       }
     };
-  }, [nodes, edges]);
+  }, [nodes, edges, networkOptions, handleNodeClick]);
 
   return (
     <main>

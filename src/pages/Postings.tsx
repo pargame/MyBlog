@@ -1,24 +1,7 @@
 import React from 'react';
 import CardGrid, { PostCard } from '../components/UI/CardGrid';
 import Footer from '../components/Layout/Footer';
-
-// Parse YAML frontmatter from a markdown string.
-// Returns { data: Record<key, value>, content: markdownBody }
-function parseFrontmatter(raw: string) {
-  const fmMatch = raw.match(/^[\uFEFF\s]*---\s*([\s\S]*?)\s*---\s*/);
-  const data: Record<string, string> = {};
-  if (!fmMatch) return { data, content: raw };
-  const fm = fmMatch[1];
-  fm.split(/\r?\n/).forEach((line) => {
-    const m = line.match(/^([A-Za-z0-9_-]+):\s*(?:(?:"([^"]*)")|(?:'([^']*)')|(.+))?$/);
-    if (!m) return;
-    const key = m[1];
-    const val = m[2] ?? m[3] ?? m[4] ?? '';
-    data[key] = val.trim();
-  });
-  const content = raw.slice(fmMatch[0].length).trim();
-  return { data, content };
-}
+import { parseFrontmatter } from '../utils/frontmatter';
 
 export default function Postings() {
   const [posts, setPosts] = React.useState<PostCard[]>([]);
@@ -31,13 +14,19 @@ export default function Postings() {
       import: 'default',
     }) as Record<string, () => Promise<string | { default: string }>>;
 
+    const parseTime = (s?: string) => {
+      if (!s) return 0;
+      const t = Date.parse(s);
+      return Number.isNaN(t) ? 0 : t;
+    };
+
     const load = async () => {
-      const entries = Object.entries(modules) as [string, () => Promise<string>][];
+      const entries = Object.entries(modules);
       const loaded = await Promise.all(
         entries.map(async ([path, resolver]) => {
           // resolver may return the raw string directly or a module with default
           const res = await resolver();
-          const raw = typeof res === 'string' ? res : String(res?.default ?? '');
+          const raw = String(res);
           const { data } = parseFrontmatter(raw);
           const filename = path.split('/').pop() || path;
           const slug = filename.replace(/\.mdx?$|\.md$/i, '');
@@ -51,12 +40,6 @@ export default function Postings() {
           return post;
         })
       );
-
-      const parseTime = (s?: string) => {
-        if (!s) return 0;
-        const t = Date.parse(s);
-        return Number.isNaN(t) ? 0 : t;
-      };
 
       loaded.sort((a, b) => {
         const ta = parseTime(a.date);

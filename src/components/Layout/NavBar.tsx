@@ -9,41 +9,49 @@ export default function NavBar() {
   // is set from Vite's BASE_URL in App.tsx so the base prefix is applied
   // exactly once at runtime. Avoid manually prefixing BASE_URL here.
 
-  // Main navigation bar styles
-  const navStyle: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: '1rem',
-    // top right bottom left - reduce left padding so Home sits nearer the edge
-    padding: '0.5rem 1rem 0.5rem 0.25rem',
-    marginBottom: '1.25rem',
-    borderRadius: 10,
-    background: 'var(--panel)',
-    boxShadow: '0 6px 20px rgba(2,6,23,0.45)',
-  };
+  // Main navigation bar styles - memoized to prevent recreating on every render
+  const navStyle: React.CSSProperties = React.useMemo(
+    () => ({
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: '1rem',
+      padding: '0.5rem 1rem 0.5rem 0.25rem',
+      marginBottom: '1.25rem',
+      borderRadius: 10,
+      background: 'var(--panel)',
+      boxShadow: '0 6px 20px rgba(2,6,23,0.45)',
+    }),
+    []
+  );
 
-  // Shared nav item style for Home and Graphs (identical appearance)
-  const navItemStyle: React.CSSProperties = {
-    fontWeight: 700,
-    color: 'var(--text)',
-    textDecoration: 'none',
-    padding: '0.6rem 0.9rem',
-    borderRadius: 8,
-    background: 'rgba(255,255,255,0.02)',
-    fontSize: '1rem',
-  };
+  // Shared nav item style - memoized
+  const navItemStyle: React.CSSProperties = React.useMemo(
+    () => ({
+      fontWeight: 700,
+      color: 'var(--text)',
+      textDecoration: 'none',
+      padding: '0.6rem 0.9rem',
+      borderRadius: 8,
+      background: 'rgba(255,255,255,0.02)',
+      fontSize: '1rem',
+    }),
+    []
+  );
 
-  // Theme toggle button style
-  const buttonStyle: React.CSSProperties = {
-    marginRight: '0.2rem',
-    padding: '0.4rem 0.7rem',
-    borderRadius: 8,
-    border: 'none',
-    background: 'transparent',
-    color: 'var(--muted-text)',
-    cursor: 'pointer',
-  };
+  // Theme toggle button style - memoized
+  const buttonStyle: React.CSSProperties = React.useMemo(
+    () => ({
+      marginRight: '0.2rem',
+      padding: '0.4rem 0.7rem',
+      borderRadius: 8,
+      border: 'none',
+      background: 'transparent',
+      color: 'var(--muted-text)',
+      cursor: 'pointer',
+    }),
+    []
+  );
 
   return (
     <nav style={navStyle} aria-label="Main navigation">

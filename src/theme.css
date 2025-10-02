@@ -31,9 +31,11 @@
     }
 
     .dev-theme {
-      background: radial-gradient(circle at 10% 10%,
-          rgba(16, 24, 40, 0.9) 0%,
-          rgba(3, 6, 12, 1) 60%);
+      background: radial-gradient(
+        circle at 10% 10%,
+        rgba(16, 24, 40, 0.9) 0%,
+        rgba(3, 6, 12, 1) 60%
+      );
       min-height: 100vh;
       color: var(--text);
       padding: 3rem 1.25rem;
@@ -49,10 +51,10 @@
     }
 
     /* Pynode: ensure editor, terminal and input look slightly lighter in dark theme for contrast */
-    .dev-theme[data-theme="dark"] .pynode-editor .monaco-editor,
-    .dev-theme[data-theme="dark"] .pynode-terminal,
-    .dev-theme[data-theme="dark"] .pynode-input,
-    .dev-theme[data-theme="dark"] textarea.pynode-input {
+    .dev-theme[data-theme='dark'] .pynode-editor .monaco-editor,
+    .dev-theme[data-theme='dark'] .pynode-terminal,
+    .dev-theme[data-theme='dark'] .pynode-input,
+    .dev-theme[data-theme='dark'] textarea.pynode-input {
       background: #2e2e2e !important;
       /* light gray on dark backgrounds */
       color: #e6e6e6 !important;
@@ -61,13 +63,13 @@
     }
 
     /* Monaco internals: ensure editor surface itself uses the requested background */
-    .dev-theme[data-theme="dark"] .pynode-editor .monaco-editor .monaco-editor-background,
-    .dev-theme[data-theme="dark"] .pynode-editor .monaco-editor .view-lines {
+    .dev-theme[data-theme='dark'] .pynode-editor .monaco-editor .monaco-editor-background,
+    .dev-theme[data-theme='dark'] .pynode-editor .monaco-editor .view-lines {
       background-color: #2e2e2e !important;
     }
 
     /* textarea batch input should match */
-    .dev-theme[data-theme="dark"] textarea.pynode-input {
+    .dev-theme[data-theme='dark'] textarea.pynode-input {
       background: #2e2e2e !important;
       color: #e6e6e6 !important;
       border-radius: 6px;
@@ -76,7 +78,7 @@
     }
 
     /* Pynode styles per theme: dark */
-    .dev-theme[data-theme="dark"] .pynode-terminal {
+    .dev-theme[data-theme='dark'] .pynode-terminal {
       --pynode-bg: #2e2e2e;
       --pynode-text: #e6e6e6;
       background: var(--pynode-bg) !important;
@@ -85,16 +87,16 @@
       border-radius: 6px;
     }
 
-    .dev-theme[data-theme="dark"] .pynode-input,
-    .dev-theme[data-theme="dark"] textarea.pynode-input,
-    .dev-theme[data-theme="dark"] .pynode-editor .monaco-editor .monaco-editor-background,
-    .dev-theme[data-theme="dark"] .pynode-editor .monaco-editor .view-lines {
+    .dev-theme[data-theme='dark'] .pynode-input,
+    .dev-theme[data-theme='dark'] textarea.pynode-input,
+    .dev-theme[data-theme='dark'] .pynode-editor .monaco-editor .monaco-editor-background,
+    .dev-theme[data-theme='dark'] .pynode-editor .monaco-editor .view-lines {
       background: var(--pynode-bg) !important;
       color: var(--pynode-text) !important;
     }
 
     /* Pynode styles per theme: light */
-    .dev-theme[data-theme="light"] .pynode-terminal {
+    .dev-theme[data-theme='light'] .pynode-terminal {
       --pynode-bg: #ffffff;
       --pynode-text: #0b1220;
       background: var(--pynode-bg) !important;
@@ -103,17 +105,17 @@
       border-radius: 6px;
     }
 
-    .dev-theme[data-theme="light"] .pynode-input,
-    .dev-theme[data-theme="light"] textarea.pynode-input,
-    .dev-theme[data-theme="light"] .pynode-editor .monaco-editor .monaco-editor-background,
-    .dev-theme[data-theme="light"] .pynode-editor .monaco-editor .view-lines {
+    .dev-theme[data-theme='light'] .pynode-input,
+    .dev-theme[data-theme='light'] textarea.pynode-input,
+    .dev-theme[data-theme='light'] .pynode-editor .monaco-editor .monaco-editor-background,
+    .dev-theme[data-theme='light'] .pynode-editor .monaco-editor .view-lines {
       background: var(--pynode-bg) !important;
       color: var(--pynode-text) !important;
     }
 
     /* Slightly brighter input field focus state */
-    .dev-theme[data-theme="dark"] .pynode-input:focus,
-    .dev-theme[data-theme="dark"] textarea.pynode-input:focus {
+    .dev-theme[data-theme='dark'] .pynode-input:focus,
+    .dev-theme[data-theme='dark'] textarea.pynode-input:focus {
       outline: none;
       box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.03);
     }

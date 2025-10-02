@@ -21,15 +21,19 @@ export default function Graphs() {
     }) as Record<string, () => Promise<string>>;
     const keys = Object.keys(modules);
     const counts: Record<string, number> = {};
-    keys.forEach((k) => {
+
+    // Optimize: single pass to count folders
+    for (const k of keys) {
       const folder = folderFromPath(k);
       counts[folder] = (counts[folder] || 0) + 1;
-    });
-    const arr: GraphCard[] = Object.keys(counts).map((name) => ({
+    }
+
+    // Optimize: use entries to avoid double iteration
+    const arr: GraphCard[] = Object.entries(counts).map(([name, count]) => ({
       id: name.toLowerCase(),
       name,
       to: `/archives/${name.toLowerCase()}`,
-      count: counts[name],
+      count,
     }));
     setFolders(arr);
   }, []);

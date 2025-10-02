@@ -2,35 +2,7 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { marked } from 'marked';
 import { useTheme } from '../ThemeProvider';
-
-// Parse YAML frontmatter and return { data, content }
-function parseFrontmatter(raw: string) {
-  const fmMatch = raw.match(/^[\uFEFF\s]*---\s*([\s\S]*?)\s*---\s*/);
-  const data: Record<string, string> = {};
-  if (!fmMatch) return { data, content: raw };
-  const fm = fmMatch[1];
-  fm.split(/\r?\n/).forEach((line) => {
-    const m = line.match(/^([A-Za-z0-9_-]+):\s*(?:(?:"([^"]*)")|(?:'([^']*)')|(.+))?$/);
-    if (!m) return;
-    const key = m[1];
-    const val = m[2] ?? m[3] ?? m[4] ?? '';
-    data[key] = val.trim();
-  });
-  const content = raw.slice(fmMatch[0].length).trim();
-  return { data, content };
-}
-
-function formatDate(iso?: string) {
-  if (!iso) return undefined;
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  const hh = String(d.getHours()).padStart(2, '0');
-  const mm = String(d.getMinutes()).padStart(2, '0');
-  return `${y}-${m}-${day} ${hh}:${mm}`;
-}
+import { parseFrontmatter, formatDate } from '../utils/frontmatter';
 
 type Props = {
   slugProp?: string;
@@ -59,19 +31,35 @@ export default function MarkdownViewer({
         import: 'default',
       }) as Record<string, () => Promise<string>>;
       const keys = Object.keys(modules);
-      const matchPath = keys.find((p) =>
-        p.toLowerCase().includes(`/${folder.toLowerCase()}/${slug.toLowerCase()}.md`)
-      );
+
+      // 더 견고한 매칭: 파일명 부분만 추출해서 비교
+      const slugLower = slug.toLowerCase();
+      const folderLower = folder.toLowerCase();
+
+      const matchPath = keys.find((p) => {
+        const pathLower = p.toLowerCase();
+        const parts = pathLower.split('/');
+        const fileName = parts[parts.length - 1];
+        const fileNameNoExt = fileName.replace(/\.md$/i, '');
+        const folderName = parts[parts.length - 2];
+        return folderName === folderLower && fileNameNoExt === slugLower;
+      });
+
       if (!matchPath) {
         setRaw('');
         return;
       }
-      modules[matchPath]().then((r) => {
-        const rawStr = String(r);
-        const { data, content } = parseFrontmatter(rawStr);
-        setMeta(data);
-        setRaw(content);
-      });
+
+      modules[matchPath]()
+        .then((r) => {
+          const rawStr = String(r);
+          const { data, content } = parseFrontmatter(rawStr);
+          setMeta(data);
+          setRaw(content);
+        })
+        .catch(() => {
+          setRaw('');
+        });
       return;
     }
 
@@ -104,10 +92,12 @@ export default function MarkdownViewer({
   });
 
   // custom marked renderer to produce cleaner code blocks (language label + escaped content)
-  const escapeHtml = (str: string) =>
-    str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const escapeHtml = React.useCallback(
+    (str: string) => str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'),
+    []
+  );
 
-  const renderer = new marked.Renderer();
+  const renderer = React.useMemo(() => new marked.Renderer(), []);
   // marked v5 uses a single Code object parameter for renderer.code
   renderer.code = (codeObj: { lang?: string; text: string; escaped?: boolean }) => {
     const {
@@ -182,7 +172,10 @@ export default function MarkdownViewer({
     return `<div class="code-wrap" data-language="${langTrim}">${langLabel}<pre class="code-block"><code class="${langClass}">${content}</code></pre></div>`;
   };
 
-  const markedOptions = { renderer, gfm: true, breaks: false, headerIds: false, mangle: false };
+  const markedOptions = React.useMemo(
+    () => ({ renderer, gfm: true, breaks: false, headerIds: false, mangle: false }),
+    [renderer]
+  );
 
   const handleClick = React.useCallback(
     (e: React.MouseEvent) => {

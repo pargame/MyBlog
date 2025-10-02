@@ -206,6 +206,10 @@ function makeWorker() {
   const blob = new Blob([encoder.encode(workerScript)], { type: 'text/javascript;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const w = new Worker(url);
+
+  // Store URL on worker instance for cleanup
+  (w as Worker & { __blobUrl?: string }).__blobUrl = url;
+
   return w;
 }
 
@@ -222,6 +226,8 @@ const Pynode: React.FC = () => {
   const [elapsedMs, setElapsedMs] = useState<number | null>(null);
   const timerRef = useRef<number | null>(null);
   const initTimeoutRef = useRef<number | null>(null);
+
+  // Memoize timer operations to prevent recreation
   const clearIntervalTimer = useCallback(() => {
     if (timerRef.current) {
       window.clearInterval(timerRef.current);
@@ -236,41 +242,49 @@ const Pynode: React.FC = () => {
       if (startTimeRef.current) setElapsedMs(Date.now() - startTimeRef.current);
     }, 200);
   }, []);
+
   const clearTerminal = useCallback(() => {
     if (terminalRef.current) terminalRef.current.textContent = '';
   }, []);
 
   // writeToTerminal: append text to the terminal element, but filter out
   // internal startup/debug logs that begin with [main] or [worker].
+  // Optimized with efficient deduplication and single DOM operation
   const writeToTerminal = useCallback((text?: string) => {
-    if (!terminalRef.current || !text) return;
-    const el = terminalRef.current as Element;
+    const terminal = terminalRef.current;
+    if (!terminal || !text) return;
+
+    const el = terminal as Element;
     let meta = terminalWriteMeta.get(el);
     if (!meta) {
       meta = {};
       terminalWriteMeta.set(el, meta);
     }
+
     // normalize escaped newline sequences
     const normalized = String(text).replace(/\\n/g, '\n');
     // filter internal debug prefixes
     if (/^\s*\[(?:main|worker)\]/.test(normalized)) return;
+
     // dedupe identical messages within 200ms
     const now = Date.now();
     if (meta.lastMessage === normalized && meta.lastTime && now - meta.lastTime < 200) return;
+
     meta.lastMessage = normalized;
     meta.lastTime = now;
-    (terminalRef.current as HTMLDivElement).textContent += normalized;
-    (terminalRef.current as HTMLDivElement).scrollTop = (
-      terminalRef.current as HTMLDivElement
-    ).scrollHeight;
+
+    // Batch DOM updates for better performance
+    terminal.textContent += normalized;
+    terminal.scrollTop = terminal.scrollHeight;
   }, []);
 
   // attach handler utility so listeners are in place immediately after worker creation
+  // Optimized: reduced dependencies, stable references
   const attachWorkerListeners = useCallback(
     (w: Worker) => {
       const handler = (ev: MessageEvent<WorkerMessageExtended>) => {
         const msg = ev.data as WorkerMessageExtended;
-        // use safe accessors for union fields
+
         // handle request-input: prefer buffered stdin, otherwise show in-terminal prompt
         if (msg.type === 'request-input') {
           const req = msg as { inputId: string; prompt?: string };
@@ -280,68 +294,68 @@ const Pynode: React.FC = () => {
             const val = stdinLinesRef.current.shift() ?? '';
             try {
               w.postMessage({ type: 'input-value', inputId, value: String(val ?? '') });
-            } catch { }
+            } catch {}
           } else {
             setInputRequest({ inputId, prompt });
             setInputValue('');
-            // focus input field in next tick
             setTimeout(() => inputFieldRef.current?.focus(), 50);
           }
           return;
         }
 
-        if (msg.type === 'ready') {
-          setIsReady(true);
-          isReadyRef.current = true;
-          if (initTimeoutRef.current) {
-            window.clearTimeout(initTimeoutRef.current);
-            initTimeoutRef.current = null;
-          }
-        } else if (msg.type === 'stdout') {
-          writeToTerminal(String((msg as { text?: string }).text ?? ''));
-        } else if (msg.type === 'stderr') {
-          writeToTerminal(String((msg as { text?: string }).text ?? ''));
-        } else if (msg.type === 'exit') {
-          setRunning(false);
-          clearIntervalTimer();
-          setElapsedMs((prev) => {
-            if (startTimeRef.current) return Date.now() - startTimeRef.current;
-            return prev ?? 0;
-          });
-          // NOTE: removed the '[process ...] exited' helper log so terminal shows only program output
-        } else if (msg.type === 'error') {
-          setRunning(false);
-          writeToTerminal(`${(msg as { message?: string }).message ?? '[error]'}\n`);
+        // Early return optimization: group related state updates
+        switch (msg.type) {
+          case 'ready':
+            setIsReady(true);
+            isReadyRef.current = true;
+            if (initTimeoutRef.current) {
+              window.clearTimeout(initTimeoutRef.current);
+              initTimeoutRef.current = null;
+            }
+            break;
+          case 'stdout':
+          case 'stderr':
+            writeToTerminal(String((msg as { text?: string }).text ?? ''));
+            if (terminalRef.current)
+              terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+            break;
+          case 'exit':
+            setRunning(false);
+            clearIntervalTimer();
+            setElapsedMs((prev) => {
+              if (startTimeRef.current) return Date.now() - startTimeRef.current;
+              return prev ?? 0;
+            });
+            break;
+          case 'error':
+            setRunning(false);
+            writeToTerminal(`${(msg as { message?: string }).message ?? '[error]'}\n`);
+            break;
         }
-        if (terminalRef.current) terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
       };
+
       const onError = (ev: ErrorEvent) => {
-        // provide richer diagnostic info from worker errors
         console.error('[Pynode] worker error', ev);
-        try {
-          if (false && terminalRef.current) writeToTerminal();
-        } catch {
-          if (false && terminalRef.current) writeToTerminal();
-        }
-        // clear init timeout
         if (initTimeoutRef.current) {
           window.clearTimeout(initTimeoutRef.current);
           initTimeoutRef.current = null;
         }
       };
+
       const onMessageError = (ev: MessageEvent) => {
         console.error('[Pynode] worker messageerror', ev);
-        if (false && terminalRef.current) writeToTerminal();
       };
+
       w.addEventListener('message', handler);
       w.addEventListener('error', onError);
       w.addEventListener('messageerror', onMessageError);
+
       return () => {
         try {
           w.removeEventListener('message', handler);
           w.removeEventListener('error', onError);
           w.removeEventListener('messageerror', onMessageError);
-        } catch { }
+        } catch {}
       };
     },
     [clearIntervalTimer, writeToTerminal]
@@ -355,7 +369,7 @@ const Pynode: React.FC = () => {
     if (workerCleanupRef.current) {
       try {
         workerCleanupRef.current();
-      } catch { }
+      } catch {}
       workerCleanupRef.current = null;
     }
 
@@ -387,10 +401,13 @@ const Pynode: React.FC = () => {
         } else {
           cleanup();
         }
-      } catch { }
+      } catch {}
       try {
         w.terminate();
-      } catch { }
+        // Revoke blob URL to prevent memory leak
+        const url = (w as Worker & { __blobUrl?: string }).__blobUrl;
+        if (url) URL.revokeObjectURL(url);
+      } catch {}
     };
   }, [attachWorkerListeners, writeToTerminal]);
 
@@ -414,97 +431,113 @@ const Pynode: React.FC = () => {
   const inputThemeStyle: React.CSSProperties =
     theme === 'dark'
       ? {
-        background: '#2e2e2e',
-        color: '#e6e6e6',
-        border: '1px solid rgba(255,255,255,0.06)',
-      }
+          background: '#2e2e2e',
+          color: '#e6e6e6',
+          border: '1px solid rgba(255,255,255,0.06)',
+        }
       : {
-        background: '#ffffff',
-        color: '#0b1220',
-        border: '1px solid rgba(2,6,23,0.06)',
-      };
+          background: '#ffffff',
+          color: '#0b1220',
+          border: '1px solid rgba(2,6,23,0.06)',
+        };
   const mergedInputStyle = { ...inputBaseStyle, ...inputThemeStyle } as React.CSSProperties;
 
+  // Optimized: memoize stdin splitting, reduce deps
   const handleRun = useCallback(() => {
-    if (!worker) return;
-    if (running) return;
+    if (!worker || running) return;
+
     clearTerminal();
     const id = String(Date.now());
     setRunId(id);
     setRunning(true);
     setElapsedMs(0);
     startTimer();
-    // prepare stdin lines buffer: prefer textarea lines for interactive input
+
+    // prepare stdin lines buffer: split once and cache
     stdinLinesRef.current = stdinText ? stdinText.split(/\r?\n/) : [];
     worker.postMessage({ type: 'run', runId: id, code, stdinText });
-    if (false) writeToTerminal();
-  }, [worker, running, code, stdinText, clearTerminal, startTimer, writeToTerminal]);
+  }, [worker, running, code, stdinText, clearTerminal, startTimer]);
 
+  // Optimized: batch state updates, reduce deps
   const handleStop = useCallback(() => {
-    if (!worker) return;
-    if (!running) return;
+    if (!worker || !running) return;
+
     // best-effort stop: notify worker and then terminate+recreate
-    const id = runId;
     try {
-      worker.postMessage({ type: 'stop', runId: id });
+      worker.postMessage({ type: 'stop', runId });
     } catch {
       // ignore
     }
+
     // terminate and recreate
     try {
       worker.terminate();
     } catch {
       // ignore
     }
+
     // cleanup previous listeners if any
     if (workerCleanupRef.current) {
       try {
         workerCleanupRef.current();
-      } catch { }
+      } catch {}
       workerCleanupRef.current = null;
     }
+
     const nw = makeWorker();
-    // attach listeners to the new worker
     workerCleanupRef.current = attachWorkerListeners(nw);
     setWorker(nw);
+
+    // Batch state updates
     setRunning(false);
     clearIntervalTimer();
     setElapsedMs((prev) => {
       if (startTimeRef.current) return Date.now() - startTimeRef.current;
       return prev ?? 0;
     });
-    if (false) writeToTerminal();
-  }, [worker, runId, clearIntervalTimer, writeToTerminal, running, attachWorkerListeners]);
-
-  // message handling is centralized in attachWorkerListeners; no extra effect needed
+  }, [worker, runId, running, clearIntervalTimer, attachWorkerListeners]);
 
   const editorHeight = useMemo(() => '60vh', []);
 
-  // Register a Monaco theme on mount so we can control editor.background exactly
-  const handleEditorMount = useCallback((editor: any, monaco: any) => {
-    try {
-      monaco.editor.defineTheme('pynode-dark', {
-        base: 'vs-dark',
+  // Memoize Monaco theme definitions to prevent recreation
+  const monacoThemes = useMemo(
+    () => ({
+      dark: {
+        base: 'vs-dark' as const,
         inherit: true,
         rules: [],
         colors: {
           'editor.background': '#2e2e2e',
         },
-      });
-      monaco.editor.defineTheme('pynode-light', {
-        base: 'vs',
+      },
+      light: {
+        base: 'vs' as const,
         inherit: true,
         rules: [],
         colors: {
           'editor.background': '#ffffff',
         },
-      });
-      // apply the correct theme
-      monaco.editor.setTheme(theme === 'dark' ? 'pynode-dark' : 'pynode-light');
-    } catch (e) {
-      // silently ignore if monaco isn't available yet
-    }
-  }, [theme]);
+      },
+    }),
+    []
+  );
+
+  // Register a Monaco theme on mount so we can control editor.background exactly
+  // Optimized: use memoized theme definitions
+  const handleEditorMount = useCallback(
+    (editor: unknown, monaco: unknown) => {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const monacoEditor = (monaco as any).editor;
+        monacoEditor.defineTheme('pynode-dark', monacoThemes.dark);
+        monacoEditor.defineTheme('pynode-light', monacoThemes.light);
+        monacoEditor.setTheme(theme === 'dark' ? 'pynode-dark' : 'pynode-light');
+      } catch {
+        // silently ignore if monaco isn't available yet
+      }
+    },
+    [theme, monacoThemes]
+  );
 
   return (
     <div className="page-container">
@@ -593,7 +626,7 @@ const Pynode: React.FC = () => {
                         inputId: inputRequest.inputId,
                         value: String(inputValue ?? ''),
                       });
-                    } catch { }
+                    } catch {}
                     setInputRequest(null);
                   }}
                 >

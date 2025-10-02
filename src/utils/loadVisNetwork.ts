@@ -7,6 +7,9 @@
 //   adapt it into the shape expected by the app.
 // - Otherwise, inject a script tag that loads the UMD standalone build from a CDN.
 
+// Cache promise to prevent multiple simultaneous loads
+let loadPromise: Promise<{ DataSet: unknown; Network: unknown }> | null = null;
+
 export async function loadVisNetwork() {
   if (typeof window === 'undefined') {
     throw new Error('loadVisNetwork can only be used in the browser');
@@ -17,7 +20,12 @@ export async function loadVisNetwork() {
     vis?: { DataSet?: unknown; Network?: unknown };
   }
   const win = window as unknown as WinWithVis;
+
+  // Return cached module if available
   if (win.__visModule) return win.__visModule;
+
+  // Return in-flight promise if already loading
+  if (loadPromise) return loadPromise;
 
   // If a global `vis` (UMD) is already available, adapt and cache it
   if (win.vis && win.vis.DataSet && win.vis.Network) {
@@ -28,7 +36,7 @@ export async function loadVisNetwork() {
 
   // Fallback: load the standalone UMD bundle from CDN
   const cdn = 'https://cdn.jsdelivr.net/npm/vis-network@10.0.1/standalone/umd/vis-network.min.js';
-  return new Promise((resolve, reject) => {
+  loadPromise = new Promise((resolve, reject) => {
     const existing = document.querySelector(`script[src="${cdn}"]`);
     if (existing) {
       existing.addEventListener('load', () => {
@@ -58,7 +66,12 @@ export async function loadVisNetwork() {
         reject(new Error('vis-network loaded but global `vis` not found'));
       }
     };
-    script.onerror = () => reject(new Error('Failed to load vis-network from CDN'));
+    script.onerror = () => {
+      loadPromise = null; // Reset on error to allow retry
+      reject(new Error('Failed to load vis-network from CDN'));
+    };
     document.head.appendChild(script);
   });
+
+  return loadPromise;
 }
