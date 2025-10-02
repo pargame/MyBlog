@@ -4,18 +4,26 @@
     --panel: #0f1724;
     --muted: #94a3b8;
     --accent: #60a5fa;
+
     :root {
       /* Dracula-inspired palette */
-      --bg: #0b1220; /* page background */
+      --bg: #0b1220;
+      /* page background */
       --panel: #0b1220;
-      --card: #151826; /* slightly lighter panel */
+      --card: #151826;
+      /* slightly lighter panel */
       /* make primary text slightly softer (gray-blue) to reduce glare in dark mode */
-      --text: #cbd7e6; /* soft gray-blue */
+      --text: #cbd7e6;
+      /* soft gray-blue */
       /* muted paragraph color: darker, less saturated */
-      --muted: #9fb0c8; /* desaturated blue-gray */
-      --muted-text: #98a8bf; /* used by some selectors for muted links */
-      --accent: #6272a4; /* purple-ish (kept) */
-      --accent-2: #ff79c6; /* pink */
+      --muted: #9fb0c8;
+      /* desaturated blue-gray */
+      --muted-text: #98a8bf;
+      /* used by some selectors for muted links */
+      --accent: #6272a4;
+      /* purple-ish (kept) */
+      --accent-2: #ff79c6;
+      /* pink */
       --green: #50fa7b;
       --yellow: #f1fa8c;
       --radius: 12px;
@@ -23,11 +31,9 @@
     }
 
     .dev-theme {
-      background: radial-gradient(
-        circle at 10% 10%,
-        rgba(16, 24, 40, 0.9) 0%,
-        rgba(3, 6, 12, 1) 60%
-      );
+      background: radial-gradient(circle at 10% 10%,
+          rgba(16, 24, 40, 0.9) 0%,
+          rgba(3, 6, 12, 1) 60%);
       min-height: 100vh;
       color: var(--text);
       padding: 3rem 1.25rem;
@@ -42,6 +48,76 @@
       box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
     }
 
+    /* Pynode: ensure editor, terminal and input look slightly lighter in dark theme for contrast */
+    .dev-theme[data-theme="dark"] .pynode-editor .monaco-editor,
+    .dev-theme[data-theme="dark"] .pynode-terminal,
+    .dev-theme[data-theme="dark"] .pynode-input,
+    .dev-theme[data-theme="dark"] textarea.pynode-input {
+      background: #2e2e2e !important;
+      /* light gray on dark backgrounds */
+      color: #e6e6e6 !important;
+      border: 1px solid rgba(255, 255, 255, 0.06) !important;
+      border-radius: 6px;
+    }
+
+    /* Monaco internals: ensure editor surface itself uses the requested background */
+    .dev-theme[data-theme="dark"] .pynode-editor .monaco-editor .monaco-editor-background,
+    .dev-theme[data-theme="dark"] .pynode-editor .monaco-editor .view-lines {
+      background-color: #2e2e2e !important;
+    }
+
+    /* textarea batch input should match */
+    .dev-theme[data-theme="dark"] textarea.pynode-input {
+      background: #2e2e2e !important;
+      color: #e6e6e6 !important;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.06) !important;
+      padding: 8px;
+    }
+
+    /* Pynode styles per theme: dark */
+    .dev-theme[data-theme="dark"] .pynode-terminal {
+      --pynode-bg: #2e2e2e;
+      --pynode-text: #e6e6e6;
+      background: var(--pynode-bg) !important;
+      color: var(--pynode-text) !important;
+      border: 1px solid rgba(255, 255, 255, 0.06) !important;
+      border-radius: 6px;
+    }
+
+    .dev-theme[data-theme="dark"] .pynode-input,
+    .dev-theme[data-theme="dark"] textarea.pynode-input,
+    .dev-theme[data-theme="dark"] .pynode-editor .monaco-editor .monaco-editor-background,
+    .dev-theme[data-theme="dark"] .pynode-editor .monaco-editor .view-lines {
+      background: var(--pynode-bg) !important;
+      color: var(--pynode-text) !important;
+    }
+
+    /* Pynode styles per theme: light */
+    .dev-theme[data-theme="light"] .pynode-terminal {
+      --pynode-bg: #ffffff;
+      --pynode-text: #0b1220;
+      background: var(--pynode-bg) !important;
+      color: var(--pynode-text) !important;
+      border: 1px solid rgba(2, 6, 23, 0.06) !important;
+      border-radius: 6px;
+    }
+
+    .dev-theme[data-theme="light"] .pynode-input,
+    .dev-theme[data-theme="light"] textarea.pynode-input,
+    .dev-theme[data-theme="light"] .pynode-editor .monaco-editor .monaco-editor-background,
+    .dev-theme[data-theme="light"] .pynode-editor .monaco-editor .view-lines {
+      background: var(--pynode-bg) !important;
+      color: var(--pynode-text) !important;
+    }
+
+    /* Slightly brighter input field focus state */
+    .dev-theme[data-theme="dark"] .pynode-input:focus,
+    .dev-theme[data-theme="dark"] textarea.pynode-input:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.03);
+    }
+
     /* Typography */
     h1,
     h2,
@@ -49,6 +125,7 @@
       color: var(--text);
       margin: 0 0 0.6rem 0;
     }
+
     p,
     li {
       color: var(--muted);
@@ -61,12 +138,14 @@
       padding: 0.5rem 0;
       margin-bottom: 1.25rem;
     }
+
     .site-nav .nav-container {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
     }
+
     .site-nav .brand {
       color: var(--text);
       font-weight: 700;
@@ -75,6 +154,7 @@
       background: rgba(255, 255, 255, 0.02);
       border-radius: 8px;
     }
+
     .site-nav .links a {
       color: var(--muted);
       text-decoration: none;
@@ -82,6 +162,7 @@
       border-radius: 8px;
       background: rgba(255, 255, 255, 0.01);
     }
+
     .site-nav .links a:hover {
       color: var(--text);
       background: rgba(255, 255, 255, 0.03);
@@ -97,6 +178,7 @@
     code {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace;
     }
+
     pre {
       background: #0b1220;
       color: var(--text);
@@ -105,6 +187,7 @@
       overflow: auto;
       border: 1px solid rgba(255, 255, 255, 0.03);
     }
+
     code {
       background: rgba(255, 255, 255, 0.02);
       padding: 0.12rem 0.3rem;
@@ -124,9 +207,11 @@
       .dev-theme {
         padding: 1.2rem;
       }
+
       .dev-theme .app {
         padding: 1rem;
       }
+
       .site-nav .links {
         display: none;
       }
@@ -138,6 +223,7 @@
     color: var(--accent);
     text-decoration: none;
   }
+
   a:hover {
     color: var(--accent-2);
   }
@@ -149,15 +235,18 @@
     margin-bottom: 1.25rem;
     border-radius: 8px;
   }
+
   .site-nav .brand {
     color: var(--text);
     font-size: 1.05rem;
     font-weight: 700;
   }
+
   .site-nav .links a {
     color: var(--muted-text);
     margin-left: 0.75rem;
   }
+
   .site-nav .links a:hover {
     color: var(--text);
   }
@@ -167,14 +256,17 @@
     .dev-theme {
       padding: 1rem;
     }
+
     .dev-theme .app {
       padding: 1rem;
     }
+
     .site-nav .links {
       display: none;
     }
   }
 }
+
 pre {
   background: #0b1220;
   color: var(--text);
@@ -194,10 +286,12 @@ a {
   padding: 0;
   margin-bottom: 1rem;
 }
+
 .site-nav .brand {
   color: #0b1220;
   font-size: 1.1rem;
 }
+
 .site-nav .links a {
   color: #0b1220;
 }

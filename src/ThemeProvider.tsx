@@ -65,7 +65,7 @@ const STYLE_ID = 'theme-provider-styles';
 
 const ThemeContext = React.createContext({
   theme: 'dark' as Theme,
-  toggle: () => {},
+  toggle: () => { },
 });
 
 function injectTheme(theme: Theme) {
@@ -95,7 +95,8 @@ export default function ThemeProvider({ children }: Props) {
 
   return (
     <ThemeContext.Provider value={{ theme, toggle }}>
-      <div className="dev-theme">{children}</div>
+      {/* expose current theme via data-theme so page-specific styles can target dark/light */}
+      <div className="dev-theme" data-theme={theme}>{children}</div>
     </ThemeContext.Provider>
   );
 }

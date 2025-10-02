@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Editor from '@monaco-editor/react';
+import { useTheme } from '../ThemeProvider';
 
 type WorkerMessage =
   | { type: 'ready' }
@@ -279,7 +280,7 @@ const Pynode: React.FC = () => {
             const val = stdinLinesRef.current.shift() ?? '';
             try {
               w.postMessage({ type: 'input-value', inputId, value: String(val ?? '') });
-            } catch {}
+            } catch { }
           } else {
             setInputRequest({ inputId, prompt });
             setInputValue('');
@@ -340,7 +341,7 @@ const Pynode: React.FC = () => {
           w.removeEventListener('message', handler);
           w.removeEventListener('error', onError);
           w.removeEventListener('messageerror', onMessageError);
-        } catch {}
+        } catch { }
       };
     },
     [clearIntervalTimer, writeToTerminal]
@@ -354,7 +355,7 @@ const Pynode: React.FC = () => {
     if (workerCleanupRef.current) {
       try {
         workerCleanupRef.current();
-      } catch {}
+      } catch { }
       workerCleanupRef.current = null;
     }
 
@@ -386,10 +387,10 @@ const Pynode: React.FC = () => {
         } else {
           cleanup();
         }
-      } catch {}
+      } catch { }
       try {
         w.terminate();
-      } catch {}
+      } catch { }
     };
   }, [attachWorkerListeners, writeToTerminal]);
 
@@ -401,6 +402,28 @@ const Pynode: React.FC = () => {
   );
   const [inputValue, setInputValue] = useState<string>('');
   const inputFieldRef = useRef<HTMLInputElement | null>(null);
+  const { theme } = useTheme();
+
+  // input styles that change depending on theme
+  const inputBaseStyle: React.CSSProperties = {
+    fontFamily: 'monospace',
+    padding: 8,
+    borderRadius: 6,
+    border: '1px solid rgba(0,0,0,0.08)',
+  };
+  const inputThemeStyle: React.CSSProperties =
+    theme === 'dark'
+      ? {
+        background: '#2e2e2e',
+        color: '#e6e6e6',
+        border: '1px solid rgba(255,255,255,0.06)',
+      }
+      : {
+        background: '#ffffff',
+        color: '#0b1220',
+        border: '1px solid rgba(2,6,23,0.06)',
+      };
+  const mergedInputStyle = { ...inputBaseStyle, ...inputThemeStyle } as React.CSSProperties;
 
   const handleRun = useCallback(() => {
     if (!worker) return;
@@ -437,7 +460,7 @@ const Pynode: React.FC = () => {
     if (workerCleanupRef.current) {
       try {
         workerCleanupRef.current();
-      } catch {}
+      } catch { }
       workerCleanupRef.current = null;
     }
     const nw = makeWorker();
@@ -457,19 +480,49 @@ const Pynode: React.FC = () => {
 
   const editorHeight = useMemo(() => '60vh', []);
 
+  // Register a Monaco theme on mount so we can control editor.background exactly
+  const handleEditorMount = useCallback((editor: any, monaco: any) => {
+    try {
+      monaco.editor.defineTheme('pynode-dark', {
+        base: 'vs-dark',
+        inherit: true,
+        rules: [],
+        colors: {
+          'editor.background': '#2e2e2e',
+        },
+      });
+      monaco.editor.defineTheme('pynode-light', {
+        base: 'vs',
+        inherit: true,
+        rules: [],
+        colors: {
+          'editor.background': '#ffffff',
+        },
+      });
+      // apply the correct theme
+      monaco.editor.setTheme(theme === 'dark' ? 'pynode-dark' : 'pynode-light');
+    } catch (e) {
+      // silently ignore if monaco isn't available yet
+    }
+  }, [theme]);
+
   return (
     <div className="page-container">
       <h1>Pynode (간이 WebIDE)</h1>
       <div style={{ display: 'flex', gap: 12 }}>
         <div style={{ flex: 1 }}>
-          <Editor
-            height={editorHeight}
-            defaultLanguage="python"
-            defaultValue={DEFAULT_CODE}
-            value={code}
-            onChange={(v) => setCode(v ?? '')}
-            options={{ minimap: { enabled: false }, fontSize: 14 }}
-          />
+          <div className="pynode-editor">
+            <Editor
+              height={editorHeight}
+              defaultLanguage="python"
+              defaultValue={DEFAULT_CODE}
+              value={code}
+              onChange={(v) => setCode(v ?? '')}
+              theme={theme === 'dark' ? 'pynode-dark' : 'pynode-light'}
+              onMount={handleEditorMount}
+              options={{ minimap: { enabled: false }, fontSize: 14 }}
+            />
+          </div>
         </div>
 
         <div style={{ width: 420, display: 'flex', flexDirection: 'column' }}>
@@ -493,7 +546,8 @@ const Pynode: React.FC = () => {
               placeholder="여기에 입력 값(배치 stdin)을 붙여넣으세요"
               value={stdinText}
               onChange={(e) => setStdinText(e.target.value)}
-              style={{ width: '100%', height: 160, marginTop: 8, fontFamily: 'monospace' }}
+              className="pynode-input"
+              style={{ width: '100%', height: 160, marginTop: 8, ...mergedInputStyle }}
             />
             <div style={{ marginTop: 6, fontSize: 12 }}>
               {running ? (
@@ -508,17 +562,15 @@ const Pynode: React.FC = () => {
             <strong>Terminal Output</strong>
             <div
               ref={terminalRef}
+              className="pynode-terminal"
               style={{
                 flex: 1,
-                background: '#0b0b0b',
-                color: '#e6e6e6',
                 padding: 10,
                 marginTop: 8,
                 overflow: 'auto',
                 whiteSpace: 'pre-wrap',
                 fontFamily: 'monospace',
                 fontSize: 13,
-                borderRadius: 4,
                 minHeight: 200,
               }}
             />
@@ -530,7 +582,8 @@ const Pynode: React.FC = () => {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   placeholder={inputRequest.prompt ?? 'input:'}
-                  style={{ flex: 1, fontFamily: 'monospace', padding: 6 }}
+                  className="pynode-input"
+                  style={{ flex: 1, padding: 6, ...mergedInputStyle }}
                 />
                 <button
                   onClick={() => {
@@ -540,7 +593,7 @@ const Pynode: React.FC = () => {
                         inputId: inputRequest.inputId,
                         value: String(inputValue ?? ''),
                       });
-                    } catch {}
+                    } catch { }
                     setInputRequest(null);
                   }}
                 >
