@@ -15,7 +15,7 @@ const slides: Slide[] = [
     title: 'Intelligent Mechatronics Engineer',
     subtitle: 'Sejong University · TOEIC 740 · 정보처리기사',
     description:
-      '소프트웨어부터 자동제어, 전자회로까지 하드웨어와 소프트웨어를 아우르는 융합 기술 엔지니어가 되고 싶습니다. 지능기전공학심화를 전공하며 AI, 임베디드 시스템, 웹 개발 등 폭넓은 분야에서 경험을 쌓았습니다. (상세 내용 준비중)',
+      '소프트웨어부터 자동제어, 전자회로까지 하드웨어와 소프트웨어를 아우르는 융합 기술 엔지니어가 되고 싶습니다. 지능기전공학심화를 전공하며 AI, 임베디드 시스템, 웹 개발 등 다양한 분야를 접해보고 학습하는 중입니다. (상세 내용 준비중)',
     colors: ['#e8eaf6', '#f3e5f5'], // Very light lavender to pale purple
   },
   {
@@ -23,7 +23,7 @@ const slides: Slide[] = [
     title: 'AI-Driven Personal Blog',
     subtitle: 'React · TypeScript · Interactive Visualization',
     description:
-      'AI를 활용한 콘텐츠 생성과 인터랙티브 시각화 기능을 갖춘 개인 블로그입니다. React와 TypeScript로 개발했으며, 사용자 경험과 성능 최적화에 집중했습니다. 특히 Graph 페이지에서는 학습 내용을 시각적으로 표현하며, AI API를 통한 마인드맵 자동 생성 기능을 기획 중입니다. 지금 보시는 이 사이트가 바로 그 결과물입니다.',
+      'AI를 활용한 콘텐츠 생성과 인터랙티브 시각화 기능을 갖춘 개인 블로그를 만들어보았습니다. React와 TypeScript를 학습하며 개발했고, 사용자 경험과 성능 최적화를 고민하며 제작했습니다. 특히 Graph 페이지에서는 학습 내용을 시각적으로 표현하며, AI API를 통한 마인드맵 자동 생성 기능을 기획하고 있습니다.',
     colors: ['#fce4ec', '#f8e1e8'], // Very light pink to pale rose
   },
   {
@@ -31,7 +31,7 @@ const slides: Slide[] = [
     title: 'Python & AI Development',
     subtitle: 'Machine Learning · Deep Learning · Data Science',
     description:
-      'TensorFlow와 PyTorch를 사용한 AI 모델 개발 경험이 있습니다. 데이터 분석, 예측 모델링, 자연어 처리, 컴퓨터 비전 등 다양한 분야를 경험했으며, 새로운 기술을 배우고 적용하는 것을 즐깁니다.',
+      'TensorFlow와 PyTorch를 활용하여 AI 모델 개발을 학습하고 있습니다. 데이터 분석, 예측 모델링, 자연어 처리, 컴퓨터 비전 등의 기술을 접해보며 기초를 다지고 있으며, 새로운 기술을 배우고 적용하는 것에 흥미를 느낍니다.',
     colors: ['#e1f5fe', '#e0f7fa'], // Very light sky blue to pale cyan
   },
   {
@@ -39,7 +39,7 @@ const slides: Slide[] = [
     title: 'C++ & Game Development',
     subtitle: 'Algorithm · Graphics · Unreal Engine',
     description:
-      'C++ STL을 활용해 알고리즘 역량을 꾸준히 향상시키고 있습니다. DirectX를 사용한 그래픽스 프로그래밍을 경험해봤으며, Unreal Engine 기반 게임 개발에도 관심이 있습니다.',
+      'C++ STL을 활용하여 알고리즘 공부를 꾸준히 하고 있습니다. DirectX를 통한 그래픽스 프로그래밍을 학습해보았으며, Unreal Engine 기반 게임 개발에도 관심을 가지고 공부 중입니다.',
     colors: ['#e8f5e9', '#e0f2f1'], // Very light mint to pale aqua
   },
 ];
