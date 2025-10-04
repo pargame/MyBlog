@@ -9,10 +9,14 @@
   <script>
     // Restore the path after 404 redirect
     (function () {
-      var redirect = sessionStorage.getItem('redirect');
-      if (redirect) {
-        sessionStorage.removeItem('redirect');
-        history.replaceState(null, '', redirect);
+      var search = window.location.search;
+      if (search) {
+        var match = search.match(/[?&]redirect=([^&]+)/);
+        if (match) {
+          var redirect = decodeURIComponent(match[1]);
+          // Clean up the URL without reloading
+          history.replaceState(null, '', '/MyBlog' + redirect);
+        }
       }
     })();
   </script>

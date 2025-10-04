@@ -6,9 +6,10 @@
     <title>Redirecting...</title>
     <script>
         // GitHub Pages SPA redirect hack
-        // Store the current path and redirect to index.html
-        sessionStorage.setItem('redirect', location.pathname + location.search + location.hash);
-        location.replace(location.origin + '/MyBlog/');
+        // Encode the path as a query parameter
+        var path = location.pathname.replace(/^\/MyBlog/, '') + location.search + location.hash;
+        var redirect = '/?redirect=' + encodeURIComponent(path);
+        location.replace(location.origin + '/MyBlog/' + redirect);
     </script>
 </head>
 
